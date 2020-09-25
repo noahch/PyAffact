@@ -1,0 +1,38 @@
+{
+  "basic": {
+    "experiment_name": "baseline",
+    "model": "resnet_51",
+    "pretrained": 1
+  },
+  "training": {
+    "epochs": 2,
+    "optimizer": {
+      "type": "SGD",
+      "learning_rate": 0.00001,
+      "momentum": 0.9
+    },
+    "criterion": {
+      "type": "BCEWithLogitsLoss"
+    },
+    "lr_scheduler": {
+      "type": "StepLR",
+      "step_size": 7,
+      "gamma": 0.1
+    }
+  },
+  "preprocessing": {
+    "dataset": {
+      "training_size": 1000,
+      "validation_size": 200,
+      "pre_aligned": 1
+    },
+    "dataloader": {
+      "batch_size": 32,
+      "shuffle": "True",
+      "num_workers": 6
+    }
+  },
+  "visualization": {
+  }
+}
+
