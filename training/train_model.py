@@ -1,4 +1,5 @@
 import copy
+import os
 import time
 
 import torch
@@ -6,19 +7,19 @@ from torch import optim, nn
 from torch.optim import lr_scheduler
 
 from network.resnet_51 import resnet50
-from preprocessing.dataset_utils import get_train_val_dataset
+from preprocessing.utils import get_train_val_dataset
+from utils.model_manager import ModelManager
+from utils.utils import get_gpu_memory_map
 
 
-class TrainModel():
+class TrainModel(ModelManager):
     def __init__(self, config, device):
-        self.config = config
-        self.device = device
+        super().__init__(config, device)
         self.datasets = get_train_val_dataset(config)
-        self.model = self._get_model()
-        self.model_device = self.model.to(self.device)
         self.optimizer = self._get_optimizer()
         self.criterion = self._get_criterion()
         self.lr_scheduler = self._get_lr_scheduler()
+        get_gpu_memory_map('After Model full init')
 
     def train(self):
         if self.config.basic.model == "resnet_51":
@@ -26,22 +27,6 @@ class TrainModel():
         else:
             raise Exception("Model {} does not have a training routine".format(self.config.basic.model))
 
-    def _get_model(self):
-        if self.config.basic.model == "resnet_51":
-            return resnet50(pretrained=bool(self.config.basic.pretrained))
-        raise Exception("Model {} does not exist".format(self.config.basic.model))
-
-    def _get_optimizer(self):
-        if self.config.training.optimizer.type == "SGD":
-            return optim.SGD(self.model_device.parameters(),
-                                       lr=self.config.training.optimizer.learning_rate,
-                                       momentum=self.config.training.optimizer.momentum)
-        raise Exception("Optimizer {} does not exist".format(self.config.training.optimizer.type))
-
-    def _get_criterion(self):
-        if self.config.training.criterion.type == "BCEWithLogitsLoss":
-            return nn.BCEWithLogitsLoss()
-        raise Exception("Criterion {} does not exist".format(self.config.training.criterion.type))
 
     def _get_lr_scheduler(self):
         if self.config.training.lr_scheduler.type == "StepLR":
@@ -50,10 +35,18 @@ class TrainModel():
                                        gamma=self.config.training.lr_scheduler.gamma)
         raise Exception("Scheduler {} does not exist".format(self.config.training.lr_scheduler.type))
 
+    def _save_model(self, model_state_dict, optimizer_state_dict, filename):
+        torch.save({
+            'model_state_dict': model_state_dict,
+            'optimizer_state_dict': optimizer_state_dict
+        }, os.path.join(self.config.basic.result_directory, filename))
+
     def _train_resnet_51(self):
         since = time.time()
 
         best_model_wts = copy.deepcopy(self.model.state_dict())
+        best_opt_wts = copy.deepcopy(self.optimizer.state_dict())
+        best_epoch = ''
         best_acc = 0.0
 
         for epoch in range(self.config.training.epochs):
@@ -69,19 +62,21 @@ class TrainModel():
                 running_loss = 0.0
                 running_diff = 0.0
                 correct_classifications = 0
-
+                get_gpu_memory_map('Before loading input')
                 # Iterate over data.
                 for inputs, labels in self.datasets['dataloaders'][phase]:
                     inputs = inputs.to(self.device)
                     labels = labels.to(self.device)
-
+                    get_gpu_memory_map('After loading input')
                     # zero the parameter gradients
                     self.optimizer.zero_grad()
 
                     # forward
                     # track history if only in train
                     with torch.set_grad_enabled(phase == 'train'):
+                        get_gpu_memory_map('Before loading output')
                         outputs = self.model(inputs)
+                        get_gpu_memory_map('After loading output')
                         # print(type(outputs[0][0]))
                         # print(labels.shape)
                         # _, preds = torch.max(outputs, 1)
@@ -117,19 +112,21 @@ class TrainModel():
                 if phase == 'val' and epoch_acc > best_acc:
                     best_acc = epoch_acc
                     best_model_wts = copy.deepcopy(self.model.state_dict())
+                    best_opt_wts = copy.deepcopy(self.optimizer.state_dict())
+                    best_epoch = epoch+1
+
+                if phase == 'val' and (epoch+1) % self.config.training.save_frequency == 0:
+                    self._save_model(copy.deepcopy(self.model.state_dict()), copy.deepcopy(self.optimizer.state_dict()), '{:03d}.pt'.format(epoch+1))
+
 
         time_elapsed = time.time() - since
         print('Training complete in {:.0f}m {:.0f}s'.format(
             time_elapsed // 60, time_elapsed % 60))
         print('Best val Acc: {:4f}'.format(best_acc))
 
-        # load best model weights
         self.model.load_state_dict(best_model_wts)
-        torch.save({
-            # 'epoch': EPOCH,
-            'model_state_dict': self.model.state_dict(),
-            'optimizer_state_dict': self.optimizer.state_dict(),
-            # 'loss': LOSS,
-        }, 'latest_model.pt')
+        self._save_model(best_model_wts, best_opt_wts, 'best-{}.pt'.format(best_epoch))
+        self._save_model(copy.deepcopy(self.model.state_dict()), copy.deepcopy(self.optimizer.state_dict()),
+                         'latest.pt')
         return self.model
 

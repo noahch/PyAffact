@@ -5,7 +5,6 @@ from preprocessing.affact_dataset import AffactDataset
 
 
 def get_train_val_dataset(config):
-
     if config.preprocessing.dataset.pre_aligned:
         data_transforms = transforms.Compose([
             transforms.Resize(224),
