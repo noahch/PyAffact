@@ -7,7 +7,7 @@
     "model": "resnet_51",
     "pretrained": 1,
     "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results/2020-10-01-14-21-33-baseline",
-    "mode": "eval"
+    "mode": "train"
   },
   "training": {
     "epochs": 2,
@@ -28,14 +28,66 @@
   },
   "preprocessing": {
     "dataset": {
-      "training_size": 1000,
-      "validation_size": 200,
+      "training_size": 70,
+      "validation_size": 20,
       "pre_aligned": 1
     },
     "dataloader": {
       "batch_size": 32,
       "shuffle": "True",
       "num_workers": 6
+    },
+    "transformation": {
+      "save_transformation_image": {
+        "enabled": 1,
+        "frequency": 10
+      },
+      "crop_size": {
+        "x": 224,
+        "y": 224
+      },
+      "random_bounding_box": {
+        "enabled": 0
+      },
+      "scale_jitter": {
+        "enabled": 1,
+        "normal_distribution": {
+          "mean": 1,
+          "std": 0.1
+        }
+      },
+      "angle_jitter": {
+        "enabled": 1,
+        "normal_distribution": {
+          "mean": 0,
+          "std": 20
+        }
+      },
+      "shift_jitter": {
+        "enabled": 1,
+        "normal_distribution": {
+          "mean": 0,
+          "std": 0.05
+        }
+      },
+      "mirror": {
+        "enabled": 1,
+        "probability": 0.5
+      },
+      "gaussian_blur": {
+        "enabled": 1,
+        "normal_distribution": {
+          "mean": 0,
+          "std": 3
+        }
+      },
+      "gamma": {
+        "enabled": 1,
+        "normal_distribution": {
+          "mean": 0,
+          "std": 1
+        }
+      }
     }
   },
   "evaluation": {

@@ -48,7 +48,9 @@ class TrainModel(ModelManager):
         best_opt_wts = copy.deepcopy(self.optimizer.state_dict())
         best_epoch = ''
         best_acc = 0.0
-
+        print('Experiment Config')
+        self.config.pprint(pformat='json')
+        print('-'*50)
         for epoch in range(self.config.training.epochs):
             print('Epoch {}/{}'.format(epoch + 1, self.config.training.epochs))
             print('-' * 10)
@@ -118,11 +120,16 @@ class TrainModel(ModelManager):
                 if phase == 'val' and (epoch+1) % self.config.training.save_frequency == 0:
                     self._save_model(copy.deepcopy(self.model.state_dict()), copy.deepcopy(self.optimizer.state_dict()), '{:03d}.pt'.format(epoch+1))
 
+        print('Experiment Config')
+        self.config.pprint(pformat='json')
+        print('-' * 50)
+
 
         time_elapsed = time.time() - since
         print('Training complete in {:.0f}m {:.0f}s'.format(
             time_elapsed // 60, time_elapsed % 60))
         print('Best val Acc: {:4f}'.format(best_acc))
+
 
         self.model.load_state_dict(best_model_wts)
         self._save_model(best_model_wts, best_opt_wts, 'best-{}.pt'.format(best_epoch))

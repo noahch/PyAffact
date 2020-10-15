@@ -2,6 +2,7 @@ import torch
 from torchvision.transforms import transforms
 
 from preprocessing.affact_dataset import AffactDataset
+from preprocessing.affact_transformer import AffactTransformer
 
 
 def get_train_val_dataset(config):
@@ -16,8 +17,10 @@ def get_train_val_dataset(config):
             transforms.ToTensor()
         ])
 
-    dataset_train = AffactDataset(transform=data_transforms, max_size=config.preprocessing.dataset.training_size, index_offset=0)
-    dataset_val = AffactDataset(transform=data_transforms, max_size=config.preprocessing.dataset.validation_size, index_offset=config.preprocessing.dataset.training_size)
+    data_transforms = transforms.Compose([AffactTransformer(config)])
+
+    dataset_train = AffactDataset(transform=data_transforms, max_size=config.preprocessing.dataset.training_size, index_offset=0, config=config)
+    dataset_val = AffactDataset(transform=data_transforms, max_size=config.preprocessing.dataset.validation_size, index_offset=config.preprocessing.dataset.training_size, config=config)
 
     training_generator = torch.utils.data.DataLoader(dataset_train, **config.preprocessing.dataloader)
     validation_generator = torch.utils.data.DataLoader(dataset_val, **config.preprocessing.dataloader)
