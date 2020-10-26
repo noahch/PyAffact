@@ -3,7 +3,7 @@
     "name": "basic_config"
   },
   "basic": {
-    "experiment_name": "baseline",
+    "experiment_name": "baseline_aligned",
     "model": "resnet_51",
     "pretrained": 1,
     "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results/2020-10-01-14-21-33-baseline",
@@ -31,9 +31,9 @@
       "training_size": 70,
       "validation_size": 20,
       "dataset_labels_filename": "CelebA/list_attr_celeba.txt",
-      "dataset_image_folder": "CelebA/Img100",
+      "dataset_image_folder": "CelebA/Img100a",
       "uses_landmarks": 1,
-      "landmarks_filename": "CelebA/list_landmarks_celeba.txt"
+      "landmarks_filename": "CelebA/list_landmarks_align_celeba.txt"
     },
     "dataloader": {
       "batch_size": 32,
@@ -41,7 +41,7 @@
       "num_workers": 6
     },
     "transformation": {
-      "use_affact_transformator": 1,
+      "use_affact_transformator": 0,
       "save_transformation_image": {
         "enabled": 1,
         "frequency": 10
@@ -54,39 +54,39 @@
         "enabled": 0
       },
       "scale_jitter": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 1,
           "std": 0.1
         }
       },
       "angle_jitter": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 0,
           "std": 20
         }
       },
       "shift_jitter": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 0,
           "std": 0.05
         }
       },
       "mirror": {
-        "enabled": 1,
+        "enabled": 0,
         "probability": 0.5
       },
       "gaussian_blur": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 0,
           "std": 3
         }
       },
       "gamma": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 0,
           "std": 1

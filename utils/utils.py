@@ -1,3 +1,5 @@
+import random
+
 import torch
 import numpy as np
 
@@ -8,9 +10,13 @@ def init_environment():
     device = torch.device("cuda:0" if use_cuda else "cpu")
     if use_cuda:
         torch.cuda.empty_cache()
-    torch.backends.cudnn.benchmark = True
+    # torch.backends.cudnn.benchmark = True
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
     np.random.seed(0)
     torch.cuda.manual_seed_all(0)
+    torch.manual_seed(0)
+    random.seed(0)
     return device
 
 

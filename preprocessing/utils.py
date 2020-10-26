@@ -6,18 +6,15 @@ from preprocessing.affact_transformer import AffactTransformer
 
 
 def get_train_val_dataset(config):
-    if config.preprocessing.dataset.pre_aligned:
-        data_transforms = transforms.Compose([
-            transforms.Resize(224),
-            transforms.ToTensor()
-        ])
+    if config.preprocessing.transformation.use_affact_transformator:
+        data_transforms = transforms.Compose([AffactTransformer(config)])
     else:
+        # Use other transformation than affact
         data_transforms = transforms.Compose([
-            transforms.Resize(224),
+            transforms.CenterCrop([224, 224]),
+            # transforms.Resize([224, 224]),
             transforms.ToTensor()
         ])
-
-    data_transforms = transforms.Compose([AffactTransformer(config)])
 
     dataset_train = AffactDataset(transform=data_transforms, max_size=config.preprocessing.dataset.training_size, index_offset=0, config=config)
     dataset_val = AffactDataset(transform=data_transforms, max_size=config.preprocessing.dataset.validation_size, index_offset=config.preprocessing.dataset.training_size, config=config)

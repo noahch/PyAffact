@@ -3,12 +3,10 @@ import os
 import time
 
 import torch
-from torch import optim, nn
 from torch.optim import lr_scheduler
 
-from network.resnet_51 import resnet50
 from preprocessing.utils import get_train_val_dataset
-from utils.model_manager import ModelManager
+from training.model_manager import ModelManager
 from utils.utils import get_gpu_memory_map
 
 
@@ -66,7 +64,7 @@ class TrainModel(ModelManager):
                 correct_classifications = 0
                 get_gpu_memory_map('Before loading input')
                 # Iterate over data.
-                for inputs, labels in self.datasets['dataloaders'][phase]:
+                for inputs, labels, _ in self.datasets['dataloaders'][phase]:
                     inputs = inputs.to(self.device)
                     labels = labels.to(self.device)
                     get_gpu_memory_map('After loading input')

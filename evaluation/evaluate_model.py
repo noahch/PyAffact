@@ -1,11 +1,10 @@
-from preprocessing.utils import get_train_val_dataset
 import os
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
 from preprocessing.utils import get_train_val_dataset
-from utils.model_manager import ModelManager
+from training.model_manager import ModelManager
 
 
 class EvalModel(ModelManager):

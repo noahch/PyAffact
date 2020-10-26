@@ -6,6 +6,11 @@ import numpy as np
 from PIL import Image
 import torch
 import random
+from torchvision.transforms import transforms
+from torchvision.transforms.functional import to_tensor
+
+from evaluation.utils import save_input_transform_output_image
+
 
 class AffactTransformer():
     """Crop randomly the image in a sample.
@@ -23,15 +28,40 @@ class AffactTransformer():
     def __call__(self, sample):
         matplotlib.use('Agg')
 
-        im, bbx, index = sample['image'], sample['bounding_box'],  sample['index']
+        im, landmarks, index = sample['image'], sample['landmarks'],  sample['index']
+
+        # Calc bbx
+        t_eye_left = np.array((landmarks[0], landmarks[1]))
+        t_eye_right = np.array((landmarks[2], landmarks[3]))
+        t_mouth_left = np.array((landmarks[4], landmarks[5]))
+        t_mouth_right = np.array((landmarks[6], landmarks[7]))
+
+        t_eye = (t_eye_left + t_eye_right) / 2
+        t_mouth = (t_mouth_left + t_mouth_right) / 2
+        d = np.linalg.norm(t_eye - t_mouth)
+        w = h = 5.5 * d
+        alpha = np.arctan((t_eye_right[1] - t_eye_left[1]) / (t_eye_right[0] - t_eye_left[0]))
+
+        bbx = [t_eye[0] - 0.5 * w,
+               t_eye[1] - 0.45 * h,
+               t_eye[0] + 0.5 * w,
+               t_eye[1] + 0.55 * h,
+               alpha]
+
+
 
         crop_size = [self.config.preprocessing.transformation.crop_size.x, self.config.preprocessing.transformation.crop_size.y]
+
+        # Scale code Version
         scale = min(crop_size[0] / bbx[2], crop_size[1] / bbx[3])
+
+        # Scale paper Version
+        scale = min(crop_size[0] / (bbx[2] - bbx[0]), crop_size[1] / (bbx[3] - bbx[1]))
+
 
         # TODO: Random bounding box
 
-        # TODO: ASk.. bbx[4] = angle.. not in given data.. default 0?
-        angle = 0
+        angle = bbx[4]
         shift = [0., 0.]
 
         # Random jitter scale, angle, shift
@@ -54,7 +84,9 @@ class AffactTransformer():
         crop_center = [crop_size[0] / 2. + shift[0], crop_size[1] / 2. + shift[1]]
         input_mask = np.ones((im.shape[1], im.shape[2]), dtype=bool)
         out_mask = np.ones((crop_size[0], crop_size[1]), dtype=bool)
-        center = (bbx[1] + bbx[3] / 2., bbx[0] + bbx[2] / 2.)
+        # center = (bbx[1] + bbx[3] / 2., bbx[0] + bbx[2] / 2.)
+        center = (bbx[1] + (bbx[3] - bbx[1]) / 2., bbx[0] + (bbx[2] - bbx[0]) / 2.)
+
         placeholder_out = np.ones((3, self.config.preprocessing.transformation.crop_size.x, self.config.preprocessing.transformation.crop_size.y))
         placeholder_out[placeholder_out > 0] = 0
 
@@ -71,7 +103,7 @@ class AffactTransformer():
         # Mirror/Flip Image if randomly drawn number is below probability threshold
         if self.config.preprocessing.transformation.mirror.enabled:
             if random.uniform(0, 1) <= self.config.preprocessing.transformation.mirror.probability:
-                placeholder_out = np.flip(placeholder_out, axis=2)
+                placeholder_out = np.flip(placeholder_out, axis=2).copy()
 
         # Apply Gaussian Blur
         if self.config.preprocessing.transformation.gaussian_blur.enabled:
@@ -88,20 +120,6 @@ class AffactTransformer():
             gamma = 2 ** np.random.normal(gamma_mean, gamma_std)
             placeholder_out = np.minimum(np.maximum(((placeholder_out / 255.0) ** gamma) * 255.0, 0.0), 255.0)
 
-        # Save every X picture to validate preprocessing
-        if self.config.preprocessing.transformation.save_transformation_image.enabled:
-            if index % self.config.preprocessing.transformation.save_transformation_image.frequency == 0:
-                plt.ion()
-                plt.clf()
-                plt.figure(1)
-                plt.subplot(121)
-                plt.imshow(Image.fromarray(np.transpose(im, (1, 2, 0)), 'RGB'))
-                plt.plot([bbx[0], bbx[0], bbx[0] + bbx[2], bbx[0] + bbx[2]], [bbx[1], bbx[1] + bbx[3], bbx[1], bbx[1] + bbx[3]],
-                         'rx', ms=10, mew=3)
-                plt.subplot(122)
-                out_slice = np.transpose(placeholder_out, (1, 2, 0))
-                out_slice = out_slice.astype(np.uint8)
-                plt.imshow(Image.fromarray(out_slice, 'RGB'))
-                plt.savefig(self.config.basic.result_directory + '/{}.jpg'.format(index))
-
-        return torch.from_numpy(placeholder_out).float()
+        placeholder_out = np.transpose(placeholder_out, (1, 2, 0))
+        placeholder_out = placeholder_out.astype(np.uint8)
+        return to_tensor(placeholder_out), bbx
