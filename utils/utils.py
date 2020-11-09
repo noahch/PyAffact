@@ -2,7 +2,8 @@ import random
 
 import torch
 import numpy as np
-
+import logging
+import subprocess
 
 def init_environment():
     # CUDA for PyTorch
@@ -13,14 +14,16 @@ def init_environment():
     # torch.backends.cudnn.benchmark = True
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
+    # TODO: SEED AS PARAM
     np.random.seed(0)
     torch.cuda.manual_seed_all(0)
     torch.manual_seed(0)
     random.seed(0)
+    setup_logging()
     return device
 
-
-import subprocess
+def setup_logging():
+    logging.basicConfig(format='%(asctime)s.%(msecs)03d %(pathname)s:%(lineno)d %(levelname)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 
 def get_gpu_memory_map(id_string=''):

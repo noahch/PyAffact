@@ -39,6 +39,7 @@ class AffactTransformer():
         t_eye = (t_eye_left + t_eye_right) / 2
         t_mouth = (t_mouth_left + t_mouth_right) / 2
         d = np.linalg.norm(t_eye - t_mouth)
+        # TODO: 5.5 and offsets AS PARAM
         w = h = 5.5 * d
         alpha = np.arctan((t_eye_right[1] - t_eye_left[1]) / (t_eye_right[0] - t_eye_left[0]))
 
@@ -49,17 +50,13 @@ class AffactTransformer():
                alpha]
 
 
-
         crop_size = [self.config.preprocessing.transformation.crop_size.x, self.config.preprocessing.transformation.crop_size.y]
 
-        # Scale code Version
-        scale = min(crop_size[0] / bbx[2], crop_size[1] / bbx[3])
+        # # Scale code Version
+        # scale = min(crop_size[0] / bbx[2], crop_size[1] / bbx[3])
 
         # Scale paper Version
         scale = min(crop_size[0] / (bbx[2] - bbx[0]), crop_size[1] / (bbx[3] - bbx[1]))
-
-
-        # TODO: Random bounding box
 
         angle = bbx[4]
         shift = [0., 0.]

@@ -32,7 +32,20 @@ def get_train_val_dataset(config):
         'val': len(dataset_val)
     }
 
+    # We use the attribute distribution of the train dataset for the validation data, since Y would not be known.
+    attribute_baseline_accuracy = {
+        'train': dataset_train.get_attribute_baseline_accuracy(),
+        'val': dataset_train.get_attribute_baseline_accuracy()
+    }
+
+    dataset_meta_information = {
+        'label_names': dataset_train.get_label_names(),
+        'number_of_labels': len(dataset_train.get_label_names())
+    }
+
     result_dict = dict()
     result_dict['dataloaders'] = dataloaders
     result_dict['dataset_sizes'] = dataset_sizes
+    result_dict['attribute_baseline_accuracy'] = attribute_baseline_accuracy
+    result_dict['dataset_meta_information'] = dataset_meta_information
     return result_dict

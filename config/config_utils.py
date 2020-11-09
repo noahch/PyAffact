@@ -27,7 +27,9 @@ def _read_arguments():
     parser.add_argument('--basic.model', default=None, type=str)
     parser.add_argument('--basic.pretrained', default=None, type=int)
     parser.add_argument('--basic.result_directory', default=None, type=str)
+    parser.add_argument('--basic.result_directory_name', default=None, type=str)
     parser.add_argument('--basic.mode', default=None, type=str)
+    parser.add_argument('--basic.enable_wand_reporting', default=None, type=int)
 
     parser.add_argument('--training.epochs', default=None, type=int)
     parser.add_argument('--training.save_frequency', default=None, type=int)
@@ -107,6 +109,7 @@ def create_result_directory(config):
         try:
             os.makedirs(result_directory)
             config.basic.result_directory = result_directory
+            config.basic.result_directory_name = directory_name
             f = open(os.path.join(result_directory, 'config.json'), "w")
             f.write(json.dumps(config.toDict(), indent=2))
             f.close()

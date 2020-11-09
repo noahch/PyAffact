@@ -7,14 +7,16 @@
     "model": "resnet_51",
     "pretrained": 1,
     "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results/2020-10-01-14-21-33-baseline",
-    "mode": "train"
+    "result_directory_name": "2020-10-01-14-21-33-baseline",
+    "mode": "train",
+    "enable_wand_reporting": 1
   },
   "training": {
-    "epochs": 2,
+    "epochs": 10,
     "save_frequency": 2,
     "optimizer": {
       "type": "SGD",
-      "learning_rate": 0.00001,
+      "learning_rate": 0.1,
       "momentum": 0.9
     },
     "criterion": {

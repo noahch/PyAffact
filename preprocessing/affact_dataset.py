@@ -2,8 +2,8 @@ import torch
 import pandas as pd
 import numpy as np
 import bob.io.image
-from skimage import io, transform
 from PIL import Image
+import logging
 from torchvision.transforms import transforms
 
 from evaluation.utils import save_input_transform_output_image
@@ -12,8 +12,8 @@ from evaluation.utils import save_input_transform_output_image
 class AffactDataset(torch.utils.data.Dataset):
     def __init__(self, transform=None, max_size=None, index_offset=0, config=None):
         'Initialization'
-
-
+         # TODO: Factor for multiplication of input
+        
         self.labels = pd.read_csv('dataset/{}'.format(config.preprocessing.dataset.dataset_labels_filename), delim_whitespace=True)
         # self.bboxes = pd.read_csv('dataset/CelebA/list_bbox_celeba.txt', delim_whitespace=True)
         if config.preprocessing.dataset.uses_landmarks:
@@ -64,3 +64,9 @@ class AffactDataset(torch.utils.data.Dataset):
 
 
         return X, y, index
+
+    def get_attribute_baseline_accuracy(self):
+        return self.labels.apply(pd.Series.value_counts).max() / len(self.labels)
+
+    def get_label_names(self):
+        return self.labels.columns

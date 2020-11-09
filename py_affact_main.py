@@ -2,6 +2,7 @@ from config.config_utils import get_config, create_result_directory
 from evaluation.evaluate_model import EvalModel
 from training.train_model import TrainModel
 from utils.utils import init_environment, get_gpu_memory_map
+import logging
 import sys
 import argparse
 
@@ -18,7 +19,9 @@ if config.basic.mode == 'train':
     create_result_directory(config)
     # Create a training instance with the loaded configuration on the loaded device
     training_instance = TrainModel(config, device)
-
+    # logger = logging.getLogger('PyAffact')
+    # logger.warning('test')
+    logging.warning('test')
     # Run the training
     training_instance.train()
 

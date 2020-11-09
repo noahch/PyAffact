@@ -1,6 +1,12 @@
 # PyAffact
 PyTorch implementation of the Affact Paper
 
+# CMDs
+- conda install -c https://www.idiap.ch/software/bob/conda bob.io.image
+- conda install -c https://www.idiap.ch/software/bob/conda bob.ip.base
+- conda install pytorch torchvision torchaudio cudatoolkit=11.0 -c pytorch
+
+
 # TODO
 - Config Evaluation
 - Evaluation
@@ -9,6 +15,7 @@ PyTorch implementation of the Affact Paper
 - Download unaligned
 - Dataset via flag in config
 - Each Transform Operation is a custom class.. Compose them by checking enabled flag
+- Read Paper and try to evaluate
 
 # Questions
 - Random Bounding Box? When is it used?
