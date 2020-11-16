@@ -24,6 +24,7 @@ def _read_arguments():
     parser.add_argument('--config.name', default='basic_config', type=str)
 
     parser.add_argument('--basic.experiment_name', default=None, type=str)
+    parser.add_argument('--basic.experiment_description', default=None, type=str)
     parser.add_argument('--basic.model', default=None, type=str)
     parser.add_argument('--basic.pretrained', default=None, type=int)
     parser.add_argument('--basic.result_directory', default=None, type=str)

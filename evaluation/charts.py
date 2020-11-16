@@ -1,7 +1,8 @@
 import plotly.graph_objects as go
 
 
-def generate_attribute_accuracy_plot(attribute_name, attribute_accuracy, attribute_accuracy_baseline):
+def generate_attribute_accuracy_plot(attribute_name, attribute_accuracy_train, attribute_accuracy_baseline_train,
+                                     attribute_accuracy_val, attribute_accuracy_baseline_val):
     layout = go.Layout(
         autosize=False,
         margin=go.layout.Margin(
@@ -14,7 +15,7 @@ def generate_attribute_accuracy_plot(attribute_name, attribute_accuracy, attribu
         xaxis=go.layout.XAxis(
             title='Epochs',
             tickmode='array',
-            tickvals=[x for x in range(1, len(attribute_accuracy)+1)]
+            tickvals=[x for x in range(1, len(attribute_accuracy_train) + 1)]
         ),
         yaxis=go.layout.YAxis(
             title='Accuracy',
@@ -27,13 +28,23 @@ def generate_attribute_accuracy_plot(attribute_name, attribute_accuracy, attribu
 
     fig = go.Figure(layout=layout)
     fig.add_trace(go.Scatter(
-        x=[x for x in range(1, len(attribute_accuracy)+1)],
-        y=attribute_accuracy,
-        name='Model Prediction ' + attribute_name
+        x=[x for x in range(1, len(attribute_accuracy_train) + 1)],
+        y=attribute_accuracy_train,
+        name='Model Prediction Train ' + attribute_name
     ))
     fig.add_trace(go.Scatter(
-        x=[x for x in range(1, len(attribute_accuracy)+1)],
-        y=[attribute_accuracy_baseline for x in range(1, len(attribute_accuracy)+1)],
-        name='Baseline ' + attribute_name
+        x=[x for x in range(1, len(attribute_accuracy_train) + 1)],
+        y=[attribute_accuracy_baseline_train for x in range(1, len(attribute_accuracy_train) + 1)],
+        name='Baseline Train ' + attribute_name
+    ))
+    fig.add_trace(go.Scatter(
+        x=[x for x in range(1, len(attribute_accuracy_val) + 1)],
+        y=attribute_accuracy_val,
+        name='Model Prediction Val ' + attribute_name
+    ))
+    fig.add_trace(go.Scatter(
+        x=[x for x in range(1, len(attribute_accuracy_val) + 1)],
+        y=[attribute_accuracy_baseline_val for x in range(1, len(attribute_accuracy_val) + 1)],
+        name='Baseline Val ' + attribute_name
     ))
     return fig

@@ -4,6 +4,7 @@
   },
   "basic": {
     "experiment_name": "baseline",
+    "experiment_description": "sample description",
     "model": "resnet_51",
     "pretrained": 1,
     "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results/2020-10-01-14-21-33-baseline",
@@ -12,7 +13,7 @@
     "enable_wand_reporting": 1
   },
   "training": {
-    "epochs": 10,
+    "epochs": 3,
     "save_frequency": 2,
     "optimizer": {
       "type": "SGD",

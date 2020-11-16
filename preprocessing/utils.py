@@ -33,9 +33,10 @@ def get_train_val_dataset(config):
     }
 
     # We use the attribute distribution of the train dataset for the validation data, since Y would not be known.
+    train_attribute_baseline_majority_value = dataset_train.get_attribute_baseline_majority_value()
     attribute_baseline_accuracy = {
         'train': dataset_train.get_attribute_baseline_accuracy(),
-        'val': dataset_train.get_attribute_baseline_accuracy()
+        'val': dataset_val.get_attribute_baseline_accuracy_val(train_attribute_baseline_majority_value)
     }
 
     dataset_meta_information = {

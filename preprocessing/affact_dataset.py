@@ -68,5 +68,25 @@ class AffactDataset(torch.utils.data.Dataset):
     def get_attribute_baseline_accuracy(self):
         return self.labels.apply(pd.Series.value_counts).max() / len(self.labels)
 
+    def get_attribute_baseline_majority_value(self):
+        return self.labels.apply(pd.Series.value_counts).idxmax()
+
+    def get_attribute_baseline_accuracy_val(self, train_attribute_baseline_majority_value):
+        x = self.labels.apply(pd.Series.value_counts)
+        lst = train_attribute_baseline_majority_value.tolist()
+        access_tuple_list = [(0 if lst[y] == -1 else 1, y) for y in range(0, len(lst))]
+        result_list = []
+        for t in access_tuple_list:
+            result_list.append((train_attribute_baseline_majority_value.keys()[t[1]], x.iloc[t] / self.labels.shape[0]))
+
+
+        return pd.DataFrame(result_list).set_index(0)[1]
+        # x = self.labels.apply(pd.Series.value_counts)
+        # y = x.loc[train_attribute_baseline_majority_value.tolist(), :]
+        # z = pd.Series(np.diag(y), index=[y.index, y.columns])
+        # z.rename(train_attribute_baseline_majority_value.keys())
+        # return z
+        # return train_attribute_baseline_majority_value
+
     def get_label_names(self):
         return self.labels.columns

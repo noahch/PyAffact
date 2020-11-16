@@ -23,8 +23,7 @@ def init_environment():
     return device
 
 def setup_logging():
-    logging.basicConfig(format='%(asctime)s.%(msecs)03d %(pathname)s:%(lineno)d %(levelname)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-
+    logging.basicConfig(format='%(asctime)s.%(msecs)03d %(pathname)s:%(lineno)d %(levelname)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
 
 def get_gpu_memory_map(id_string=''):
     """Get the current gpu usage.

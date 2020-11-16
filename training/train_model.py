@@ -44,12 +44,10 @@ class TrainModel(ModelManager):
 
     def _train_resnet_51(self):
         if self.config.basic.enable_wand_reporting:
-            wandb.init(project="pyaffact", name=self.config.basic.result_directory_name)
+            wandb.init(project="pyaffact_uzh", entity="uzh", name=self.config.basic.result_directory_name, notes=self.config.basic.experiment_description, config=self.config.toDict())
+
             wandb.watch(self.model_device)
-        loss_train = []
-        loss_val = []
-        accuracy_train = []
-        accuracy_val = []
+
         since = time.time()
 
         best_model_wts = copy.deepcopy(self.model.state_dict())
@@ -58,16 +56,38 @@ class TrainModel(ModelManager):
         best_acc = 0.0
         # print('Experiment Config')
         # self.config.pprint(pformat='json')
-        print('-' * 50)
-        epoch_accuracy_store = None
+        # print('-' * 50)
+        epoch_accuracy_loss_dict = {
+            'train': {
+                'accuracy': None,
+                'loss': None,
+            },
+            'val': {
+                'accuracy': None,
+                'loss': None,
+            }
+        }
+
+        epoch_accuracy_store_dict = {
+            'train': None,
+            'val': None
+        }
+
+        epoch_attributes_correct_count_dict = {
+            'train': None,
+            'val': None
+        }
+
+        # epoch_accuracy_store = None
+
         # epoch_accuracy_store = torch.zeros(1,40)
         # epoch_accuracy_store = epoch_accuracy_store.to(self.device)
         for epoch in range(self.config.training.epochs):
-            print('Epoch {}/{}'.format(epoch + 1, self.config.training.epochs))
-            print('-' * 10)
+            # print('Epoch {}/{}'.format(epoch + 1, self.config.training.epochs))
+            logging.info('Epoch {}/{}'.format(epoch + 1, self.config.training.epochs))
+            # print('-' * 10)
 
-            attributes_correct_count = torch.zeros(self.datasets['dataset_meta_information']['number_of_labels'])
-            attributes_correct_count = attributes_correct_count.to(self.device)
+
             # Each epoch has a training and validation phase
             for phase in ['train', 'val']:
                 if phase == 'train':
@@ -75,6 +95,9 @@ class TrainModel(ModelManager):
                 else:
                     self.model.eval()  # Set model to evaluate mode
 
+                attributes_correct_count = torch.zeros(self.datasets['dataset_meta_information']['number_of_labels'])
+                attributes_correct_count = attributes_correct_count.to(self.device)
+                epoch_attributes_correct_count_dict[phase] = attributes_correct_count
                 running_loss = 0.0
                 # running_diff = 0.0
                 correct_classifications = 0
@@ -113,7 +136,7 @@ class TrainModel(ModelManager):
                     outputs[outputs >= 0.5] = 1
                     # running_diff += torch.sum(prediction_loss)
 
-                    attributes_correct_count += torch.sum(outputs == labels.type_as(outputs), dim=0)
+                    epoch_attributes_correct_count_dict[phase] += torch.sum(outputs == labels.type_as(outputs), dim=0)
                     correct_classifications += torch.sum(outputs == labels.type_as(outputs))
                     # print(correct_classifications)
 
@@ -123,24 +146,15 @@ class TrainModel(ModelManager):
                 epoch_loss = running_loss / self.datasets['dataset_sizes'][phase]
                 epoch_accuracy = correct_classifications.double() / (self.datasets['dataset_sizes'][phase] * self.datasets['dataset_meta_information']['number_of_labels'])
                 # epoch_acc = running_diff / (self.datasets['dataset_sizes'][phase] * 40)
-                attributes_correct_count = attributes_correct_count / self.datasets['dataset_sizes'][phase]
+                epoch_attributes_correct_count_dict[phase] = epoch_attributes_correct_count_dict[phase] / self.datasets['dataset_sizes'][phase]
 
-                # Generating accuracy for each attribute to generate an epoch accuracy store in the form of [[acc_attr1, 2...], [epoch2_acc_attr1, 2...]]
-                # [[acc_attr1, 2...], [epoch2_acc_attr1, 2...]] --> transpose [[epoch1_acc_attr1, epoch2_acc_attr1...], [...]] to generate an per attribute accuracy progress
-                if self.config.basic.enable_wand_reporting:
-                    wandb.log({"Test Accuracy": epoch_accuracy, "Test Loss": epoch_loss})
-                    if epoch_accuracy_store is not None:
-                        epoch_accuracy_store = torch.cat((epoch_accuracy_store, attributes_correct_count.unsqueeze(0)))
-                        transposed = torch.transpose(epoch_accuracy_store, 0, 1).cpu()
-                        for i in range(0,self.datasets['dataset_meta_information']['number_of_labels']):
-                            attr_name = self.datasets['dataset_meta_information']['label_names'][i]
-                            fig = generate_attribute_accuracy_plot(attr_name, transposed[i].tolist(), self.datasets['attribute_baseline_accuracy'][phase][attr_name])
-                            wandb.log({'Accuracy {}'.format(attr_name): fig})
-                    else:
-                        epoch_accuracy_store = attributes_correct_count.unsqueeze(0).clone()
+                epoch_accuracy_loss_dict[phase]['accuracy'] = epoch_accuracy
+                epoch_accuracy_loss_dict[phase]['loss'] = epoch_loss
 
+                # if self.config.basic.enable_wand_reporting:
+                #     wandb.log({"Accuracy {}".format(phase): epoch_accuracy, "Loss {}".format(phase): epoch_loss, "Baseline": })
 
-                print('{} Loss: {:.4f} \t Acc: {:.4f}'.format(phase, epoch_loss, epoch_accuracy))
+                logging.info('{} Loss: {:.4f} \t Acc: {:.4f}'.format(phase, epoch_loss, epoch_accuracy))
 
                 # deep copy the model
                 if phase == 'val' and epoch_accuracy > best_acc:
@@ -153,14 +167,44 @@ class TrainModel(ModelManager):
                     self._save_model(copy.deepcopy(self.model.state_dict()), copy.deepcopy(self.optimizer.state_dict()),
                                      '{:03d}.pt'.format(epoch + 1))
 
-        print('Experiment Config')
-        self.config.pprint(pformat='json')
-        print('-' * 50)
+            # Generating accuracy for each attribute to generate an epoch accuracy store in the form of [[acc_attr1, 2...], [epoch2_acc_attr1, 2...]]
+            # [[acc_attr1, 2...], [epoch2_acc_attr1, 2...]] --> transpose [[epoch1_acc_attr1, epoch2_acc_attr1...], [...]] to generate an per attribute accuracy progress
+            if self.config.basic.enable_wand_reporting:
+                wandb.log({
+                           "Accuracy Train": epoch_accuracy_loss_dict['train']['accuracy'],
+                           "Accuracy Val": epoch_accuracy_loss_dict['val']['accuracy'],
+                           "Loss Train": epoch_accuracy_loss_dict['train']['loss'],
+                           "Loss Val": epoch_accuracy_loss_dict['val']['loss'],
+                           "Baseline Train": self.datasets['attribute_baseline_accuracy']['train'].mean(),
+                           "Baseline Val": self.datasets['attribute_baseline_accuracy']['val'].mean()
+                           }, step=epoch)
 
+                if epoch_accuracy_store_dict['train'] is not None:
+                    epoch_accuracy_store_dict['train'] = torch.cat((epoch_accuracy_store_dict['train'], epoch_attributes_correct_count_dict['train'].unsqueeze(0)))
+                    epoch_accuracy_store_dict['val'] = torch.cat((epoch_accuracy_store_dict['val'], epoch_attributes_correct_count_dict['val'].unsqueeze(0)))
+                    transposed_train = torch.transpose(epoch_accuracy_store_dict['train'], 0, 1).cpu()
+                    transposed_val = torch.transpose(epoch_accuracy_store_dict['val'], 0, 1).cpu()
+                    for i in range(0, self.datasets['dataset_meta_information']['number_of_labels']):
+                        attr_name = self.datasets['dataset_meta_information']['label_names'][i]
+                        fig = generate_attribute_accuracy_plot(attr_name,
+                                                               transposed_train[i].tolist(),
+                                                               self.datasets['attribute_baseline_accuracy']['train'][attr_name],
+                                                               transposed_val[i].tolist(),
+                                                               self.datasets['attribute_baseline_accuracy']['val'][attr_name],
+                                                               )
+                        wandb.log({'Accuracy {}'.format(attr_name): fig}, step=epoch)
+                else:
+                    epoch_accuracy_store_dict['train'] = epoch_attributes_correct_count_dict['train'].unsqueeze(0).clone()
+                    epoch_accuracy_store_dict['val'] = epoch_attributes_correct_count_dict['val'].unsqueeze(0).clone()
+
+        # print('Experiment Config')
+        # self.config.pprint(pformat='json')
+        # print('-' * 50)
+        # wandb.log(self.config.pprint(pformat='json'))
         time_elapsed = time.time() - since
-        print('Training complete in {:.0f}m {:.0f}s'.format(
+        logging.info('Training complete in {:.0f}m {:.0f}s'.format(
             time_elapsed // 60, time_elapsed % 60))
-        print('Best val Acc: {:4f}'.format(best_acc))
+        logging.info('Best val Acc: {:4f}'.format(best_acc))
 
         self.model.load_state_dict(best_model_wts)
         self._save_model(best_model_wts, best_opt_wts, 'best-{}.pt'.format(best_epoch))
