@@ -4,28 +4,28 @@
   },
   "basic": {
     "experiment_name": "baseline",
-    "model": "auto_encoder",
+    "model": "auto_encoder_flat",
     "result_directory": "",
     "mode": "train"
   },
   "preprocessing": {
     "dataset": {
-      "path": "10K/trainA",
+      "path": "1K/trainB",
       "training_size": 7500,
-      "validation_size": 1500
+      "validation_size": 1800
     },
     "dataloader": {
-      "batch_size": 128,
+      "batch_size": 32,
       "shuffle": "True",
       "num_workers": 6
     }
   },
   "training": {
-    "epochs": 100,
-    "save_frequency": 5,
+    "epochs": 1500,
+    "save_frequency": 50,
     "optimizer": {
       "type": "Adam",
-      "learning_rate": 0.1,
+      "learning_rate": 0.01,
       "momentum": 0.9
     },
     "criterion": {
