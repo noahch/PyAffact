@@ -10,21 +10,18 @@ from evaluation.utils import save_input_transform_output_image
 
 
 class AffactDataset(torch.utils.data.Dataset):
-    def __init__(self, transform=None, max_size=None, index_offset=0, config=None):
+    def __init__(self, transform=None, labels=None, landmarks=None, config=None):
         'Initialization'
          # TODO: Factor for multiplication of input
         
-        self.labels = pd.read_csv('dataset/{}'.format(config.preprocessing.dataset.dataset_labels_filename), delim_whitespace=True)
+        self.labels = labels
         # self.bboxes = pd.read_csv('dataset/CelebA/list_bbox_celeba.txt', delim_whitespace=True)
         if config.preprocessing.dataset.uses_landmarks:
-            self.landmarks = pd.read_csv('dataset/{}'.format(config.preprocessing.dataset.landmarks_filename), delim_whitespace=True)
+            self.landmarks = landmarks
         else:
             # TODO: Manually detect landmarks (eyes and mouth)
             raise Exception('Manual Landmark detection not yet implemented')
 
-        if max_size:
-            self.labels = self.labels.iloc[index_offset:index_offset+max_size]
-            self.landmarks = self.landmarks.iloc[index_offset:index_offset+max_size]
         self.transform = transform
         assert self.transform is not None, "A basic transformation is needed. i.e.  Resize() and ToTensor()"
         self.config = config

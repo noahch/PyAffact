@@ -7,8 +7,8 @@
     "experiment_description": "sample description",
     "model": "resnet_51",
     "pretrained": 1,
-    "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results/2020-10-01-14-21-33-baseline",
-    "result_directory_name": "2020-10-01-14-21-33-baseline",
+    "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results/2020-11-19-16-04-46-baseline",
+    "result_directory_name": "2020-11-19-16-04-46-baseline",
     "mode": "train",
     "enable_wand_reporting": 1
   },
@@ -31,15 +31,17 @@
   },
   "preprocessing": {
     "dataset": {
-      "training_size": 70,
-      "validation_size": 20,
+      "train_fraction": 0.5,
+      "val_fraction": 0.2,
+      "test_fraction": 0.3,
+      "number_of_samples": 100,
       "dataset_labels_filename": "CelebA/list_attr_celeba.txt",
       "dataset_image_folder": "CelebA/Img100",
       "uses_landmarks": 1,
       "landmarks_filename": "CelebA/list_landmarks_celeba.txt"
     },
     "dataloader": {
-      "batch_size": 32,
+      "batch_size": 16,
       "shuffle": "True",
       "num_workers": 6
     },
@@ -98,6 +100,16 @@
     }
   },
   "evaluation": {
+    "test_labels_pickle_filename": "test_labels.pkl",
+    "test_landmarks_pickle_filename": "test_landmarks.pkl",
+    "train_majority_pickle_filename": "train_majority.pkl",
+    "model_weights_filename": "best-3.pt",
+    "qualitative": {
+      "number_of_samples": 5
+    },
+    "quantitative": {
+      "overall_accuracy": 1,
+      "per_attribute_accuracy": 1
+    }
   }
 }
-

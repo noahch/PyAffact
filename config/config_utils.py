@@ -42,8 +42,10 @@ def _read_arguments():
     parser.add_argument('--training.lr_scheduler.step_size', default=None, type=int)
     parser.add_argument('--training.lr_scheduler.gamma', default=None, type=float)
 
-    parser.add_argument('--preprocessing.dataset.training_size', default=None, type=int)
-    parser.add_argument('--preprocessing.dataset.validation_size', default=None, type=int)
+    parser.add_argument('--preprocessing.dataset.train_fraction', default=None, type=int)
+    parser.add_argument('--preprocessing.dataset.val_fraction', default=None, type=int)
+    parser.add_argument('--preprocessing.dataset.test_fraction', default=None, type=int)
+    parser.add_argument('--preprocessing.dataset.number_of_samples', default=None, type=int)
     parser.add_argument('--preprocessing.dataset.dataset_labels_filename', default=None, type=str)
     parser.add_argument('--preprocessing.dataset.dataset_image_folder', default=None, type=str)
     parser.add_argument('--preprocessing.dataset.uses_landmarks', default=None, type=int)
@@ -76,6 +78,13 @@ def _read_arguments():
     parser.add_argument('--preprocessing.transformation.gamma.enabled', default=None, type=int)
     parser.add_argument('--preprocessing.transformation.gamma.normal_distribution.mean', default=None, type=int)
     parser.add_argument('--preprocessing.transformation.gamma.normal_distribution.std', default=None, type=int)
+
+    parser.add_argument('--evaluation.test_labels_pickle_filename', default=None, type=str)
+    parser.add_argument('--evaluation.test_landmarks_pickle_filename', default=None, type=str)
+    parser.add_argument('--evaluation.model_weights_filename', default=None, type=str)
+    parser.add_argument('--evaluation.qualitative.number_of_samples', default=None, type=int)
+    parser.add_argument('--evaluation.quantitative.overall_accuracy', default=None, type=int)
+    parser.add_argument('--evaluation.quantitative.per_attribute_accuracy', default=None, type=int)
 
     args = parser.parse_args()
     return args
@@ -111,11 +120,14 @@ def create_result_directory(config):
             os.makedirs(result_directory)
             config.basic.result_directory = result_directory
             config.basic.result_directory_name = directory_name
-            f = open(os.path.join(result_directory, 'config.json'), "w")
-            f.write(json.dumps(config.toDict(), indent=2))
-            f.close()
+            save_config_to_file(config)
             return config
         except:
             raise Exception('directory could not be created')
     else:
         raise Exception('directory already exists')
+
+def save_config_to_file(config):
+    f = open(os.path.join(config.basic.result_directory, 'config.json'), "w")
+    f.write(json.dumps(config.toDict(), indent=2))
+    f.close()

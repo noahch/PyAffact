@@ -5,6 +5,7 @@ import time
 import torch
 from torch.optim import lr_scheduler
 
+from config.config_utils import save_config_to_file
 from evaluation.charts import generate_attribute_accuracy_plot
 from preprocessing.utils import get_train_val_dataset
 from training.model_manager import ModelManager
@@ -208,6 +209,9 @@ class TrainModel(ModelManager):
 
         self.model.load_state_dict(best_model_wts)
         self._save_model(best_model_wts, best_opt_wts, 'best-{}.pt'.format(best_epoch))
+        self.config.evaluation.model_weights_filename = 'best-{}.pt'.format(best_epoch)
+        save_config_to_file(self.config)
+
         self._save_model(copy.deepcopy(self.model.state_dict()), copy.deepcopy(self.optimizer.state_dict()),
                          'latest.pt')
         if self.config.basic.enable_wand_reporting:

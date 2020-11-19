@@ -22,4 +22,5 @@ PyTorch implementation of the Affact Paper
 - Erwartung Schlussreport
 - Zahl am Anfag der Datasets entfernt
 - Reshape or CenterCrop
-- Wie oft das selbe Image modifizieren in der Preprocessing pipeline.. 
+- Wie oft das selbe Image modifizieren in der Preprocessing pipeline.. --> TEST!
+- BBX nachfragen.. für baseline (z.B aligned, oder unaligned mit BBX)
