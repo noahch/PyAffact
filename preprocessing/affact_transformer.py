@@ -28,27 +28,36 @@ class AffactTransformer():
     def __call__(self, sample):
         matplotlib.use('Agg')
 
-        im, landmarks, index = sample['image'], sample['landmarks'],  sample['index']
+        im, landmarks, bounding_boxes, index = sample['image'], sample['landmarks'], sample['bounding_boxes'], sample['index']
+        bbx = None
+        if self.config.preprocessing.dataset.uses_landmarks:
+            # Calc bbx
+            t_eye_left = np.array((landmarks[0], landmarks[1]))
+            t_eye_right = np.array((landmarks[2], landmarks[3]))
+            t_mouth_left = np.array((landmarks[4], landmarks[5]))
+            t_mouth_right = np.array((landmarks[6], landmarks[7]))
 
-        # Calc bbx
-        t_eye_left = np.array((landmarks[0], landmarks[1]))
-        t_eye_right = np.array((landmarks[2], landmarks[3]))
-        t_mouth_left = np.array((landmarks[4], landmarks[5]))
-        t_mouth_right = np.array((landmarks[6], landmarks[7]))
+            t_eye = (t_eye_left + t_eye_right) / 2
+            t_mouth = (t_mouth_left + t_mouth_right) / 2
+            d = np.linalg.norm(t_eye - t_mouth)
+            # TODO: 5.5 and offsets AS PARAM
+            w = h = 5.5 * d
+            alpha = np.arctan((t_eye_right[1] - t_eye_left[1]) / (t_eye_right[0] - t_eye_left[0]))
 
-        t_eye = (t_eye_left + t_eye_right) / 2
-        t_mouth = (t_mouth_left + t_mouth_right) / 2
-        d = np.linalg.norm(t_eye - t_mouth)
-        # TODO: 5.5 and offsets AS PARAM
-        w = h = 5.5 * d
-        alpha = np.arctan((t_eye_right[1] - t_eye_left[1]) / (t_eye_right[0] - t_eye_left[0]))
-
-        bbx = [t_eye[0] - 0.5 * w,
-               t_eye[1] - 0.45 * h,
-               t_eye[0] + 0.5 * w,
-               t_eye[1] + 0.55 * h,
-               alpha]
-
+            bbx = [t_eye[0] - 0.5 * w,
+                   t_eye[1] - 0.45 * h,
+                   t_eye[0] + 0.5 * w,
+                   t_eye[1] + 0.55 * h,
+                   alpha]
+            # print(bbx)
+        else:
+            bbx = [
+                bounding_boxes[0],
+                bounding_boxes[1],
+                bounding_boxes[0] + bounding_boxes[2],
+                bounding_boxes[1] + bounding_boxes[3],
+                0
+            ]
 
         crop_size = [self.config.preprocessing.transformation.crop_size.x, self.config.preprocessing.transformation.crop_size.y]
 

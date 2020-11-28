@@ -14,11 +14,9 @@ def get_train_val_dataset(config):
         data_transforms = transforms.Compose([AffactTransformer(config)])
     else:
         # Use other transformation than affact
-        data_transforms = transforms.Compose([
-            transforms.CenterCrop([224, 224]),
-            # transforms.Resize([224, 224]),
-            transforms.ToTensor()
-        ])
+        raise NotImplemented("Implement your own Transformer here")
+
+    assert config.preprocessing.dataset.uses_bounding_boxes != config.preprocessing.dataset.uses_landmarks, "Either use landmarks or bounding boxes"
 
     labels = pd.read_csv('dataset/{}'.format(config.preprocessing.dataset.dataset_labels_filename),
                          delim_whitespace=True)
@@ -33,6 +31,15 @@ def get_train_val_dataset(config):
         assert labels.shape[0] == landmarks.shape[0], "Label and Landmarks not of same shape"
         # TODO: uncomment
         # landmarks = landmarks.reindex(idx)
+
+    bounding_boxes = None
+    if config.preprocessing.dataset.uses_bounding_boxes:
+        bounding_boxes = pd.read_csv('dataset/{}'.format(config.preprocessing.dataset.bounding_boxes_filename),
+                                delim_whitespace=True)
+
+        assert labels.shape[0] == bounding_boxes.shape[0], "Label and bounding boxes not of same shape"
+        # TODO: uncomment
+        # bounding_boxes = bounding_boxes.reindex(idx)
 
     # If number of samples is -1 --> use whole dataset
     if config.preprocessing.dataset.number_of_samples == -1:
@@ -57,9 +64,18 @@ def get_train_val_dataset(config):
 
         config.evaluation.test_landmarks_pickle_filename = 'test_landmarks.pkl'
 
+    df_train_bounding_boxes, df_val_bounding_boxes, df_test_bounding_boxes = None, None, None
+    if config.preprocessing.dataset.uses_bounding_boxes:
+        df_train_bounding_boxes, df_val_bounding_boxes, df_test_bounding_boxes = calculate_split(config, bounding_boxes, size)
+        df_train_bounding_boxes.to_pickle('{}/train_bounding_boxes.pkl'.format(config.basic.result_directory), compression='zip')
+        df_val_bounding_boxes.to_pickle('{}/val_bounding_boxes.pkl'.format(config.basic.result_directory), compression='zip')
+        df_test_bounding_boxes.to_pickle(os.path.join(config.basic.result_directory, 'test_bounding_boxes.pkl'),
+                                    compression='zip')
 
-    dataset_train, training_generator = generate_dataset_and_loader(data_transforms, df_train_labels, df_train_landmarks, config)
-    dataset_val, validation_generator = generate_dataset_and_loader(data_transforms, df_val_labels, df_val_landmarks, config)
+        config.evaluation.test_bounding_boxes = 'test_bounding_boxes.pkl'
+
+    dataset_train, training_generator = generate_dataset_and_loader(data_transforms, df_train_labels, df_train_landmarks, df_train_bounding_boxes, config)
+    dataset_val, validation_generator = generate_dataset_and_loader(data_transforms, df_val_labels, df_val_landmarks, df_val_bounding_boxes, config)
 
     dataloaders = {
         'train': training_generator,
@@ -96,10 +112,15 @@ def get_train_val_dataset(config):
     result_dict['dataset_meta_information'] = dataset_meta_information
     return result_dict
 
-def generate_dataset_and_loader(transform, labels, landmarks, config):
-    dataset = AffactDataset(transform=transform, labels=labels, landmarks=landmarks,
+def generate_dataset_and_loader(transform, labels, landmarks, bounding_boxes, config):
+    dataset = AffactDataset(transform=transform, labels=labels, landmarks=landmarks, bounding_boxes=bounding_boxes,
                   config=config)
-    dataloader = torch.utils.data.DataLoader(dataset, **config.preprocessing.dataloader)
+    if config.basic.mode == 'train':
+        dataloader = torch.utils.data.DataLoader(dataset, **config.preprocessing.dataloader)
+    else:
+        sampler = torch.utils.data.SequentialSampler(dataset)
+        dataloader = torch.utils.data.DataLoader(dataset, **config.evaluation.dataloader, sampler=sampler)
+
     return dataset, dataloader
 
 def calculate_split(config, df, size):

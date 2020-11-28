@@ -122,7 +122,7 @@ def generate_attribute_accuracy_chart(labels, per_attribute_accuracy, per_attrib
         y=results['positive_label'],
         x=results['positive_val'],
         name='Model Accuracy +',
-        marker_color='forestgreen',
+        marker_color='#306e41',
         orientation='h',
         offset=0,
         marker_line_width=0
@@ -131,7 +131,7 @@ def generate_attribute_accuracy_chart(labels, per_attribute_accuracy, per_attrib
         y=results['neutral_label'],
         x=results['neutral_val'],
         name='Model Accuracy +/-',
-        marker_color='darkorange',
+        marker_color='#c96f2a',
         orientation='h',
         offset=0,
         marker_line_width=0
@@ -140,28 +140,40 @@ def generate_attribute_accuracy_chart(labels, per_attribute_accuracy, per_attrib
         y=results['negative_label'],
         x=results['negative_val'],
         name='Model Accuracy -',
-        marker_color='indianred',
+        marker_color='#963034',
         orientation='h',
         offset=0,
         marker_line_width=0
     ))
-    # fig.add_trace(go.Bar(
-    #     y=labels,
-    #     x=per_attribute_accuracy,
-    #     name='Model Accuracy',
-    #     marker_color=color_array,
-    #     orientation='h',
-    #     offset=0.5
-    # ))
-    # fig.add_trace(go.Bar(
-    #     y=labels[10:],
-    #     x=per_attribute_accuracy[10:],
-    #     name='Model Accuracy2',
-    #     marker_color='purple',
-    #     orientation='h',
-    #     offset=0.5
-    # ))
 
     # Here we modify the tickangle of the xaxis, resulting in rotated labels.
     fig.update_layout(barmode='overlay', xaxis_tickangle=-45, bargroupgap=0.1, bargap=0.6)
+    return fig
+
+
+def accuracy_table(column_names, prediction, per_attribute_correct_classification):
+    layout = go.Layout(
+        autosize=False,
+        margin=go.layout.Margin(
+            l=2,
+            r=2,
+            b=2,
+            t=5,
+            pad=2
+        ),
+        height=1000
+        # paper_bgcolor='rgba(255,255,255,1)',
+        # plot_bgcolor='rgba(255,255,255,0.5)'
+    )
+
+    header = ['<b>Attribute</b>'] + ['Image-{}'.format(x) for x in range(1, len(prediction) + 1)]
+    cellText = [column_names] + [['yes' if y else 'no' for y in x] for x in prediction]
+    colorlist = [['#306e41' if y else '#963034' for y in x] for x in per_attribute_correct_classification]
+    colors = [['grey'] * len(column_names)] + colorlist
+    table = go.Table(columnwidth=[70] + [30] * len(prediction),
+                     header=dict(values=header),
+                     cells=dict(values=cellText, fill_color=colors, font=dict(color='white'), align=['left'] + ['center'] * len(prediction))
+                     )
+
+    fig = go.Figure(layout=layout, data=table)
     return fig

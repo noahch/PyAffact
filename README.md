@@ -24,3 +24,7 @@ PyTorch implementation of the Affact Paper
 - Reshape or CenterCrop
 - Wie oft das selbe Image modifizieren in der Preprocessing pipeline.. --> TEST!
 - BBX nachfragen.. für baseline (z.B aligned, oder unaligned mit BBX)
+- Beim Evaluieren: Wie transformieren
+
+-> Dataset remove first line.. 
+-> Gauss Sigma zu hoch, viel zu blurry

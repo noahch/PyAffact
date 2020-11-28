@@ -1,11 +1,15 @@
 import os
+
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
+import torchvision
 from torchvision.transforms import transforms
 
-from evaluation.charts import generate_attribute_accuracy_chart
+from evaluation.charts import generate_attribute_accuracy_chart, accuracy_table
+from evaluation.utils import tensor_to_image, image_grid_and_accuracy_plot
 from preprocessing.affact_transformer import AffactTransformer
 from preprocessing.utils import get_train_val_dataset, generate_dataset_and_loader
 from training.model_manager import ModelManager
@@ -21,7 +25,13 @@ class EvalModel(ModelManager):
         self.landmarks = pd.read_pickle(
             os.path.join(self.config.basic.result_directory, self.config.evaluation.test_landmarks_pickle_filename),
             compression='zip')
+        # TODO: Switch off
         data_transforms = transforms.Compose([AffactTransformer(config)])
+        # data_transforms = transforms.Compose([
+        #     transforms.CenterCrop([224, 224]),
+        #     # transforms.Resize([224, 224]),
+        #     transforms.ToTensor()
+        # ])
         self.dataset_test, self.test_generator = generate_dataset_and_loader(data_transforms, self.labels,
                                                                              self.landmarks, config)
         train_attribute_baseline_majority_value = pd.read_pickle(
@@ -36,9 +46,14 @@ class EvalModel(ModelManager):
             os.path.join(self.config.basic.result_directory, self.config.evaluation.model_weights_filename))
         self.model_device.load_state_dict(checkpoint['model_state_dict'])
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-        self.visualize_model(self.model_device)
 
-    def visualize_model(self, model):
+        if self.config.evaluation.quantitative.enabled:
+            self.quantitative_analysis(self.model_device)
+
+        if self.config.evaluation.qualitative.enabled:
+            self.qualitative_analysis(self.model_device)
+
+    def quantitative_analysis(self, model):
         model.eval()
 
         correct_classifications = 0
@@ -61,6 +76,48 @@ class EvalModel(ModelManager):
         per_attribute_baseline_accuracy = self.test_attribute_baseline_accuracy
         all_attributes_accuracy = correct_classifications / (self.labels.shape[0] * self.labels.shape[1])
         all_attributes_baseline_accuracy = self.test_attribute_baseline_accuracy.sum(axis=0) / self.labels.shape[1]
-        figure = generate_attribute_accuracy_chart(self.labels.columns.tolist(), per_attribute_accuracy.tolist(), per_attribute_baseline_accuracy.tolist(), all_attributes_accuracy.tolist(), all_attributes_baseline_accuracy)
+        figure = generate_attribute_accuracy_chart(self.labels.columns.tolist(), per_attribute_accuracy.tolist(),
+                                                   per_attribute_baseline_accuracy.tolist(),
+                                                   all_attributes_accuracy.tolist(), all_attributes_baseline_accuracy)
         figure.write_image(os.path.join(self.config.basic.result_directory, 'acurracy_plot.jpg'), scale=5)
 
+    def qualitative_analysis(self, model):
+        model.eval()
+        matplotlib.use('TkAgg')
+        data_iterator = iter(self.test_generator)
+        images, labels, _ = data_iterator.next()
+        inputs = images.to(self.device)
+        labels = labels.to(self.device)
+
+        # track history if only in train
+        with torch.no_grad():
+            outputs = self.model(inputs)
+            outputs[outputs < 0.5] = 0
+            outputs[outputs >= 0.5] = 1
+
+        images = images.cpu()
+
+        per_attribute_correct_classification = outputs == labels.type_as(outputs)
+        accuracy_list = [round(x, 4) for x in
+                         (torch.sum(per_attribute_correct_classification, dim=1) / self.labels.shape[1]).cpu().tolist()]
+        prediction = outputs.type(torch.IntTensor).cpu().tolist()
+        labels = labels.cpu().tolist()
+        # print(prediction)
+        # print(labels)
+        # print(accuracy_list)
+
+        per_attribute_correct_classification = per_attribute_correct_classification.cpu().tolist()
+
+        fig = accuracy_table(self.labels.columns.tolist(), prediction, per_attribute_correct_classification)
+        image_grid_and_accuracy_plot(images, accuracy_list, number_of_img_per_row=self.config.evaluation.qualitative.number_of_images_per_row,
+                                     result_directory=self.config.basic.result_directory, saveOnly=True)
+        fig.write_image(os.path.join(self.config.basic.result_directory, 'acurracy_table.jpg'), scale=5)
+        # plt.imshow(tensor_to_image(images[3]))
+        # plt.show()
+        # imshow(torchvision.utils.make_grid(images))
+
+
+def imshow(img):
+    image = tensor_to_image(img)
+    plt.imshow(image)
+    plt.show()

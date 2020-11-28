@@ -10,7 +10,7 @@ from evaluation.utils import save_input_transform_output_image
 
 
 class AffactDataset(torch.utils.data.Dataset):
-    def __init__(self, transform=None, labels=None, landmarks=None, config=None):
+    def __init__(self, transform=None, labels=None, landmarks=None, bounding_boxes=None, config=None):
         'Initialization'
          # TODO: Factor for multiplication of input
         
@@ -18,6 +18,8 @@ class AffactDataset(torch.utils.data.Dataset):
         # self.bboxes = pd.read_csv('dataset/CelebA/list_bbox_celeba.txt', delim_whitespace=True)
         if config.preprocessing.dataset.uses_landmarks:
             self.landmarks = landmarks
+        elif config.preprocessing.dataset.uses_bounding_boxes:
+            self.bounding_boxes = bounding_boxes
         else:
             # TODO: Manually detect landmarks (eyes and mouth)
             raise Exception('Manual Landmark detection not yet implemented')
@@ -38,17 +40,32 @@ class AffactDataset(torch.utils.data.Dataset):
         y = np.array(self.labels.iloc[index].array)
         y = np.where(y<0, 0, y)
 
+        # If the AffactTransformer is used, the input format required changes (also includes landmarks, and index)
         if 'AffactTransformer' in '{}'.format(self.transform):
             # Load data and get label
             image = bob.io.base.load('dataset/{}/{}'.format(self.config.preprocessing.dataset.dataset_image_folder, x))
-            landmarks = self.landmarks.iloc[index].tolist()
-            landmarks = landmarks[:4] + landmarks[6:]
+            landmarks, bounding_boxes = None, None
+            if self.config.preprocessing.dataset.uses_landmarks:
+                landmarks = self.landmarks.iloc[index].tolist()
+                landmarks = landmarks[:4] + landmarks[6:]
+            elif self.config.preprocessing.dataset.uses_bounding_boxes:
+                bounding_boxes = self.bounding_boxes.iloc[index].tolist()
+                bounding_boxes = bounding_boxes[1:]
+
             input = {
                 'image': image,
                 'landmarks': landmarks,
+                'bounding_boxes': bounding_boxes,
                 'index': index
             }
+            # print(self.labels.iloc[index].name)
             X, bbx = self.transform(input)
+
+            # TODO: Report -> This serves a check to see if each image is augmented differently in each epoch
+            # if x == '000050.jpg':
+            #     import time
+            #     ms = int(round(time.time() * 1000))
+            #     save_input_transform_output_image('check-Image-50-{}'.format(ms), image, X, self.config.basic.result_directory, bbx)
         else:
             image = Image.open('dataset/{}/{}'.format(self.config.preprocessing.dataset.dataset_image_folder, x))
             X = self.transform(image)

@@ -49,7 +49,9 @@ def _read_arguments():
     parser.add_argument('--preprocessing.dataset.dataset_labels_filename', default=None, type=str)
     parser.add_argument('--preprocessing.dataset.dataset_image_folder', default=None, type=str)
     parser.add_argument('--preprocessing.dataset.uses_landmarks', default=None, type=int)
+    parser.add_argument('--preprocessing.dataset.uses_bounding_boxes', default=None, type=int)
     parser.add_argument('--preprocessing.dataset.landmarks_filename', default=None, type=str)
+    parser.add_argument('--preprocessing.dataset.bounding_boxes_filename', default=None, type=str)
 
     parser.add_argument('--preprocessing.dataloader.batch_size', default=None, type=int)
     parser.add_argument('--preprocessing.dataloader.shuffle', default=None, type=str)
@@ -81,10 +83,14 @@ def _read_arguments():
 
     parser.add_argument('--evaluation.test_labels_pickle_filename', default=None, type=str)
     parser.add_argument('--evaluation.test_landmarks_pickle_filename', default=None, type=str)
+    parser.add_argument('--evaluation.train_majority_pickle_filename', default=None, type=str)
     parser.add_argument('--evaluation.model_weights_filename', default=None, type=str)
-    parser.add_argument('--evaluation.qualitative.number_of_samples', default=None, type=int)
-    parser.add_argument('--evaluation.quantitative.overall_accuracy', default=None, type=int)
-    parser.add_argument('--evaluation.quantitative.per_attribute_accuracy', default=None, type=int)
+    parser.add_argument('--evaluation.qualitative.enabled', default=None, type=int)
+    parser.add_argument('--evaluation.qualitative.number_of_images_per_row', default=None, type=int)
+    parser.add_argument('--evaluation.quantitative.enabled', default=None, type=int)
+    parser.add_argument('--evaluation.dataloader.batch_size', default=None, type=int)
+    parser.add_argument('--evaluation.dataloader.shuffle', default=None, type=str)
+    parser.add_argument('--evaluation.dataloader.num_workers', default=None, type=int)
 
     args = parser.parse_args()
     return args

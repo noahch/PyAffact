@@ -222,10 +222,22 @@ def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     if pretrained:
         state_dict = load_state_dict_from_url(model_urls[arch],
                                               progress=progress)
-
+        for k,v in state_dict.items():
+            print(k)
         model.load_state_dict(state_dict, strict=False)
     return model
 
+def _resnetInsight(arch, block, layers, pretrained, progress, **kwargs):
+    model = ResNet(block, layers, **kwargs)
+    if pretrained:
+        state_dict = torch.load('./insightface/model_ir_se50.pth')
+        for k,v in state_dict.items():
+            print(k)
+        model.load_state_dict(state_dict, strict=False)
+    print(model.state_dict()['conv1.weight'][0][0][0])
+    for k, v in model.state_dict().items():
+        print(k)
+    return model
 
 
 def resnet50(pretrained=False, progress=True, **kwargs):
