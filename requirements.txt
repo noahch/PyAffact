@@ -1,12 +1,4 @@
 backcall==0.2.0
-bob.blitz==2.0.22
-bob.core==2.2.6
-bob.extension==5.0.1
-bob.io.base==3.0.9
-bob.io.image==2.4.6
-bob.ip.base==2.2.6
-bob.math==3.1.7
-bob.sp==2.0.16
 certifi==2020.6.20
 chardet==3.0.4
 click==7.1.2
