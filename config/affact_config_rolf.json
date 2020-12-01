@@ -1,21 +1,21 @@
 {
   "config": {
-    "name": "basic_config"
+    "name": "affact_config_rolf"
   },
   "basic": {
-    "cuda_device_name": "cuda:0",
-    "experiment_name": "baseline",
-    "experiment_description": "sample description",
+    "cuda_device_name": "cuda:6",
+    "experiment_name": "affact",
+    "experiment_description": "Affact Model. ResNet50, pretrained, affact transformation, uses landmarks",
     "model": "resnet_51",
     "pretrained": 1,
-    "result_directory": "/home/noah/Desktop/affact/",
-    "result_directory_name": "2020-12-01-13-17-07-baseline",
+    "result_directory": "/local/scratch/noahAndYves/affact_experiment_results",
+    "result_directory_name": "",
     "mode": "train",
-    "enable_wand_reporting": 0
+    "enable_wand_reporting": 1
   },
   "training": {
-    "epochs": 3,
-    "save_frequency": 2,
+    "epochs": 36,
+    "save_frequency": 5,
     "optimizer": {
       "type": "SGD",
       "learning_rate": 0.1,
@@ -26,7 +26,7 @@
     },
     "lr_scheduler": {
       "type": "StepLR",
-      "step_size": 7,
+      "step_size": 4,
       "gamma": 0.1
     }
   },
@@ -35,24 +35,24 @@
       "train_fraction": 0.5,
       "val_fraction": 0.2,
       "test_fraction": 0.3,
-      "number_of_samples": 100,
-      "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
-      "dataset_image_folder": "dataset/CelebA/Img100",
+      "number_of_samples": -1,
+      "dataset_labels_filename": "/local/scratch/datasets/CelebA/protocol/list_attr_celeba.txt",
+      "dataset_image_folder": "/local/scratch/datasets/CelebA/img_celeba",
       "uses_landmarks": 1,
       "uses_bounding_boxes": 0,
-      "landmarks_filename": "dataset/CelebA/list_landmarks_celeba.txt",
-      "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt"
+      "landmarks_filename": "/local/scratch/datasets/CelebA/protocol/list_landmarks_celeba.txt",
+      "bounding_boxes_filename": "/local/scratch/datasets/CelebA/protocol/list_bbox_celeba.txt"
     },
     "dataloader": {
-      "batch_size": 16,
+      "batch_size": 64,
       "shuffle": "True",
-      "num_workers": 6
+      "num_workers": 32
     },
     "transformation": {
       "use_affact_transformator": 1,
       "save_transformation_image": {
         "enabled": 1,
-        "frequency": 10
+        "frequency": 100000
       },
       "crop_size": {
         "x": 224,

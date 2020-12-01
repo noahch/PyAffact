@@ -28,7 +28,6 @@ def _read_arguments():
     parser.add_argument('--basic.model', default=None, type=str)
     parser.add_argument('--basic.pretrained', default=None, type=int)
     parser.add_argument('--basic.result_directory', default=None, type=str)
-    parser.add_argument('--basic.result_directory_name', default=None, type=str)
     parser.add_argument('--basic.mode', default=None, type=str)
     parser.add_argument('--basic.enable_wand_reporting', default=None, type=int)
 
@@ -116,11 +115,11 @@ def _replace_value_in_config(config, argument, argument_value):
     return DotMap(_update(config.toDict(), new_dict))
 
 def create_result_directory(config):
-    abs_path = Path(os.path.abspath(os.path.dirname(__file__)))
-    abs_path_parent = abs_path.parent
+    # abs_path = Path(os.path.abspath(os.path.dirname(__file__)))
+    # abs_path_parent = abs_path.parent
     now = datetime.now()
     directory_name = '{}-{:02d}-{:02d}-{:02d}-{:02d}-{:02d}-{}'.format(now.year, now.month, now.day, now.hour, now.minute, now.second, config.basic.experiment_name)
-    result_directory = os.path.join(abs_path_parent, 'experiments', 'results', directory_name)
+    result_directory = os.path.join(config.basic.result_directory, directory_name)
     if not os.path.exists(result_directory):
         try:
             os.makedirs(result_directory)
