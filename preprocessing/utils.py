@@ -18,14 +18,14 @@ def get_train_val_dataset(config):
 
     assert config.preprocessing.dataset.uses_bounding_boxes != config.preprocessing.dataset.uses_landmarks, "Either use landmarks or bounding boxes"
 
-    labels = pd.read_csv('dataset/{}'.format(config.preprocessing.dataset.dataset_labels_filename),
+    labels = pd.read_csv(config.preprocessing.dataset.dataset_labels_filename,
                          delim_whitespace=True, skiprows=1)
     idx = np.random.permutation(labels.index)
     # TODO: uncomment
     labels = labels.reindex(idx)
     landmarks = None
     if config.preprocessing.dataset.uses_landmarks:
-        landmarks = pd.read_csv('dataset/{}'.format(config.preprocessing.dataset.landmarks_filename),
+        landmarks = pd.read_csv(config.preprocessing.dataset.landmarks_filename,
                                 delim_whitespace=True, skiprows=1)
 
         assert labels.shape[0] == landmarks.shape[0], "Label and Landmarks not of same shape"
@@ -34,7 +34,7 @@ def get_train_val_dataset(config):
 
     bounding_boxes = None
     if config.preprocessing.dataset.uses_bounding_boxes:
-        bounding_boxes = pd.read_csv('dataset/{}'.format(config.preprocessing.dataset.bounding_boxes_filename),
+        bounding_boxes = pd.read_csv(config.preprocessing.dataset.bounding_boxes_filename,
                                 delim_whitespace=True, skiprows=1)
 
         assert labels.shape[0] == bounding_boxes.shape[0], "Label and bounding boxes not of same shape"
