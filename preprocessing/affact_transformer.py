@@ -42,7 +42,12 @@ class AffactTransformer():
             d = np.linalg.norm(t_eye - t_mouth)
             # TODO: 5.5 and offsets AS PARAM
             w = h = 5.5 * d
-            alpha = np.arctan((t_eye_right[1] - t_eye_left[1]) / (t_eye_right[0] - t_eye_left[0]))
+
+            # TODO: Discuss with Prof.
+            if (t_eye_right[0] - t_eye_left[0]) == 0:
+                alpha = 0
+            else:
+                alpha = np.arctan((t_eye_right[1] - t_eye_left[1]) / (t_eye_right[0] - t_eye_left[0]))
 
             bbx = [t_eye[0] - 0.5 * w,
                    t_eye[1] - 0.45 * h,
