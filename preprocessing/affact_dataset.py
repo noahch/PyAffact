@@ -43,7 +43,7 @@ class AffactDataset(torch.utils.data.Dataset):
         # If the AffactTransformer is used, the input format required changes (also includes landmarks, and index)
         if 'AffactTransformer' in '{}'.format(self.transform):
             # Load data and get label
-            image = bob.io.base.load('dataset/{}/{}'.format(self.config.preprocessing.dataset.dataset_image_folder, x))
+            image = bob.io.base.load('{}/{}'.format(self.config.preprocessing.dataset.dataset_image_folder, x))
             landmarks, bounding_boxes = None, None
             if self.config.preprocessing.dataset.uses_landmarks:
                 landmarks = self.landmarks.iloc[index].tolist()
@@ -67,7 +67,7 @@ class AffactDataset(torch.utils.data.Dataset):
             #     ms = int(round(time.time() * 1000))
             #     save_input_transform_output_image('check-Image-50-{}'.format(ms), image, X, self.config.basic.result_directory, bbx)
         else:
-            image = Image.open('dataset/{}/{}'.format(self.config.preprocessing.dataset.dataset_image_folder, x))
+            image = Image.open('{}/{}'.format(self.config.preprocessing.dataset.dataset_image_folder, x))
             X = self.transform(image)
             bbx = None
 

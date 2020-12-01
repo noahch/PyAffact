@@ -36,12 +36,12 @@
       "val_fraction": 0.2,
       "test_fraction": 0.3,
       "number_of_samples": 100,
-      "dataset_labels_filename": "CelebA/list_attr_celeba.txt",
-      "dataset_image_folder": "CelebA/Img100",
+      "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
+      "dataset_image_folder": "dataset/CelebA/Img100",
       "uses_landmarks": 1,
       "uses_bounding_boxes": 0,
-      "landmarks_filename": "CelebA/list_landmarks_celeba.txt",
-      "bounding_boxes_filename": "CelebA/list_bbox_celeba.txt"
+      "landmarks_filename": "dataset/CelebA/list_landmarks_celeba.txt",
+      "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt"
     },
     "dataloader": {
       "batch_size": 16,
