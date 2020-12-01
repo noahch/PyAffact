@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from config.config_utils import get_config, create_result_directory
 from evaluation.evaluate_model import EvalModel
 from training.train_model import TrainModel
