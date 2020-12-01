@@ -19,27 +19,27 @@ def get_train_val_dataset(config):
     assert config.preprocessing.dataset.uses_bounding_boxes != config.preprocessing.dataset.uses_landmarks, "Either use landmarks or bounding boxes"
 
     labels = pd.read_csv('dataset/{}'.format(config.preprocessing.dataset.dataset_labels_filename),
-                         delim_whitespace=True)
+                         delim_whitespace=True, skiprows=1)
     idx = np.random.permutation(labels.index)
     # TODO: uncomment
-    # labels = labels.reindex(idx)
+    labels = labels.reindex(idx)
     landmarks = None
     if config.preprocessing.dataset.uses_landmarks:
         landmarks = pd.read_csv('dataset/{}'.format(config.preprocessing.dataset.landmarks_filename),
-                                delim_whitespace=True)
+                                delim_whitespace=True, skiprows=1)
 
         assert labels.shape[0] == landmarks.shape[0], "Label and Landmarks not of same shape"
         # TODO: uncomment
-        # landmarks = landmarks.reindex(idx)
+        landmarks = landmarks.reindex(idx)
 
     bounding_boxes = None
     if config.preprocessing.dataset.uses_bounding_boxes:
         bounding_boxes = pd.read_csv('dataset/{}'.format(config.preprocessing.dataset.bounding_boxes_filename),
-                                delim_whitespace=True)
+                                delim_whitespace=True, skiprows=1)
 
         assert labels.shape[0] == bounding_boxes.shape[0], "Label and bounding boxes not of same shape"
         # TODO: uncomment
-        # bounding_boxes = bounding_boxes.reindex(idx)
+        bounding_boxes = bounding_boxes.reindex(idx)
 
     # If number of samples is -1 --> use whole dataset
     if config.preprocessing.dataset.number_of_samples == -1:

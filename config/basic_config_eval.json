@@ -3,13 +3,12 @@
     "name": "basic_config"
   },
   "basic": {
-    "cuda_device_name": "cuda:0",
     "experiment_name": "baseline",
     "experiment_description": "sample description",
     "model": "resnet_51",
     "pretrained": 1,
-    "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results/2020-12-01-13-17-07-baseline",
-    "result_directory_name": "2020-12-01-13-17-07-baseline",
+    "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results/2020-11-20-12-05-33-baseline",
+    "result_directory_name": "2020-11-20-12-05-33-baseline",
     "mode": "train",
     "enable_wand_reporting": 0
   },
@@ -105,7 +104,6 @@
   "evaluation": {
     "test_labels_pickle_filename": "test_labels.pkl",
     "test_landmarks_pickle_filename": "test_landmarks.pkl",
-    "test_bounding_boxes_filename": "test_bounding_boxes.pkl",
     "train_majority_pickle_filename": "train_majority.pkl",
     "model_weights_filename": "best-2.pt",
     "qualitative": {

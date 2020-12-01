@@ -28,3 +28,6 @@ PyTorch implementation of the Affact Paper
 
 -> Dataset remove first line.. 
 -> Gauss Sigma zu hoch, viel zu blurry
+
+# Problem mit Insightface
+- Alternativ Idee: Landmark detector und weitere Transformation (color shift)

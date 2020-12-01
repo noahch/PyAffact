@@ -22,7 +22,7 @@ def _overwrite_defaults(config, args):
 def _read_arguments():
     parser = argparse.ArgumentParser(description='Arguments for PyAffact')
     parser.add_argument('--config.name', default='basic_config', type=str)
-
+    parser.add_argument('--basic.cuda_device_name', default=None, type=str)
     parser.add_argument('--basic.experiment_name', default=None, type=str)
     parser.add_argument('--basic.experiment_description', default=None, type=str)
     parser.add_argument('--basic.model', default=None, type=str)

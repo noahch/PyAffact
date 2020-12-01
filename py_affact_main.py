@@ -6,13 +6,15 @@ import logging
 import sys
 import argparse
 
+# Load configuration for training
+config = get_config()
+
 # Init environment, use GPU if available, set random seed
-device = init_environment()
+device = init_environment(config)
 
 get_gpu_memory_map()
 
-# Load configuration for training
-config = get_config()
+
 
 
 if config.basic.mode == 'train':

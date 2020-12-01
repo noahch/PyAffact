@@ -22,9 +22,17 @@ class EvalModel(ModelManager):
         self.labels = pd.read_pickle(
             os.path.join(self.config.basic.result_directory, self.config.evaluation.test_labels_pickle_filename),
             compression='zip')
-        self.landmarks = pd.read_pickle(
-            os.path.join(self.config.basic.result_directory, self.config.evaluation.test_landmarks_pickle_filename),
-            compression='zip')
+
+        self.landmarks, self.bounding_boxes = None, None
+        if self.config.preprocessing.dataset.uses_landmarks:
+            self.landmarks = pd.read_pickle(
+                os.path.join(self.config.basic.result_directory, self.config.evaluation.test_landmarks_pickle_filename),
+                compression='zip')
+        else:
+            self.bounding_boxes = pd.read_pickle(
+                os.path.join(self.config.basic.result_directory, self.config.evaluation.test_bounding_boxes_filename),
+                compression='zip')
+
         # TODO: Switch off
         data_transforms = transforms.Compose([AffactTransformer(config)])
         # data_transforms = transforms.Compose([
@@ -33,7 +41,7 @@ class EvalModel(ModelManager):
         #     transforms.ToTensor()
         # ])
         self.dataset_test, self.test_generator = generate_dataset_and_loader(data_transforms, self.labels,
-                                                                             self.landmarks, config)
+                                                                             self.landmarks, self.bounding_boxes, config)
         train_attribute_baseline_majority_value = pd.read_pickle(
             os.path.join(self.config.basic.result_directory, self.config.evaluation.train_majority_pickle_filename),
             compression='zip')

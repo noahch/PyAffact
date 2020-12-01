@@ -49,7 +49,6 @@ class AffactTransformer():
                    t_eye[0] + 0.5 * w,
                    t_eye[1] + 0.55 * h,
                    alpha]
-            # print(bbx)
         else:
             bbx = [
                 bounding_boxes[0],
@@ -60,9 +59,6 @@ class AffactTransformer():
             ]
 
         crop_size = [self.config.preprocessing.transformation.crop_size.x, self.config.preprocessing.transformation.crop_size.y]
-
-        # # Scale code Version
-        # scale = min(crop_size[0] / bbx[2], crop_size[1] / bbx[3])
 
         # Scale paper Version
         scale = min(crop_size[0] / (bbx[2] - bbx[0]), crop_size[1] / (bbx[3] - bbx[1]))
@@ -90,7 +86,6 @@ class AffactTransformer():
         crop_center = [crop_size[0] / 2. + shift[0], crop_size[1] / 2. + shift[1]]
         input_mask = np.ones((im.shape[1], im.shape[2]), dtype=bool)
         out_mask = np.ones((crop_size[0], crop_size[1]), dtype=bool)
-        # center = (bbx[1] + bbx[3] / 2., bbx[0] + bbx[2] / 2.)
         center = (bbx[1] + (bbx[3] - bbx[1]) / 2., bbx[0] + (bbx[2] - bbx[0]) / 2.)
 
         placeholder_out = np.ones((3, self.config.preprocessing.transformation.crop_size.x, self.config.preprocessing.transformation.crop_size.y))

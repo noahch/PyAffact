@@ -5,10 +5,10 @@ import numpy as np
 import logging
 import subprocess
 
-def init_environment():
+def init_environment(config):
     # CUDA for PyTorch
     use_cuda = torch.cuda.is_available()
-    device = torch.device("cuda:0" if use_cuda else "cpu")
+    device = torch.device(config.basic.cuda_device_name if use_cuda else "cpu")
     if use_cuda:
         torch.cuda.empty_cache()
     # torch.backends.cudnn.benchmark = True
