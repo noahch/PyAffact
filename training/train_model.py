@@ -12,6 +12,7 @@ from training.model_manager import ModelManager
 from utils.utils import get_gpu_memory_map
 import wandb
 import logging
+from tqdm import tqdm
 
 
 # TODO: Extend from base class
@@ -103,8 +104,10 @@ class TrainModel(ModelManager):
                 # running_diff = 0.0
                 correct_classifications = 0
                 get_gpu_memory_map('Before loading input')
+                pbar = tqdm(range(self.datasets['dataset_sizes'][phase]))
                 # Iterate over data.
                 for inputs, labels, _ in self.datasets['dataloaders'][phase]:
+                    pbar.update(n=inputs.shape[0])
                     inputs = inputs.to(self.device)
                     labels = labels.to(self.device)
                     get_gpu_memory_map('After loading input')
