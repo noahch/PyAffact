@@ -21,6 +21,9 @@ class ModelManager():
             return optim.SGD(self.model_device.parameters(),
                              lr=self.config.training.optimizer.learning_rate,
                              momentum=self.config.training.optimizer.momentum)
+        if self.config.training.optimizer.type == "Adam":
+            return optim.Adam(self.model_device.parameters(),
+                             lr=self.config.training.optimizer.learning_rate)
         raise Exception("Optimizer {} does not exist".format(self.config.training.optimizer.type))
 
     def _get_criterion(self):
