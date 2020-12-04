@@ -28,6 +28,9 @@ class TrainModel(ModelManager):
     def train(self):
         if self.config.basic.model == "resnet_51":
             return self._train_resnet_51()
+        # same training routine for our network
+        elif self.config.basic.model == "resnet_noahAndYves":
+            return self._train_resnet_51()
         else:
             raise Exception("Model {} does not have a training routine".format(self.config.basic.model))
 
@@ -36,6 +39,10 @@ class TrainModel(ModelManager):
             return lr_scheduler.StepLR(self.optimizer,
                                        step_size=self.config.training.lr_scheduler.step_size,
                                        gamma=self.config.training.lr_scheduler.gamma)
+        elif self.config.training.lr_scheduler.type == "ReduceLROnPlateau":
+            return lr_scheduler.ReduceLROnPlateau(self.optimizer,
+                                       patience=self.config.training.lr_scheduler.patience,
+                                       factor=self.config.training.lr_scheduler.gamma, cooldown=1)
         raise Exception("Scheduler {} does not exist".format(self.config.training.lr_scheduler.type))
 
     def _save_model(self, model_state_dict, optimizer_state_dict, filename):
@@ -104,10 +111,24 @@ class TrainModel(ModelManager):
                 # running_diff = 0.0
                 correct_classifications = 0
                 get_gpu_memory_map('Before loading input')
-                pbar = tqdm(range(self.datasets['dataset_sizes'][phase]))
+                # pbar = tqdm(range(self.datasets['dataset_sizes'][phase]))
+
+
+
+                #logging.info(self.datasets['dataloaders']['train'][0][0])
+
+                # assert that inputs shape is of form [batch size, 3, x, y]
+
+
                 # Iterate over data.
                 for inputs, labels, _ in self.datasets['dataloaders'][phase]:
-                    pbar.update(n=inputs.shape[0])
+
+                    # logging.info(inputs.shape)
+                    # assert (inputs.shape == (
+                    #     self.config.preprocessing.dataloader.batch_size, 3,
+                    #     self.config.preprocessing.transformation.crop_size.x,
+                    #     self.config.preprocessing.transformation.crop_size.y))
+                    # pbar.update(n=inputs.shape[0])
                     inputs = inputs.to(self.device)
                     labels = labels.to(self.device)
                     get_gpu_memory_map('After loading input')
@@ -145,7 +166,13 @@ class TrainModel(ModelManager):
                     # print(correct_classifications)
 
                 if phase == 'train':
-                    self.lr_scheduler.step()
+                    if self.config.training.lr_scheduler.type == "ReduceLROnPlateau":
+                        self.lr_scheduler.step(loss) # TODO change to val loss
+                        if self.lr_scheduler.in_cooldown:
+                            logging.info("Changed learning rate from {} to {}".format((1 / self.config.training.lr_scheduler.gamma) * self.optimizer.param_groups[0]["lr"],  self.optimizer.param_groups[0]["lr"]))
+                    else:
+                        self.lr_scheduler.step()
+
 
                 epoch_loss = running_loss / self.datasets['dataset_sizes'][phase]
                 epoch_accuracy = correct_classifications.double() / (self.datasets['dataset_sizes'][phase] * self.datasets['dataset_meta_information']['number_of_labels'])

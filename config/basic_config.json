@@ -4,9 +4,9 @@
   },
   "basic": {
     "cuda_device_name": "cuda:0",
-    "experiment_name": "baseline",
+    "experiment_name": "baseline on own network",
     "experiment_description": "sample description",
-    "model": "resnet_51",
+    "model": "resnet_noahAndYves",
     "pretrained": 1,
     "result_directory": "/home/yves/Desktop/uzh/",
     "result_directory_name": "2020-12-01-13-17-07-baseline",
@@ -14,20 +14,21 @@
     "enable_wand_reporting": 1
   },
   "training": {
-    "epochs": 3,
-    "save_frequency": 2,
+    "epochs": 30,
+    "save_frequency": 10,
     "optimizer": {
       "type": "SGD",
       "learning_rate": 0.1,
-      "momentum": 0.9
+      "momentum": 0
     },
     "criterion": {
       "type": "BCEWithLogitsLoss"
     },
     "lr_scheduler": {
-      "type": "StepLR",
+      "type": "ReduceLROnPlateau",
       "step_size": 7,
-      "gamma": 0.1
+      "gamma": 0.1,
+      "patience": 3
     }
   },
   "preprocessing": {
@@ -35,7 +36,7 @@
       "train_fraction": 0.5,
       "val_fraction": 0.2,
       "test_fraction": 0.3,
-      "number_of_samples": 100,
+      "number_of_samples": 1000,
       "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
       "dataset_image_folder": "dataset/CelebA/Img",
       "uses_landmarks": 1,
@@ -44,9 +45,9 @@
       "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt"
     },
     "dataloader": {
-      "batch_size": 16,
+      "batch_size": 6,
       "shuffle": "True",
-      "num_workers": 6
+      "num_workers": 16
     },
     "transformation": {
       "use_affact_transformator": 1,
@@ -62,39 +63,39 @@
         "enabled": 0
       },
       "scale_jitter": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 1,
           "std": 0.1
         }
       },
       "angle_jitter": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 0,
           "std": 20
         }
       },
       "shift_jitter": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 0,
           "std": 0.05
         }
       },
       "mirror": {
-        "enabled": 1,
+        "enabled": 0,
         "probability": 0.5
       },
       "gaussian_blur": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 0,
           "std": 0.3
         }
       },
       "gamma": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 0,
           "std": 1

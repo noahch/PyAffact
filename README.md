@@ -7,6 +7,8 @@ PyTorch implementation of the Affact Paper
 - conda install pytorch torchvision torchaudio cudatoolkit=11.0 -c pytorch
 - conda install -c plotly plotly-orca
 
+#Today
+- baseline
 
 # TODO
 - hyperopt, with multiple arguments

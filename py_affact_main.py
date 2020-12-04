@@ -29,6 +29,7 @@ if config.basic.mode == 'train' or config.basic.mode == 'trainEval':
     training_instance.train()
 
 if config.basic.mode == 'eval' or config.basic.mode == 'trainEval':
+    config.basic.mode = 'eval'
     # Create an evaluation instance with the loaded configuration on the loaded device
     eval_instance = EvalModel(config, device)
 

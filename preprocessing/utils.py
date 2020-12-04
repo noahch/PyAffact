@@ -115,7 +115,7 @@ def get_train_val_dataset(config):
 def generate_dataset_and_loader(transform, labels, landmarks, bounding_boxes, config):
     dataset = AffactDataset(transform=transform, labels=labels, landmarks=landmarks, bounding_boxes=bounding_boxes,
                   config=config)
-    if config.basic.mode == 'train':
+    if config.basic.mode == 'train' or config.basic.mode == 'trainEval':
         dataloader = torch.utils.data.DataLoader(dataset, **config.preprocessing.dataloader, prefetch_factor=3)
     else:
         sampler = torch.utils.data.SequentialSampler(dataset)

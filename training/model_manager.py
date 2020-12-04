@@ -2,6 +2,7 @@ from torch import optim, nn
 from torch.optim import lr_scheduler
 
 from network.resnet_51 import resnet50
+from network.resnet_noahAndYves import resnet50_noahAndYves
 
 
 class ModelManager():
@@ -14,6 +15,8 @@ class ModelManager():
     def _get_model(self):
         if self.config.basic.model == "resnet_51":
             return resnet50(pretrained=bool(self.config.basic.pretrained))
+        if self.config.basic.model == "resnet_noahAndYves":
+            return resnet50_noahAndYves(pretrained=bool(self.config.basic.pretrained))
         raise Exception("Model {} does not exist".format(self.config.basic.model))
 
     def _get_optimizer(self):
