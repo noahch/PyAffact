@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import torch
 import torchvision
+import wandb
 from torchvision.transforms import transforms
 
 from evaluation.charts import generate_attribute_accuracy_chart, accuracy_table
@@ -87,6 +88,7 @@ class EvalModel(ModelManager):
         figure = generate_attribute_accuracy_chart(self.labels.columns.tolist(), per_attribute_accuracy.tolist(),
                                                    per_attribute_baseline_accuracy.tolist(),
                                                    all_attributes_accuracy.tolist(), all_attributes_baseline_accuracy)
+        wandb.log({'Accuracy Plot Eval': figure})
         figure.write_image(os.path.join(self.config.basic.result_directory, 'acurracy_plot.jpg'), scale=5)
 
     def qualitative_analysis(self, model):
@@ -116,10 +118,14 @@ class EvalModel(ModelManager):
 
         per_attribute_correct_classification = per_attribute_correct_classification.cpu().tolist()
 
-        fig = accuracy_table(self.labels.columns.tolist(), prediction, per_attribute_correct_classification)
-        image_grid_and_accuracy_plot(images, accuracy_list, number_of_img_per_row=self.config.evaluation.qualitative.number_of_images_per_row,
+        accuracy_table_fig = accuracy_table(self.labels.columns.tolist(), prediction, per_attribute_correct_classification)
+        accuracy_sample = image_grid_and_accuracy_plot(images, accuracy_list, number_of_img_per_row=self.config.evaluation.qualitative.number_of_images_per_row,
                                      result_directory=self.config.basic.result_directory, saveOnly=True)
-        fig.write_image(os.path.join(self.config.basic.result_directory, 'acurracy_table.jpg'), scale=5)
+
+        accuracy_sample.savefig('{}/accuracy_sample.jpg'.format(self.config.basic.result_directory))
+        wandb.log({'Accuracy Sample Eval': accuracy_sample})
+        wandb.log({'Accuracy Table Eval': accuracy_table_fig})
+        accuracy_table_fig.write_image(os.path.join(self.config.basic.result_directory, 'acurracy_table.jpg'), scale=5)
         # plt.imshow(tensor_to_image(images[3]))
         # plt.show()
         # imshow(torchvision.utils.make_grid(images))

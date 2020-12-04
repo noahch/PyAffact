@@ -15,10 +15,10 @@ device = init_environment(config)
 
 get_gpu_memory_map()
 
+#TODO: assert mode = train, eval or train and eval
 
 
-
-if config.basic.mode == 'train':
+if config.basic.mode == 'train' or config.basic.mode == 'trainEval':
     create_result_directory(config)
     # Create a training instance with the loaded configuration on the loaded device
     training_instance = TrainModel(config, device)
@@ -28,12 +28,10 @@ if config.basic.mode == 'train':
     # Run the training
     training_instance.train()
 
-elif config.basic.mode == 'eval':
+if config.basic.mode == 'eval' or config.basic.mode == 'trainEval':
     # Create an evaluation instance with the loaded configuration on the loaded device
     eval_instance = EvalModel(config, device)
 
     # Run the training
     eval_instance.eval()
-else:
-    raise Exception('Mode does not exist')
 

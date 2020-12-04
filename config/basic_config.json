@@ -8,10 +8,10 @@
     "experiment_description": "sample description",
     "model": "resnet_51",
     "pretrained": 1,
-    "result_directory": "/home/noah/Desktop/affact/",
+    "result_directory": "/home/yves/Desktop/uzh/",
     "result_directory_name": "2020-12-01-13-17-07-baseline",
-    "mode": "train",
-    "enable_wand_reporting": 0
+    "mode": "trainEval",
+    "enable_wand_reporting": 1
   },
   "training": {
     "epochs": 3,
@@ -37,7 +37,7 @@
       "test_fraction": 0.3,
       "number_of_samples": 100,
       "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
-      "dataset_image_folder": "dataset/CelebA/Img100",
+      "dataset_image_folder": "dataset/CelebA/Img",
       "uses_landmarks": 1,
       "uses_bounding_boxes": 0,
       "landmarks_filename": "dataset/CelebA/list_landmarks_celeba.txt",

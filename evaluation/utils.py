@@ -73,7 +73,8 @@ def image_grid_and_accuracy_plot(images, accuracy_list, number_of_img_per_row=3,
     if not saveOnly:
         plt.show(block=True)
 
-    fig.savefig('{}/accuracy_sample.jpg'.format(result_directory))
+    return fig
+
 
 
 

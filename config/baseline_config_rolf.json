@@ -10,7 +10,7 @@
     "pretrained": 1,
     "result_directory": "/local/scratch/noahAndYves/affact_experiment_results",
     "result_directory_name": "",
-    "mode": "train",
+    "mode": "trainEval",
     "enable_wand_reporting": 1
   },
   "training": {
