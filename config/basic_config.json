@@ -11,7 +11,7 @@
     "result_directory": "/home/yves/Desktop/uzh/",
     "result_directory_name": "2020-12-01-13-17-07-baseline",
     "mode": "trainEval",
-    "enable_wand_reporting": 1
+    "enable_wand_reporting": 0
   },
   "training": {
     "epochs": 30,
@@ -36,7 +36,7 @@
       "train_fraction": 0.5,
       "val_fraction": 0.2,
       "test_fraction": 0.3,
-      "number_of_samples": 10000,
+      "number_of_samples": 50000,
       "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
       "dataset_image_folder": "dataset/CelebA/Img",
       "uses_landmarks": 1,
@@ -48,7 +48,7 @@
       "batch_size": 32,
       "shuffle": "True",
       "num_workers": 6,
-      "prefetch_factor": 6
+      "prefetch_factor": 2
     },
     "transformation": {
       "use_affact_transformator": 1,

@@ -36,7 +36,7 @@
       "train_fraction": 0.5,
       "val_fraction": 0.2,
       "test_fraction": 0.3,
-      "number_of_samples": -1,
+      "number_of_samples": 50000,
       "dataset_labels_filename": "/local/scratch/datasets/CelebA/protocol/list_attr_celeba.txt",
       "dataset_image_folder": "/local/scratch/datasets/CelebA/img_celeba",
       "uses_landmarks": 1,
@@ -48,7 +48,7 @@
       "batch_size": 64,
       "shuffle": "True",
       "num_workers": 32,
-      "prefetch_factor": 50
+      "prefetch_factor": 10
     },
     "transformation": {
       "use_affact_transformator": 1,
