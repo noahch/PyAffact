@@ -111,7 +111,7 @@ class TrainModel(ModelManager):
                 # running_diff = 0.0
                 correct_classifications = 0
                 get_gpu_memory_map('Before loading input')
-                # pbar = tqdm(range(self.datasets['dataset_sizes'][phase]))
+                pbar = tqdm(range(self.datasets['dataset_sizes'][phase]))
 
 
 
@@ -128,7 +128,7 @@ class TrainModel(ModelManager):
                     #     self.config.preprocessing.dataloader.batch_size, 3,
                     #     self.config.preprocessing.transformation.crop_size.x,
                     #     self.config.preprocessing.transformation.crop_size.y))
-                    # pbar.update(n=inputs.shape[0])
+                    pbar.update(n=inputs.shape[0])
                     inputs = inputs.to(self.device)
                     labels = labels.to(self.device)
                     get_gpu_memory_map('After loading input')
