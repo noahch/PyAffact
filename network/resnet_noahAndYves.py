@@ -146,9 +146,9 @@ class ResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
-        self.fcTanh = nn.Tanh()
+        self.fcRelu = nn.ReLU(inplace=True)
         self.fc51 = nn.Linear(num_classes, 40)
-        self.fcTanh2 = nn.Tanh()
+        self.fcRelu2 = nn.ReLU(inplace=True)
         self.fc52 = nn.Linear(40, 40)
         self.fc52Sigmoid = nn.Sigmoid()
 
@@ -209,9 +209,9 @@ class ResNet(nn.Module):
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.fc(x)
-        x = self.fcTanh(x)
+        x = self.fcRelu(x)
         x = self.fc51(x)
-        x = self.fcTanh2(x)
+        x = self.fcRelu2(x)
         x = self.fc52(x)
         x = self.fc52Sigmoid(x)
         return x

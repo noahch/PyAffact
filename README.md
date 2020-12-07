@@ -33,3 +33,6 @@ baseline:
 
 
 # Questions
+- evaluation:
+    - welche bilder zur evaluation brauchen um performance von unserem und ihres zu vergleichen?
+    - erst bei subset netzwerk besser als baseline
