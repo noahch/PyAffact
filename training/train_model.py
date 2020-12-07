@@ -52,6 +52,7 @@ class TrainModel(ModelManager):
         }, os.path.join(self.config.basic.result_directory, filename))
 
     def _train_resnet_51(self):
+        logging.info("cpu pre training")
         if self.config.basic.enable_wand_reporting:
             wandb.init(project="pyaffact_uzh", entity="uzh", name=self.config.basic.result_directory_name, notes=self.config.basic.experiment_description, config=self.config.toDict())
 
@@ -110,7 +111,6 @@ class TrainModel(ModelManager):
                 running_loss = 0.0
                 # running_diff = 0.0
                 correct_classifications = 0
-                get_gpu_memory_map('Before loading input')
                 pbar = tqdm(range(self.datasets['dataset_sizes'][phase]))
 
 
@@ -131,22 +131,18 @@ class TrainModel(ModelManager):
                     pbar.update(n=inputs.shape[0])
                     inputs = inputs.to(self.device)
                     labels = labels.to(self.device)
-                    get_gpu_memory_map('After loading input')
+
                     # zero the parameter gradients
                     self.optimizer.zero_grad()
 
                     # forward
                     # track history if only in train
                     with torch.set_grad_enabled(phase == 'train'):
-                        get_gpu_memory_map('Before loading output')
+                        # logging.info("calculate forward pass")
                         outputs = self.model(inputs)
-                        get_gpu_memory_map('After loading output')
-                        # print(type(outputs[0][0]))
-                        # print(labels.shape)
-                        # _, preds = torch.max(outputs, 1)
-                        # prediction_loss = abs(labels.type_as(outputs) - outputs)
+
                         loss = self.criterion(outputs, labels.type_as(outputs))
-                        # loss = criterion(outputs, torch.max(labels, 1)[1])
+
 
                         # backward + optimize only if in training phase
                         if phase == 'train':
