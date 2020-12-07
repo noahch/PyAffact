@@ -180,7 +180,7 @@ class TrainModel(ModelManager):
                 # deep copy the model
                 if phase == 'val' and epoch_accuracy > best_acc:
                     best_acc = epoch_accuracy
-                    # best_model_wts = copy.deepcopy(self.model.state_dict())
+                    best_model_wts = copy.deepcopy(self.model.state_dict())
                     best_opt_wts = copy.deepcopy(self.optimizer.state_dict())
                     best_epoch = epoch + 1
 
