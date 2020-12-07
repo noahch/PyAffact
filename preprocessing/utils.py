@@ -1,3 +1,5 @@
+import logging
+
 import torch
 from torchvision.transforms import transforms
 import pandas as pd
@@ -9,6 +11,7 @@ from preprocessing.affact_transformer import AffactTransformer
 import os
 
 
+#TODO refactor!! check if shuffle needed, evtl use functions for df transformations
 def get_train_val_dataset(config):
     if config.preprocessing.transformation.use_affact_transformator:
         data_transforms = transforms.Compose([AffactTransformer(config)])
@@ -20,9 +23,9 @@ def get_train_val_dataset(config):
 
     labels = pd.read_csv(config.preprocessing.dataset.dataset_labels_filename,
                          delim_whitespace=True, skiprows=1)
-    idx = np.random.permutation(labels.index)
+    # idx = np.random.permutation(labels.index)
     # TODO: uncomment
-    labels = labels.reindex(idx)
+    # labels = labels.reindex(idx)
     landmarks = None
     if config.preprocessing.dataset.uses_landmarks:
         landmarks = pd.read_csv(config.preprocessing.dataset.landmarks_filename,
@@ -30,7 +33,7 @@ def get_train_val_dataset(config):
 
         assert labels.shape[0] == landmarks.shape[0], "Label and Landmarks not of same shape"
         # TODO: uncomment
-        landmarks = landmarks.reindex(idx)
+        # landmarks = landmarks.reindex(idx)
 
     bounding_boxes = None
     if config.preprocessing.dataset.uses_bounding_boxes:
@@ -39,7 +42,7 @@ def get_train_val_dataset(config):
 
         assert labels.shape[0] == bounding_boxes.shape[0], "Label and bounding boxes not of same shape"
         # TODO: uncomment
-        bounding_boxes = bounding_boxes.reindex(idx)
+        # bounding_boxes = bounding_boxes.reindex(idx)
 
     # If number of samples is -1 --> use whole dataset
     if config.preprocessing.dataset.number_of_samples == -1:
@@ -47,32 +50,105 @@ def get_train_val_dataset(config):
     else:
         size = config.preprocessing.dataset.number_of_samples
 
+
     assert config.preprocessing.dataset.train_fraction + config.preprocessing.dataset.val_fraction + config.preprocessing.dataset.test_fraction == 1, "Train/Val/Test split must sum up to 1"
 
-    df_train_labels, df_val_labels, df_test_labels = calculate_split(config, labels, size)
+    df_train_labels, df_val_labels, df_test_labels = None, None, None
+    df_train_bounding_boxes, df_val_bounding_boxes, df_test_bounding_boxes = None, None, None
+    df_train_landmarks, df_val_landmarks, df_test_landmarks = None, None, None
+
+    if config.preprocessing.dataset.use_partition_file:
+        assert config.preprocessing.dataset.partition_filename, "Partition filename must be set if partition file is used"
+        partition_df = pd.read_csv(config.preprocessing.dataset.partition_filename,
+                             delim_whitespace=True, header=None)
+        partition_df.columns = ['filename', 'partition']
+        partition_df["partition"] = pd.to_numeric(partition_df["partition"])
+
+        train_partition_df = partition_df.loc[partition_df["partition"] == 0]
+        val_partition_df = partition_df.loc[partition_df["partition"] == 1]
+        test_partition_df = partition_df.loc[partition_df["partition"] == 2]
+
+        df_train_labels = pd.merge(labels, train_partition_df, left_index=True, right_on='filename', how='inner')
+        df_train_labels.set_index('filename', inplace=True)
+
+        df_val_labels = pd.merge(labels, val_partition_df, left_index=True, right_on='filename', how='inner')
+        df_val_labels.set_index('filename', inplace=True)
+
+        df_test_labels = pd.merge(labels, test_partition_df, left_index=True, right_on='filename', how='inner')
+        df_test_labels.set_index('filename', inplace=True)
+
+
+        df_train_labels.drop(columns=["partition"], inplace=True)
+        df_val_labels.drop(columns=["partition"], inplace=True)
+        df_test_labels.drop(columns=["partition"], inplace=True)
+
+        if config.preprocessing.dataset.uses_landmarks:
+            df_train_landmarks = pd.merge(landmarks, train_partition_df, left_index=True, right_on='filename', how='inner')
+            df_train_landmarks.set_index('filename', inplace=True)
+
+            df_val_landmarks = pd.merge(landmarks, val_partition_df, left_index=True, right_on='filename', how='inner')
+            df_val_landmarks.set_index('filename', inplace=True)
+
+            df_test_landmarks = pd.merge(landmarks, test_partition_df, left_index=True, right_on='filename', how='inner')
+            df_test_landmarks.set_index('filename', inplace=True)
+
+            df_train_landmarks.drop(columns=["partition"], inplace=True)
+            df_val_landmarks.drop(columns=["partition"], inplace=True)
+            df_test_landmarks.drop(columns=["partition"], inplace=True)
+
+        if config.preprocessing.dataset.uses_bounding_boxes:
+            df_train_bounding_boxes = pd.merge(bounding_boxes, train_partition_df, left_on='image_id', right_on='filename', how='inner')
+
+            df_val_bounding_boxes = pd.merge(bounding_boxes, val_partition_df, left_on='image_id', right_on='filename', how='inner')
+
+            df_test_bounding_boxes = pd.merge(bounding_boxes, test_partition_df, left_on='image_id', right_on='filename', how='inner')
+
+
+            df_train_bounding_boxes.drop(columns=["filename", "partition"], inplace=True)
+            df_val_bounding_boxes.drop(columns=["filename", "partition"], inplace=True)
+            df_test_bounding_boxes.drop(columns=["filename", "partition"], inplace=True)
+
+
+
+
+
+
+    else:
+        df_train_labels, df_val_labels, df_test_labels = calculate_split(config, labels, size)
+
+
+        if config.preprocessing.dataset.uses_landmarks:
+            df_train_landmarks, df_val_landmarks, df_test_landmarks = calculate_split(config, landmarks, size)
+
+
+
+        if config.preprocessing.dataset.uses_bounding_boxes:
+            df_train_bounding_boxes, df_val_bounding_boxes, df_test_bounding_boxes = calculate_split(config, bounding_boxes, size)
+
+
     df_train_labels.to_pickle('{}/train_labels.pkl'.format(config.basic.result_directory), compression='zip')
     df_val_labels.to_pickle('{}/val_labels.pkl'.format(config.basic.result_directory), compression='zip')
     df_test_labels.to_pickle(os.path.join(config.basic.result_directory, 'test_labels.pkl'), compression='zip')
     config.evaluation.test_labels_pickle_filename = 'test_labels.pkl'
 
-    df_train_landmarks, df_val_landmarks, df_test_landmarks = None, None, None
     if config.preprocessing.dataset.uses_landmarks:
-        df_train_landmarks, df_val_landmarks, df_test_landmarks = calculate_split(config, landmarks, size)
         df_train_landmarks.to_pickle('{}/train_landmarks.pkl'.format(config.basic.result_directory), compression='zip')
         df_val_landmarks.to_pickle('{}/val_landmarks.pkl'.format(config.basic.result_directory), compression='zip')
-        df_test_landmarks.to_pickle(os.path.join(config.basic.result_directory, 'test_landmarks.pkl'), compression='zip')
+        df_test_landmarks.to_pickle(os.path.join(config.basic.result_directory, 'test_landmarks.pkl'),
+                                    compression='zip')
 
         config.evaluation.test_landmarks_pickle_filename = 'test_landmarks.pkl'
 
-    df_train_bounding_boxes, df_val_bounding_boxes, df_test_bounding_boxes = None, None, None
     if config.preprocessing.dataset.uses_bounding_boxes:
-        df_train_bounding_boxes, df_val_bounding_boxes, df_test_bounding_boxes = calculate_split(config, bounding_boxes, size)
-        df_train_bounding_boxes.to_pickle('{}/train_bounding_boxes.pkl'.format(config.basic.result_directory), compression='zip')
-        df_val_bounding_boxes.to_pickle('{}/val_bounding_boxes.pkl'.format(config.basic.result_directory), compression='zip')
+        df_train_bounding_boxes.to_pickle('{}/train_bounding_boxes.pkl'.format(config.basic.result_directory),
+                                          compression='zip')
+        df_val_bounding_boxes.to_pickle('{}/val_bounding_boxes.pkl'.format(config.basic.result_directory),
+                                        compression='zip')
         df_test_bounding_boxes.to_pickle(os.path.join(config.basic.result_directory, 'test_bounding_boxes.pkl'),
-                                    compression='zip')
+                                         compression='zip')
 
         config.evaluation.test_bounding_boxes = 'test_bounding_boxes.pkl'
+
 
     dataset_train, training_generator = generate_dataset_and_loader(data_transforms, df_train_labels, df_train_landmarks, df_train_bounding_boxes, config)
     dataset_val, validation_generator = generate_dataset_and_loader(data_transforms, df_val_labels, df_val_landmarks, df_val_bounding_boxes, config)

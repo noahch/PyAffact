@@ -33,6 +33,8 @@
   },
   "preprocessing": {
     "dataset": {
+      "use_partition_file": 1,
+      "partition_filename": "/local/scratch/datasets/CelebA/protocol/list_eval_partition.txt",
       "train_fraction": 0.5,
       "val_fraction": 0.2,
       "test_fraction": 0.3,

@@ -123,11 +123,6 @@ class TrainModel(ModelManager):
                 # Iterate over data.
                 for inputs, labels, _ in self.datasets['dataloaders'][phase]:
 
-                    # logging.info(inputs.shape)
-                    # assert (inputs.shape == (
-                    #     self.config.preprocessing.dataloader.batch_size, 3,
-                    #     self.config.preprocessing.transformation.crop_size.x,
-                    #     self.config.preprocessing.transformation.crop_size.y))
                     pbar.update(n=inputs.shape[0])
                     inputs = inputs.to(self.device)
                     labels = labels.to(self.device)
@@ -138,7 +133,6 @@ class TrainModel(ModelManager):
                     # forward
                     # track history if only in train
                     with torch.set_grad_enabled(phase == 'train'):
-                        # logging.info("calculate forward pass")
                         outputs = self.model(inputs)
 
                         loss = self.criterion(outputs, labels.type_as(outputs))
@@ -151,8 +145,7 @@ class TrainModel(ModelManager):
 
                     # statistics
                     running_loss += loss.item() * inputs.size(0)
-                    # running_diff += torch.sum(prediction_loss)
-                    # outputs_copy = copy.deepcopy(outputs)
+
                     outputs[outputs < 0.5] = 0
                     outputs[outputs >= 0.5] = 1
                     # running_diff += torch.sum(prediction_loss)

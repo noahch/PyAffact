@@ -36,3 +36,5 @@ baseline:
 - evaluation:
     - welche bilder zur evaluation brauchen um performance von unserem und ihres zu vergleichen?
     - erst bei subset netzwerk besser als baseline
+    
+                        /local/scratch/datasets/CelebA/protocol/list_eval_partition.txt

@@ -33,22 +33,24 @@
   },
   "preprocessing": {
     "dataset": {
+      "use_partition_file": 1,
+      "partition_filename": "dataset/CelebA/list_eval_partition.txt",
       "train_fraction": 0.5,
       "val_fraction": 0.2,
       "test_fraction": 0.3,
       "number_of_samples": -1,
       "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
       "dataset_image_folder": "dataset/CelebA/Img",
-      "uses_landmarks": 1,
-      "uses_bounding_boxes": 0,
+      "uses_landmarks": 0,
+      "uses_bounding_boxes": 1,
       "landmarks_filename": "dataset/CelebA/list_landmarks_celeba.txt",
       "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt"
     },
     "dataloader": {
       "batch_size": 64,
       "shuffle": "True",
-      "num_workers": 6,
-      "prefetch_factor": 3
+      "num_workers": 16,
+      "prefetch_factor": 10
     },
     "transformation": {
       "use_affact_transformator": 1,
@@ -59,9 +61,6 @@
       "crop_size": {
         "x": 224,
         "y": 224
-      },
-      "random_bounding_box": {
-        "enabled": 0
       },
       "scale_jitter": {
         "enabled": 1,
