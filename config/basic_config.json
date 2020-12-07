@@ -8,13 +8,13 @@
     "experiment_description": "sample description",
     "model": "resnet_noahAndYves",
     "pretrained": 1,
-    "result_directory": "/home/yves/Desktop/uzh/",
+    "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results",
     "result_directory_name": "2020-12-01-13-17-07-baseline",
     "mode": "trainEval",
     "enable_wand_reporting": 0
   },
   "training": {
-    "epochs": 30,
+    "epochs": 1,
     "save_frequency": 10,
     "optimizer": {
       "type": "SGD",
@@ -28,7 +28,7 @@
       "type": "ReduceLROnPlateau",
       "step_size": 7,
       "gamma": 0.1,
-      "patience": 3
+      "patience": 4
     }
   },
   "preprocessing": {

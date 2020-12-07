@@ -52,7 +52,6 @@ class TrainModel(ModelManager):
         }, os.path.join(self.config.basic.result_directory, filename))
 
     def _train_resnet_51(self):
-        logging.info("cpu pre training")
         if self.config.basic.enable_wand_reporting:
             wandb.init(project="pyaffact_uzh", entity="uzh", name=self.config.basic.result_directory_name, notes=self.config.basic.experiment_description, config=self.config.toDict())
 
@@ -122,7 +121,7 @@ class TrainModel(ModelManager):
 
                 # Iterate over data.
                 for inputs, labels, _ in self.datasets['dataloaders'][phase]:
-
+                    # if phase == 'train':
                     pbar.update(n=inputs.shape[0])
                     inputs = inputs.to(self.device)
                     labels = labels.to(self.device)
@@ -154,11 +153,13 @@ class TrainModel(ModelManager):
                     correct_classifications += torch.sum(outputs == labels.type_as(outputs))
                     # print(correct_classifications)
 
-                if phase == 'train':
+                if phase == 'val':
                     if self.config.training.lr_scheduler.type == "ReduceLROnPlateau":
-                        self.lr_scheduler.step(loss) # TODO change to val loss
+                        self.lr_scheduler.step(loss)
                         if self.lr_scheduler.in_cooldown:
-                            logging.info("Changed learning rate from {} to {}".format((1 / self.config.training.lr_scheduler.gamma) * self.optimizer.param_groups[0]["lr"],  self.optimizer.param_groups[0]["lr"]))
+
+                            logging.info("Changed learning rate from {} to {}. Reinitializing model weights with best model from epoch {}".format((1 / self.config.training.lr_scheduler.gamma) * self.optimizer.param_groups[0]["lr"],  self.optimizer.param_groups[0]["lr"], best_epoch))
+                            self.model_device.load_state_dict(best_model_wts)
                     else:
                         self.lr_scheduler.step()
 
@@ -179,7 +180,7 @@ class TrainModel(ModelManager):
                 # deep copy the model
                 if phase == 'val' and epoch_accuracy > best_acc:
                     best_acc = epoch_accuracy
-                    best_model_wts = copy.deepcopy(self.model.state_dict())
+                    # best_model_wts = copy.deepcopy(self.model.state_dict())
                     best_opt_wts = copy.deepcopy(self.optimizer.state_dict())
                     best_epoch = epoch + 1
 

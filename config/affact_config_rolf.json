@@ -3,10 +3,10 @@
     "name": "affact_config_rolf"
   },
   "basic": {
-    "cuda_device_name": "cuda:6",
-    "experiment_name": "affact",
+    "cuda_device_name": "cuda:2",
+    "experiment_name": "affactSGDpretrainedLR01ReduceOnPlateau",
     "experiment_description": "Affact Model. ResNet50, pretrained, affact transformation, uses landmarks",
-    "model": "resnet_noahAndYves",
+    "model": "resnet_51",
     "pretrained": 1,
     "result_directory": "/local/scratch/noahAndYves/affact_experiment_results",
     "result_directory_name": "",
@@ -14,7 +14,7 @@
     "enable_wand_reporting": 1
   },
   "training": {
-    "epochs": 20,
+    "epochs": 50,
     "save_frequency": 5,
     "optimizer": {
       "type": "SGD",
@@ -28,7 +28,7 @@
       "type": "ReduceLROnPlateau",
       "step_size": 5,
       "gamma": 0.1,
-      "patience": 3
+      "patience": 4
     }
   },
   "preprocessing": {
