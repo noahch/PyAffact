@@ -48,7 +48,7 @@
       "batch_size": 64,
       "shuffle": "True",
       "num_workers": 32,
-      "prefetch_factor": 10
+      "prefetch_factor": 50
     },
     "transformation": {
       "use_affact_transformator": 1,
