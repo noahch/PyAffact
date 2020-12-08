@@ -22,9 +22,7 @@ if config.basic.mode == 'train' or config.basic.mode == 'trainEval':
     create_result_directory(config)
     # Create a training instance with the loaded configuration on the loaded device
     training_instance = TrainModel(config, device)
-    # logger = logging.getLogger('PyAffact')
-    # logger.warning('test')
-    logging.warning('test')
+
     # Run the training
     training_instance.train()
 

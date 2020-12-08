@@ -88,7 +88,8 @@ class EvalModel(ModelManager):
         figure = generate_attribute_accuracy_chart(self.labels.columns.tolist(), per_attribute_accuracy.tolist(),
                                                    per_attribute_baseline_accuracy.tolist(),
                                                    all_attributes_accuracy.tolist(), all_attributes_baseline_accuracy)
-        wandb.log({'Accuracy Plot Eval': figure})
+        if self.config.basic.enable_wand_reporting:
+            wandb.log({'Accuracy Plot Eval': figure})
         figure.write_image(os.path.join(self.config.basic.result_directory, 'acurracy_plot.jpg'), scale=5)
 
     def qualitative_analysis(self, model):
@@ -123,8 +124,9 @@ class EvalModel(ModelManager):
                                      result_directory=self.config.basic.result_directory, saveOnly=True)
 
         accuracy_sample.savefig('{}/accuracy_sample.jpg'.format(self.config.basic.result_directory))
-        wandb.log({'Accuracy Sample Eval': accuracy_sample})
-        wandb.log({'Accuracy Table Eval': accuracy_table_fig})
+        if self.config.basic.enable_wand_reporting:
+            wandb.log({'Accuracy Sample Eval': accuracy_sample})
+            wandb.log({'Accuracy Table Eval': accuracy_table_fig})
         accuracy_table_fig.write_image(os.path.join(self.config.basic.result_directory, 'acurracy_table.jpg'), scale=5)
         # plt.imshow(tensor_to_image(images[3]))
         # plt.show()

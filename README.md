@@ -18,6 +18,7 @@ PyTorch implementation of the Affact Paper
 - refactoring
 - landmark detector
 - color temp shift
+- POS_weight with BCEWithLogitsLoss
 
 # Experiments
 affact:

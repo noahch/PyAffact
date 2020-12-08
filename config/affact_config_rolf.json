@@ -4,7 +4,7 @@
   },
   "basic": {
     "cuda_device_name": "cuda:2",
-    "experiment_name": "affactSGDpretrainedLR01ReduceOnPlateau",
+    "experiment_name": "affactSGDpretrainedLR01ReduceOnPlateauNoSigmoid",
     "experiment_description": "Affact Model. ResNet50, pretrained, affact transformation, uses landmarks",
     "model": "resnet_51",
     "pretrained": 1,

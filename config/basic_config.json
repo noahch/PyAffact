@@ -6,7 +6,7 @@
     "cuda_device_name": "cuda:0",
     "experiment_name": "baseline on own network",
     "experiment_description": "sample description",
-    "model": "resnet_noahAndYves",
+    "model": "resnet_51",
     "pretrained": 1,
     "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results",
     "result_directory_name": "2020-12-01-13-17-07-baseline",
@@ -14,7 +14,7 @@
     "enable_wand_reporting": 0
   },
   "training": {
-    "epochs": 1,
+    "epochs": 10,
     "save_frequency": 10,
     "optimizer": {
       "type": "SGD",
@@ -33,12 +33,12 @@
   },
   "preprocessing": {
     "dataset": {
-      "use_partition_file": 1,
+      "use_partition_file": 0,
       "partition_filename": "dataset/CelebA/list_eval_partition.txt",
       "train_fraction": 0.5,
       "val_fraction": 0.2,
       "test_fraction": 0.3,
-      "number_of_samples": -1,
+      "number_of_samples": 5000,
       "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
       "dataset_image_folder": "dataset/CelebA/Img",
       "uses_landmarks": 0,

@@ -4,7 +4,7 @@
   },
   "basic": {
     "cuda_device_name": "cuda:3",
-    "experiment_name": "baselineSGDpretrainedLR01ReduceOnPlateau",
+    "experiment_name": "baselineSGDpretrainedLR01ReduceOnPlateauNoSigmoid",
     "experiment_description": "Baseline Model. ResNet50, pretrained, no perturbation, uses bounding boxes",
     "model": "resnet_51",
     "pretrained": 1,

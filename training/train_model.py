@@ -110,8 +110,9 @@ class TrainModel(ModelManager):
                 running_loss = 0.0
                 # running_diff = 0.0
                 correct_classifications = 0
-                pbar = tqdm(range(self.datasets['dataset_sizes'][phase]))
 
+                pbar = tqdm(range(self.datasets['dataset_sizes'][phase]))
+                pbar.clear()
 
 
                 #logging.info(self.datasets['dataloaders']['train'][0][0])

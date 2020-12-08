@@ -45,7 +45,7 @@ subprocess32==3.5.4
 torch==1.7.0
 torchaudio==0.7.0a0+ac17b64
 torchvision==0.8.1
-tqdm==4.51.0
+tqdm==4.54.1
 traitlets==5.0.5
 typing-extensions==3.7.4.3
 urllib3==1.25.11

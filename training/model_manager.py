@@ -32,4 +32,6 @@ class ModelManager():
     def _get_criterion(self):
         if self.config.training.criterion.type == "BCEWithLogitsLoss":
             return nn.BCEWithLogitsLoss()
+        if self.config.training.criterion.type == "BCELoss":
+            return nn.BCELoss()
         raise Exception("Criterion {} does not exist".format(self.config.training.criterion.type))
