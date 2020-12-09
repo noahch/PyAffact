@@ -15,7 +15,7 @@ def get_config():
 
 def _overwrite_defaults(config, args):
     for argument, argument_value in args.__dict__.items():
-        if argument_value:
+        if argument_value is not None:
             config = _replace_value_in_config(config, argument, argument_value)
     return config
 
