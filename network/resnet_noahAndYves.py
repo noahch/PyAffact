@@ -150,7 +150,7 @@ class ResNet(nn.Module):
         self.fc51 = nn.Linear(num_classes, 40)
         self.fcRelu2 = nn.ReLU(inplace=True)
         self.fc52 = nn.Linear(40, 40)
-        self.fc52Sigmoid = nn.Sigmoid()
+        # self.fc52Sigmoid = nn.Sigmoid()
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -213,7 +213,7 @@ class ResNet(nn.Module):
         x = self.fc51(x)
         x = self.fcRelu2(x)
         x = self.fc52(x)
-        x = self.fc52Sigmoid(x)
+        # x = self.fc52Sigmoid(x)
         return x
 
     def forward(self, x):
