@@ -6,7 +6,7 @@
     "cuda_device_name": "cuda:0",
     "experiment_name": "baseline on own network",
     "experiment_description": "sample description",
-    "model": "resnet_51",
+    "model": "resnet_noahAndYves",
     "pretrained": 1,
     "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results",
     "result_directory_name": "2020-12-01-13-17-07-baseline",

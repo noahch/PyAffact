@@ -3,10 +3,10 @@
     "name": "baseline_config_rolf"
   },
   "basic": {
-    "cuda_device_name": "cuda:3",
-    "experiment_name": "baselineSGDpretrainedLR01ReduceOnPlateauNoSigmoid",
-    "experiment_description": "Baseline Model. ResNet50, pretrained, no perturbation, uses bounding boxes",
-    "model": "resnet_51",
+    "cuda_device_name": "cuda:2",
+    "experiment_name": "baselineSGDpretrainedExtendedNetDropout02",
+    "experiment_description": "Baseline Model. ResNet50-Extended, SGD, pretrained, no perturbation, uses bounding boxes, use dropout",
+    "model": "resnet_noahAndYves",
     "pretrained": 1,
     "result_directory": "/local/scratch/noahAndYves/affact_experiment_results",
     "result_directory_name": "",
@@ -29,7 +29,8 @@
       "step_size": 5,
       "gamma": 0.1,
       "patience": 4
-    }
+    },
+    "dropout": 0.2
   },
   "preprocessing": {
     "dataset": {
