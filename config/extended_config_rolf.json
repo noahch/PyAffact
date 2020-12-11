@@ -1,12 +1,12 @@
 {
   "config": {
-    "name": "affact_config_rolf"
+    "name": "extended_config_rolf"
   },
   "basic": {
     "cuda_device_name": "cuda:2",
-    "experiment_name": "affactSGDpretrainedLR01ReduceOnPlateauNoSigmoid",
+    "experiment_name": "extendedtSGDpretrainedLR01ReduceOnPlateauNoSigmoid",
     "experiment_description": "Affact Model. ResNet50, pretrained, affact transformation, uses landmarks",
-    "model": "resnet_51",
+    "model": "resnet_noahAndYves",
     "pretrained": 1,
     "result_directory": "/local/scratch/noahAndYves/affact_experiment_results",
     "result_directory_name": "",
@@ -106,7 +106,7 @@
         }
       },
       "temperature": {
-        "enabled": 0
+        "enabled": 1
       }
     }
   },

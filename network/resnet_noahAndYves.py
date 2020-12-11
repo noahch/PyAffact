@@ -153,7 +153,11 @@ class ResNet(nn.Module):
         self.fcRelu2 = nn.ReLU(inplace=True)
         if dropout:
             self.dropout2 = nn.Dropout(self.dropout)
-        self.fc52 = nn.Linear(40, 40)
+        self.fc52 = nn.Linear(40, 100)
+        self.fcRelu3 = nn.ReLU(inplace=True)
+        if dropout:
+            self.dropout3 = nn.Dropout(self.dropout)
+        self.fc53 = nn.Linear(100, 40)
         # self.fc52Sigmoid = nn.Sigmoid()
 
         for m in self.modules():
@@ -221,6 +225,10 @@ class ResNet(nn.Module):
         if self.dropout:
             x = self.dropout2(x)
         x = self.fc52(x)
+        x = self.fcRelu3(x)
+        if self.dropout:
+            x = self.dropout3(x)
+        x = self.fc53(x)
         # x = self.fc52Sigmoid(x)
         return x
 

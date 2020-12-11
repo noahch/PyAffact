@@ -84,6 +84,7 @@ def _read_arguments():
     parser.add_argument('--preprocessing.transformation.gamma.enabled', default=None, type=int)
     parser.add_argument('--preprocessing.transformation.gamma.normal_distribution.mean', default=None, type=int)
     parser.add_argument('--preprocessing.transformation.gamma.normal_distribution.std', default=None, type=int)
+    parser.add_argument('--preprocessing.transformation.temperature.enabled', default=None, type=int)
 
     parser.add_argument('--evaluation.test_labels_pickle_filename', default=None, type=str)
     parser.add_argument('--evaluation.test_landmarks_pickle_filename', default=None, type=str)

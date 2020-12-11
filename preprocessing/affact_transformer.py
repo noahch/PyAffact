@@ -24,6 +24,26 @@ class AffactTransformer():
         if not config:
             raise Exception("No Config defined")
         self.config = config
+        self.kelvin_table = {
+            1000: (255, 56, 0),
+            1500: (255, 109, 0),
+            2000: (255, 137, 18),
+            2500: (255, 161, 72),
+            3000: (255, 180, 107),
+            3500: (255, 196, 137),
+            4000: (255, 209, 163),
+            4500: (255, 219, 186),
+            5000: (255, 228, 206),
+            5500: (255, 236, 224),
+            6000: (255, 243, 239),
+            6500: (255, 249, 253),
+            7000: (245, 243, 255),
+            7500: (235, 238, 255),
+            8000: (227, 233, 255),
+            8500: (220, 229, 255),
+            9000: (214, 225, 255),
+            9500: (208, 222, 255),
+            10000: (204, 219, 255)}
 
     def __call__(self, sample):
         matplotlib.use('Agg')
@@ -125,6 +145,20 @@ class AffactTransformer():
             gamma_std = self.config.preprocessing.transformation.gamma.normal_distribution.std
             gamma = 2 ** np.random.normal(gamma_mean, gamma_std)
             placeholder_out = np.minimum(np.maximum(((placeholder_out / 255.0) ** gamma) * 255.0, 0.0), 255.0)
+
+
+        # Apply Picture Temperature
+        # if self.config.preprocessing.transformation.temperature.enabled:
+        if self.config.preprocessing.transformation.temperature.enabled:
+            r, g, b = self.kelvin_table[random.choice(list(self.kelvin_table.keys()))]
+            matrix = (r / 255.0, 0.0, 0.0, 0.0,
+                      0.0, g / 255.0, 0.0, 0.0,
+                      0.0, 0.0, b / 255.0, 0.0)
+            temp_img = Image.fromarray(np.uint8(np.transpose(placeholder_out, (1, 2, 0)))).convert('RGB')
+            temp_img = temp_img.convert('RGB', matrix)
+            placeholder_out = np.asarray(temp_img)
+            placeholder_out = np.transpose(placeholder_out, (2, 0, 1))
+
 
         placeholder_out = np.transpose(placeholder_out, (1, 2, 0))
         placeholder_out = placeholder_out.astype(np.uint8)

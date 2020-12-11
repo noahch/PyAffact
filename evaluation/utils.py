@@ -38,6 +38,25 @@ def save_input_transform_output_image(index, input_image, output_image, result_d
     plt.imshow(output_image)
     plt.savefig('{}/{}.jpg'.format(result_directory, index))
 
+def save_image(output_image, result_directory, name):
+    matplotlib.use('Agg')
+
+
+    if isinstance(output_image, np.ndarray):
+        output_image = Image.fromarray(np.transpose(output_image, (1, 2, 0)).astype(np.uint8), 'RGB')
+
+    if isinstance(output_image, torch.Tensor):
+        output_image = np.transpose(output_image.numpy(), (1, 2, 0))
+        output_image = (output_image * 1 + 0) * 255
+        output_image = output_image.astype(np.uint8)
+        output_image = Image.fromarray(output_image, 'RGB')
+
+
+    plt.clf()
+    plt.figure(1)
+    plt.imshow(output_image)
+    plt.savefig('{}/{}.jpg'.format(result_directory, name))
+
 def tensor_to_image(tensor):
     if isinstance(tensor, np.ndarray):
         output_image = Image.fromarray(np.transpose(tensor, (1, 2, 0)).astype(np.uint8), 'RGB')

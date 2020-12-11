@@ -28,12 +28,6 @@ if config.basic.mode == 'train' or config.basic.mode == 'trainEval':
 
 if config.basic.mode == 'eval' or config.basic.mode == 'trainEval':
     config.basic.mode = 'eval'
-    config.transformation.scale_jitter.enabled = 0
-    config.transformation.angle_jitter.enabled = 0
-    config.transformation.shift_jitter.enabled = 0
-    config.transformation.mirror.enabled = 0
-    config.transformation.gaussian_blur.enabled = 0
-    config.transformation.gamma.enabled = 0
     # Create an evaluation instance with the loaded configuration on the loaded device
     eval_instance = EvalModel(config, device)
 

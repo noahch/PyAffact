@@ -6,7 +6,7 @@ from PIL import Image
 import logging
 from torchvision.transforms import transforms
 
-from evaluation.utils import save_input_transform_output_image
+from evaluation.utils import save_input_transform_output_image, save_image
 
 
 class AffactDataset(torch.utils.data.Dataset):
@@ -60,19 +60,18 @@ class AffactDataset(torch.utils.data.Dataset):
             }
             # print(self.labels.iloc[index].name)
             X, bbx = self.transform(input)
-
             # TODO: Report -> This serves a check to see if each image is augmented differently in each epoch
-            # if x == '000050.jpg':
+            # if x == '003529.jpg' or x=='003530.jpg':
             #     import time
             #     ms = int(round(time.time() * 1000))
-            #     save_input_transform_output_image('check-Image-50-{}'.format(ms), image, X, self.config.basic.result_directory, bbx)
+            #     save_image(X, self.config.basic.result_directory, x+str(ms))
         else:
             image = Image.open('{}/{}'.format(self.config.preprocessing.dataset.dataset_image_folder, x))
             X = self.transform(image)
             bbx = None
 
         # Save every X picture to validate preprocessing
-        if self.config.preprocessing.transformation.save_transformation_image.enabled:
+        if self.config.preprocessing.transformation.save_transformation_image.enabled and (self.config.basic.mode == 'trainEval' or self.config.basic.mode == 'train'):
             if index % self.config.preprocessing.transformation.save_transformation_image.frequency == 0:
                 save_input_transform_output_image(index, image, X, self.config.basic.result_directory, bbx)
 

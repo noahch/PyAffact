@@ -104,6 +104,9 @@
           "mean": 0,
           "std": 1
         }
+      },
+      "temperature": {
+        "enabled": 0
       }
     }
   },
