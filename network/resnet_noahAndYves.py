@@ -113,14 +113,14 @@ class Bottleneck(nn.Module):
 
 class ResNet(nn.Module):
 
-    def __init__(self, block, layers, num_classes=1000, zero_init_residual=False,
+    def __init__(self, block, layers, dropout, num_classes=1000, zero_init_residual=False,
                  groups=1, width_per_group=64, replace_stride_with_dilation=None,
                  norm_layer=None):
         super(ResNet, self).__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
         self._norm_layer = norm_layer
-
+        self.dropout = dropout
         self.inplanes = 64
         self.dilation = 1
         if replace_stride_with_dilation is None:
@@ -147,8 +147,12 @@ class ResNet(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
         self.fcRelu = nn.ReLU(inplace=True)
+        if dropout:
+            self.dropout1 = nn.Dropout(self.dropout)
         self.fc51 = nn.Linear(num_classes, 40)
         self.fcRelu2 = nn.ReLU(inplace=True)
+        if dropout:
+            self.dropout2 = nn.Dropout(self.dropout)
         self.fc52 = nn.Linear(40, 40)
         self.fc52Sigmoid = nn.Sigmoid()
 
@@ -210,8 +214,12 @@ class ResNet(nn.Module):
         x = torch.flatten(x, 1)
         x = self.fc(x)
         x = self.fcRelu(x)
+        if self.dropout:
+            x = self.dropout1(x)
         x = self.fc51(x)
         x = self.fcRelu2(x)
+        if self.dropout:
+            x = self.dropout2(x)
         x = self.fc52(x)
         x = self.fc52Sigmoid(x)
         return x
@@ -220,8 +228,8 @@ class ResNet(nn.Module):
         return self._forward_impl(x)
 
 
-def _resnet(arch, block, layers, pretrained, progress, **kwargs):
-    model = ResNet(block, layers, **kwargs)
+def _resnet(arch, block, layers, pretrained, progress, dropout, **kwargs):
+    model = ResNet(block, layers, dropout, **kwargs)
     if pretrained:
         state_dict = load_state_dict_from_url(model_urls[arch],
                                               progress=progress)
@@ -243,7 +251,7 @@ def _resnet(arch, block, layers, pretrained, progress, **kwargs):
 #     return model
 
 
-def resnet50_noahAndYves(pretrained=False, progress=True, **kwargs):
+def resnet50_noahAndYves(pretrained=False, progress=True, dropout=None, **kwargs):
     r"""ResNet-50 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 
@@ -251,6 +259,6 @@ def resnet50_noahAndYves(pretrained=False, progress=True, **kwargs):
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _resnet('resnet50', Bottleneck, [3, 4, 6, 3], pretrained, progress,
+    return _resnet('resnet50', Bottleneck, [3, 4, 6, 3], pretrained, progress, dropout,
                    **kwargs)
 

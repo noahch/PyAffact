@@ -11,13 +11,15 @@ PyTorch implementation of the Affact Paper
 - baseline
 
 # TODO
-- hyperopt, with multiple arguments
+- landmark detector
+- color temp shift
 - Multi GPU
 - continue training
 - report
 - refactoring
-- landmark detector
-- color temp shift
+
+
+- hyperopt, with multiple arguments
 - POS_weight with BCEWithLogitsLoss
 
 # Experiments

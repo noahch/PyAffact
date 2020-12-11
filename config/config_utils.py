@@ -40,6 +40,7 @@ def _read_arguments():
     parser.add_argument('--training.lr_scheduler.type', default=None, type=str)
     parser.add_argument('--training.lr_scheduler.step_size', default=None, type=int)
     parser.add_argument('--training.lr_scheduler.gamma', default=None, type=float)
+    parser.add_argument('--training.dropout', default=None, type=float)
 
     parser.add_argument('--preprocessing.dataset.use_partition_file', default=None, type=int)
     parser.add_argument('--preprocessing.dataset.partition_filename', default=None, type=str)
