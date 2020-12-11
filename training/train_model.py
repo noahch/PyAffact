@@ -52,7 +52,6 @@ class TrainModel(ModelManager):
         }, os.path.join(self.config.basic.result_directory, filename))
 
     def _train_resnet_51(self):
-        print(self.model)
         if self.config.basic.enable_wand_reporting:
             wandb.init(project="pyaffact_uzh", entity="uzh", name=self.config.basic.result_directory_name, notes=self.config.basic.experiment_description, config=self.config.toDict())
 
