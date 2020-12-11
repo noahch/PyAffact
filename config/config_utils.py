@@ -15,7 +15,7 @@ def get_config():
 
 def _overwrite_defaults(config, args):
     for argument, argument_value in args.__dict__.items():
-        if argument_value:
+        if argument_value is not None:
             config = _replace_value_in_config(config, argument, argument_value)
     return config
 
@@ -40,6 +40,7 @@ def _read_arguments():
     parser.add_argument('--training.lr_scheduler.type', default=None, type=str)
     parser.add_argument('--training.lr_scheduler.step_size', default=None, type=int)
     parser.add_argument('--training.lr_scheduler.gamma', default=None, type=float)
+    parser.add_argument('--training.lr_scheduler.patience', default=None, type=float)
     parser.add_argument('--training.dropout', default=None, type=float)
 
     parser.add_argument('--preprocessing.dataset.use_partition_file', default=None, type=int)

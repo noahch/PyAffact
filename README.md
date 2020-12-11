@@ -35,6 +35,9 @@ baseline:
         --config.name=baseline_config_rolf --basic.cuda_device_name=cuda:4 --basic.experiment_name=baselineAdamLR01 --training.optimizer.type=Adam --training.lr_scheduler.step_size=10
 
 
+python py_affact_main.py --preprocessing.dataset.use_partition_file=0 --preprocessing.dataset.number_of_samples=500 --training.epochs=1
+
+
 # Questions
 - evaluation:
     - welche bilder zur evaluation brauchen um performance von unserem und ihres zu vergleichen?

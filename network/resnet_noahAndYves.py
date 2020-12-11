@@ -154,7 +154,7 @@ class ResNet(nn.Module):
         if dropout:
             self.dropout2 = nn.Dropout(self.dropout)
         self.fc52 = nn.Linear(40, 40)
-        self.fc52Sigmoid = nn.Sigmoid()
+        # self.fc52Sigmoid = nn.Sigmoid()
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -221,7 +221,7 @@ class ResNet(nn.Module):
         if self.dropout:
             x = self.dropout2(x)
         x = self.fc52(x)
-        x = self.fc52Sigmoid(x)
+        # x = self.fc52Sigmoid(x)
         return x
 
     def forward(self, x):
