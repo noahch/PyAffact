@@ -16,7 +16,7 @@ class ModelManager():
         if self.config.basic.model == "resnet_51":
             return resnet50(pretrained=bool(self.config.basic.pretrained))
         if self.config.basic.model == "resnet_noahAndYves":
-            return resnet50_noahAndYves(pretrained=bool(self.config.basic.pretrained))
+            return resnet50_noahAndYves(pretrained=bool(self.config.basic.pretrained), dropout=self.config.training.dropout)
         raise Exception("Model {} does not exist".format(self.config.basic.model))
 
     def _get_optimizer(self):
