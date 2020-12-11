@@ -9,7 +9,7 @@ class ModelManager():
     def __init__(self, config, device):
         self.config = config
         self.device = device
-        self.model = nn.DataParallel(self._get_model(), device_ids=[6,7])
+        self.model = nn.DataParallel(self._get_model(), device_ids=[int(x[-1]) for x in self.config.basic.cuda_device_name.split(',')])
         self.model_device = self.model.to(self.device)
 
     def _get_model(self):

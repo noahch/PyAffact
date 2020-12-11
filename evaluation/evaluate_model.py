@@ -82,7 +82,7 @@ class EvalModel(ModelManager):
 
     def eval(self):
         checkpoint = torch.load(
-            os.path.join(self.config.basic.result_directory, self.config.evaluation.model_weights_filename), map_location=self.config.basic.cuda_device_name)
+            os.path.join(self.config.basic.result_directory, self.config.evaluation.model_weights_filename), map_location=self.config.basic.cuda_device_name.split(',')[0])
         self.model_device.load_state_dict(checkpoint['model_state_dict'])
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 

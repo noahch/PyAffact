@@ -8,7 +8,10 @@ import subprocess
 def init_environment(config):
     # CUDA for PyTorch
     use_cuda = torch.cuda.is_available()
-    device = torch.device(config.basic.cuda_device_name if use_cuda else "cpu")
+    if len(config.basic.cuda_device_name.split(',')) > torch.cuda.device_count():
+        raise Exception("Not enough devices")
+
+    device = torch.device(config.basic.cuda_device_name.split(',')[0] if use_cuda else "cpu")
     if use_cuda:
         torch.cuda.empty_cache()
     # torch.backends.cudnn.benchmark = True
