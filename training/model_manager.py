@@ -9,7 +9,7 @@ class ModelManager():
     def __init__(self, config, device):
         self.config = config
         self.device = device
-        self.model = self._get_model()
+        self.model = nn.DataParallel(self._get_model(), device_ids=[6,7])
         self.model_device = self.model.to(self.device)
 
     def _get_model(self):
