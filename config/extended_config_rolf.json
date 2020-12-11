@@ -3,9 +3,9 @@
     "name": "extended_config_rolf"
   },
   "basic": {
-    "cuda_device_name": "cuda:2",
-    "experiment_name": "extendedtSGDpretrainedLR01ReduceOnPlateauNoSigmoid",
-    "experiment_description": "Affact Model. ResNet50, pretrained, affact transformation, uses landmarks",
+    "cuda_device_name": "cuda:4",
+    "experiment_name": "extendedSGDpretrainedLR01TemperatureDropout02",
+    "experiment_description": "Affact Extended, pretrained, affact transformation, uses landmarks",
     "model": "resnet_noahAndYves",
     "pretrained": 1,
     "result_directory": "/local/scratch/noahAndYves/affact_experiment_results",
