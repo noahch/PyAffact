@@ -197,7 +197,11 @@ def generate_model_accuracy_of_testsets(labels, per_attribute_accuracy_list, per
             marker_color=colors[i+1],
             orientation='h'
         ))
-
+    fig.update_layout(xaxis = dict(
+        tickmode = 'array',
+        tickvals = [0, 0.25, 0.5, 0.75, 1],
+        ticktext = ['0%', '25%', '50%', '75%', '100%']
+    ))
     return fig
 
 

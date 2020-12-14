@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image
 import torch
 import random
+
 from torchvision.transforms import transforms
 from torchvision.transforms.functional import to_tensor
 
@@ -45,12 +46,13 @@ class AffactTransformer():
             9500: (208, 222, 255),
             10000: (204, 219, 255)}
 
+
     def __call__(self, sample):
         matplotlib.use('Agg')
 
         im, landmarks, bounding_boxes, index = sample['image'], sample['landmarks'], sample['bounding_boxes'], sample['index']
         bbx = None
-        if self.config.preprocessing.dataset.uses_landmarks:
+        if self.config.preprocessing.dataset.uses_landmarks or self.config.preprocessing.dataset.uses_automatic_landmarks:
             # Calc bbx
             t_eye_left = np.array((landmarks[0], landmarks[1]))
             t_eye_right = np.array((landmarks[2], landmarks[3]))
@@ -123,7 +125,11 @@ class AffactTransformer():
             out_slice = np.ones((crop_size[0], crop_size[1]))
             out_slice = out_slice.astype(np.float)
             x = geom.process(in_slice, input_mask, out_slice, out_mask, center)
-            bob.ip.base.extrapolate_mask(out_mask, out_slice)
+            try:
+                bob.ip.base.extrapolate_mask(out_mask, out_slice)
+            except:
+                print('error')
+                bob.io.base.save(sample['image'], 'failing_img.jpg')
             placeholder_out[i] = out_slice
 
         # Mirror/Flip Image if randomly drawn number is below probability threshold

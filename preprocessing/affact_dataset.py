@@ -4,6 +4,8 @@ import numpy as np
 import bob.io.image
 from PIL import Image
 import logging
+
+from facenet_pytorch.models.mtcnn import MTCNN
 from torchvision.transforms import transforms
 
 from evaluation.utils import save_input_transform_output_image, save_image
@@ -20,6 +22,8 @@ class AffactDataset(torch.utils.data.Dataset):
             self.landmarks = landmarks
         elif config.preprocessing.dataset.uses_bounding_boxes:
             self.bounding_boxes = bounding_boxes
+        elif config.preprocessing.dataset.uses_automatic_landmarks:
+            self.mtcnn = MTCNN(select_largest=False, device=config.basic.cuda_device_name.split(',')[0])
         else:
             # TODO: Manually detect landmarks (eyes and mouth)
             raise Exception('Manual Landmark detection not yet implemented')
@@ -51,6 +55,11 @@ class AffactDataset(torch.utils.data.Dataset):
             elif self.config.preprocessing.dataset.uses_bounding_boxes:
                 bounding_boxes = self.bounding_boxes.iloc[index].tolist()
                 bounding_boxes = bounding_boxes[1:]
+            elif self.config.preprocessing.dataset.uses_automatic_landmarks:
+                # im = Image.open('{}/{}'.format(self.config.preprocessing.dataset.dataset_image_folder, x))
+                boxes, probs, lm = self.mtcnn.detect(Image.fromarray(np.transpose(image, (1, 2, 0)), 'RGB'), landmarks=True)
+                landmarks = [lm[0][0][0], lm[0][0][1], lm[0][1][0], lm[0][1][1],
+                             lm[0][3][0], lm[0][3][1], lm[0][4][0], lm[0][4][1]]
 
             input = {
                 'image': image,

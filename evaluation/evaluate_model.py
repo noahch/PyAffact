@@ -30,12 +30,15 @@ class EvalModel(ModelManager):
             self.landmarks = pd.read_pickle(
                 os.path.join(self.config.basic.result_directory, self.config.evaluation.test_landmarks_pickle_filename),
                 compression='zip')
-        else:
+        if self.config.preprocessing.dataset.uses_bounding_boxes:
             self.bounding_boxes = pd.read_pickle(
                 os.path.join(self.config.basic.result_directory, self.config.evaluation.test_bounding_boxes_filename),
                 compression='zip')
 
         # Config for eval TestSet A
+        config.preprocessing.dataset.uses_bounding_boxes = 0
+        config.preprocessing.dataset.uses_landmarks = 0
+        config.preprocessing.dataset.uses_automatic_landmarks = 1
         config.preprocessing.transformation.scale_jitter.enabled = 0
         config.preprocessing.transformation.angle_jitter.enabled = 0
         config.preprocessing.transformation.shift_jitter.enabled = 0
@@ -44,25 +47,28 @@ class EvalModel(ModelManager):
         config.preprocessing.transformation.gamma.enabled = 0
         data_transforms_A = transforms.Compose([AffactTransformer(copy.deepcopy(config))])
 
-
         # Config for eval TestSet S
+        config.preprocessing.dataset.uses_bounding_boxes = 0
+        config.preprocessing.dataset.uses_landmarks = 1
+        config.preprocessing.dataset.uses_automatic_landmarks = 0
         config.preprocessing.transformation.scale_jitter.enabled = 1
         config.preprocessing.transformation.shift_jitter.enabled = 1
-        config.preprocessing.transformation.shift_jitter.normal_distribution.std = 0.2
         data_transforms_S = transforms.Compose([AffactTransformer(copy.deepcopy(config))])
 
         # Config for eval TestSet T
+        config.preprocessing.dataset.uses_bounding_boxes = 0
+        config.preprocessing.dataset.uses_landmarks = 0
+        config.preprocessing.dataset.uses_automatic_landmarks = 1
         config.preprocessing.transformation.scale_jitter.enabled = 1
         config.preprocessing.transformation.shift_jitter.enabled = 1
-        config.preprocessing.transformation.shift_jitter.normal_distribution.std = 0.2
         config.preprocessing.transformation.angle_jitter.enabled = 1
         config.preprocessing.transformation.mirror.enabled = 1
         config.preprocessing.transformation.gaussian_blur.enabled = 1
         config.preprocessing.transformation.gamma.enabled = 1
         data_transforms_T = transforms.Compose([AffactTransformer(copy.deepcopy(config))])
 
-        # self.dataset_test, self.test_generator = generate_dataset_and_loader(data_transforms, self.labels,
-        #                                                                      self.landmarks, self.bounding_boxes, config)
+
+        # config for eval TestSet A
 
         self.dataset_test_A, self.test_generator_A = generate_dataset_and_loader(data_transforms_A, self.labels,
                                                                              self.landmarks, self.bounding_boxes, config)

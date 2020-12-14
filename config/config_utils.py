@@ -53,6 +53,7 @@ def _read_arguments():
     parser.add_argument('--preprocessing.dataset.dataset_image_folder', default=None, type=str)
     parser.add_argument('--preprocessing.dataset.uses_landmarks', default=None, type=int)
     parser.add_argument('--preprocessing.dataset.uses_bounding_boxes', default=None, type=int)
+    parser.add_argument('--preprocessing.dataset.uses_automatic_landmarks', default=None, type=int)
     parser.add_argument('--preprocessing.dataset.landmarks_filename', default=None, type=str)
     parser.add_argument('--preprocessing.dataset.bounding_boxes_filename', default=None, type=str)
 
@@ -61,7 +62,6 @@ def _read_arguments():
     parser.add_argument('--preprocessing.dataloader.num_workers', default=None, type=int)
     parser.add_argument('--preprocessing.dataloader.prefetch_factor', default=None, type=int)
 
-    parser.add_argument('--preprocessing.transformation.use_affact_transformator', default=None, type=int)
     parser.add_argument('--preprocessing.transformation.save_transformation_image.enabled', default=None, type=int)
     parser.add_argument('--preprocessing.transformation.save_transformation_image.frequency', default=None, type=int)
     parser.add_argument('--preprocessing.transformation.crop_size.x', default=None, type=int)

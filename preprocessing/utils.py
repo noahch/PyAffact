@@ -13,13 +13,9 @@ import os
 
 #TODO refactor!! check if shuffle needed, evtl use functions for df transformations
 def get_train_val_dataset(config):
-    if config.preprocessing.transformation.use_affact_transformator:
-        data_transforms = transforms.Compose([AffactTransformer(config)])
-    else:
-        # Use other transformation than affact
-        raise NotImplemented("Implement your own Transformer here")
+    data_transforms = transforms.Compose([AffactTransformer(config)])
 
-    assert config.preprocessing.dataset.uses_bounding_boxes != config.preprocessing.dataset.uses_landmarks, "Either use landmarks or bounding boxes"
+    assert (config.preprocessing.dataset.uses_bounding_boxes + config.preprocessing.dataset.uses_landmarks + config.preprocessing.dataset.uses_automatic_landmarks) == 1, "Either use landmarks or bounding boxes or automatic landmark detection"
 
     labels = pd.read_csv(config.preprocessing.dataset.dataset_labels_filename,
                          delim_whitespace=True, skiprows=1)
