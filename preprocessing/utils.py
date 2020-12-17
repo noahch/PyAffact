@@ -106,9 +106,6 @@ def get_train_val_dataset(config):
 
 
 
-
-
-
     else:
         df_train_labels, df_val_labels, df_test_labels = calculate_split(config, labels, size)
 

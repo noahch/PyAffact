@@ -6,9 +6,11 @@ from datetime import datetime
 import argparse
 import collections
 
-def get_config():
+def get_config(config_name=None):
     args = _read_arguments()
-    with open("config/" + args.__dict__['config.name'] + ".json", "r") as f:
+    if not config_name:
+        config_name = args.__dict__['config.name']
+    with open("config/" + config_name + ".json", "r") as f:
         my_dict = json.load(f)
     config = DotMap(my_dict)
     return _overwrite_defaults(config, args)

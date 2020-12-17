@@ -10,7 +10,7 @@
     "pretrained": 1,
     "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results",
     "result_directory_name": "2020-12-01-13-17-07-baseline",
-    "mode": "eval",
+    "mode": "train",
     "enable_wand_reporting": 0
   },
   "training": {
@@ -34,24 +34,24 @@
   },
   "preprocessing": {
     "dataset": {
-      "use_partition_file": 0,
+      "use_partition_file": 1,
       "partition_filename": "dataset/CelebA/list_eval_partition.txt",
       "train_fraction": 0.5,
       "val_fraction": 0.2,
       "test_fraction": 0.3,
-      "number_of_samples": 100,
+      "number_of_samples": -1,
       "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
       "dataset_image_folder": "dataset/CelebA/Img",
-      "uses_landmarks": 0,
-      "uses_bounding_boxes": 1,
-      "uses_automatic_landmarks" : 1,
+      "uses_landmarks": 1,
+      "uses_bounding_boxes": 0,
+      "uses_automatic_landmarks" : 0,
       "landmarks_filename": "dataset/CelebA/list_landmarks_celeba.txt",
       "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt"
     },
     "dataloader": {
       "batch_size": 32,
       "shuffle": "True",
-      "num_workers": 1,
+      "num_workers": 8,
       "prefetch_factor": 10
     },
     "transformation": {
@@ -71,7 +71,7 @@
         }
       },
       "angle_jitter": {
-        "enabled": 0,
+        "enabled": 1,
         "normal_distribution": {
           "mean": 0,
           "std": 20

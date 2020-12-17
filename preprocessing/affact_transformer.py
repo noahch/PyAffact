@@ -68,6 +68,8 @@ class AffactTransformer():
             # TODO: Discuss with Prof.
             if (t_eye_right[0] - t_eye_left[0]) == 0:
                 alpha = 0
+                bob.io.base.save(im, 'error{}.jpg'.format(index))
+                print('error')
             else:
                 alpha = np.arctan((t_eye_right[1] - t_eye_left[1]) / (t_eye_right[0] - t_eye_left[0]))
 
