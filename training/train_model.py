@@ -7,7 +7,7 @@ from torch.optim import lr_scheduler
 
 from utils.config_utils import save_config_to_file
 from evaluation.charts import generate_attribute_accuracy_plot
-from preprocessing.utils import get_train_val_dataset
+from preprocessing.dataset_generator import get_train_val_dataset
 from training.model_manager import ModelManager
 import wandb
 import logging

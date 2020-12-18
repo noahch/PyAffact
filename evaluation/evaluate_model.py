@@ -13,7 +13,7 @@ from torchvision.transforms import transforms
 from evaluation.charts import generate_attribute_accuracy_chart, accuracy_table, generate_model_accuracy_of_testsets
 from evaluation.utils import tensor_to_image, image_grid_and_accuracy_plot
 from preprocessing.affact_transformer import AffactTransformer
-from preprocessing.utils import get_train_val_dataset, generate_dataset_and_loader
+from preprocessing.dataset_generator import get_train_val_dataset, generate_dataset_and_loader
 from training.model_manager import ModelManager
 
 
