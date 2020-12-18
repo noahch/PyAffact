@@ -6,11 +6,10 @@
     "cuda_device_name": "cuda:0",
     "experiment_name": "baseline on own network",
     "experiment_description": "sample description",
-    "model": "resnet_noahAndYves",
+    "model": "resnet_51",
     "pretrained": 1,
-    "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results",
+    "result_directory": "/home/yves/Desktop/uzh/affact/results",
     "result_directory_name": "2020-12-01-13-17-07-baseline",
-    "mode": "train",
     "enable_wand_reporting": 0
   },
   "training": {
@@ -34,17 +33,10 @@
   },
   "preprocessing": {
     "dataset": {
-      "use_partition_file": 1,
       "partition_filename": "dataset/CelebA/list_eval_partition.txt",
-      "train_fraction": 0.5,
-      "val_fraction": 0.2,
-      "test_fraction": 0.3,
-      "number_of_samples": -1,
       "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
       "dataset_image_folder": "dataset/CelebA/Img",
-      "uses_landmarks": 1,
-      "uses_bounding_boxes": 0,
-      "uses_automatic_landmarks" : 0,
+      "bounding_box_mode": 0,
       "landmarks_filename": "dataset/CelebA/list_landmarks_celeba.txt",
       "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt"
     },
@@ -105,24 +97,6 @@
       "temperature": {
         "enabled": 0
       }
-    }
-  },
-  "evaluation": {
-    "test_labels_pickle_filename": "test_labels.pkl",
-    "test_landmarks_pickle_filename": "test_landmarks.pkl",
-    "test_bounding_boxes_filename": "test_bounding_boxes.pkl",
-    "train_majority_pickle_filename": "train_majority.pkl",
-    "model_weights_filename": "best-2.pt",
-    "qualitative": {
-      "enabled": 1,
-      "number_of_images_per_row": 3
-    },
-    "quantitative": {
-      "enabled": 1
-    },
-    "dataloader": {
-      "batch_size": 6,
-      "num_workers": 1
     }
   }
 }

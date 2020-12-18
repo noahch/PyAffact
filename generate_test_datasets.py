@@ -4,7 +4,7 @@ import pandas as pd
 # Load partition file
 from torchvision.transforms import transforms
 
-from config.config_utils import get_config
+from utils.config_utils import get_config
 from evaluation.utils import tensor_to_image
 from preprocessing.affact_transformer import AffactTransformer
 

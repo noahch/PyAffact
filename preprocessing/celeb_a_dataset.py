@@ -11,22 +11,20 @@ from torchvision.transforms import transforms
 from evaluation.utils import save_input_transform_output_image, save_image
 
 
-class AffactDataset(torch.utils.data.Dataset):
+class CelebADataset(torch.utils.data.Dataset):
     def __init__(self, transform=None, labels=None, landmarks=None, bounding_boxes=None, config=None):
         'Initialization'
-         # TODO: Factor for multiplication of input
-        
+
         self.labels = labels
-        # self.bboxes = pd.read_csv('dataset/CelebA/list_bbox_celeba.txt', delim_whitespace=True)
-        if config.preprocessing.dataset.uses_landmarks:
+        if config.preprocessing.dataset.bounding_box_mode == 0:
             self.landmarks = landmarks
-        elif config.preprocessing.dataset.uses_bounding_boxes:
+        elif config.preprocessing.dataset.bounding_box_mode == 1:
             self.bounding_boxes = bounding_boxes
-        elif config.preprocessing.dataset.uses_automatic_landmarks:
+        elif config.preprocessing.dataset.bounding_box_mode == 2:
             self.mtcnn = MTCNN(select_largest=False, device=config.basic.cuda_device_name.split(',')[0])
         else:
-            # TODO: Manually detect landmarks (eyes and mouth)
-            raise Exception('Manual Landmark detection not yet implemented')
+            raise Exception("Chose a valid bounding_box_mode (0=landmarks hand-labeled, 1=bbx hand-labeled, 2=bbx detected")
+
 
         self.transform = transform
         assert self.transform is not None, "A basic transformation is needed. i.e.  Resize() and ToTensor()"
@@ -49,14 +47,13 @@ class AffactDataset(torch.utils.data.Dataset):
             # Load data and get label
             image = bob.io.base.load('{}/{}'.format(self.config.preprocessing.dataset.dataset_image_folder, x))
             landmarks, bounding_boxes = None, None
-            if self.config.preprocessing.dataset.uses_landmarks:
+            if self.config.preprocessing.dataset.bounding_box_mode == 0:
                 landmarks = self.landmarks.iloc[index].tolist()
                 landmarks = landmarks[:4] + landmarks[6:]
-            elif self.config.preprocessing.dataset.uses_bounding_boxes:
+            elif self.config.preprocessing.dataset.bounding_box_mode == 1:
                 bounding_boxes = self.bounding_boxes.iloc[index].tolist()
                 bounding_boxes = bounding_boxes[1:]
-            elif self.config.preprocessing.dataset.uses_automatic_landmarks:
-                # im = Image.open('{}/{}'.format(self.config.preprocessing.dataset.dataset_image_folder, x))
+            elif self.config.preprocessing.dataset.bounding_box_mode == 2:
                 boxes, probs, lm = self.mtcnn.detect(Image.fromarray(np.transpose(image, (1, 2, 0)), 'RGB'), landmarks=True)
                 landmarks = [lm[0][0][0], lm[0][0][1], lm[0][1][0], lm[0][1][1],
                              lm[0][3][0], lm[0][3][1], lm[0][4][0], lm[0][4][1]]
@@ -67,7 +64,6 @@ class AffactDataset(torch.utils.data.Dataset):
                 'bounding_boxes': bounding_boxes,
                 'index': index
             }
-            # print(self.labels.iloc[index].name)
             X, bbx = self.transform(input)
             # TODO: Report -> This serves a check to see if each image is augmented differently in each epoch
             # if x == '003529.jpg' or x=='003530.jpg':
@@ -80,7 +76,7 @@ class AffactDataset(torch.utils.data.Dataset):
             bbx = None
 
         # Save every X picture to validate preprocessing
-        if self.config.preprocessing.transformation.save_transformation_image.enabled and (self.config.basic.mode == 'trainEval' or self.config.basic.mode == 'train'):
+        if self.config.preprocessing.transformation.save_transformation_image.enabled:
             if index % self.config.preprocessing.transformation.save_transformation_image.frequency == 0:
                 save_input_transform_output_image(index, image, X, self.config.basic.result_directory, bbx)
 
@@ -100,15 +96,7 @@ class AffactDataset(torch.utils.data.Dataset):
         result_list = []
         for t in access_tuple_list:
             result_list.append((train_attribute_baseline_majority_value.keys()[t[1]], x.iloc[t] / self.labels.shape[0]))
-
-
         return pd.DataFrame(result_list).set_index(0)[1]
-        # x = self.labels.apply(pd.Series.value_counts)
-        # y = x.loc[train_attribute_baseline_majority_value.tolist(), :]
-        # z = pd.Series(np.diag(y), index=[y.index, y.columns])
-        # z.rename(train_attribute_baseline_majority_value.keys())
-        # return z
-        # return train_attribute_baseline_majority_value
 
     def get_label_names(self):
         return self.labels.columns

@@ -3,7 +3,7 @@ import torch.nn as nn
 from .utils import load_state_dict_from_url
 
 
-__all__ = ['ResNet', 'resnet50']
+__all__ = ['ResNet', 'resnet51_ext']
 
 
 model_urls = {
@@ -259,7 +259,7 @@ def _resnet(arch, block, layers, pretrained, progress, dropout, **kwargs):
 #     return model
 
 
-def resnet50_noahAndYves(pretrained=False, progress=True, dropout=None, **kwargs):
+def resnet51_ext(pretrained=False, progress=True, dropout=None, **kwargs):
     r"""ResNet-50 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
 

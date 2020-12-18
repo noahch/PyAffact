@@ -52,7 +52,7 @@ class AffactTransformer():
 
         im, landmarks, bounding_boxes, index = sample['image'], sample['landmarks'], sample['bounding_boxes'], sample['index']
         bbx = None
-        if self.config.preprocessing.dataset.uses_landmarks or self.config.preprocessing.dataset.uses_automatic_landmarks:
+        if self.config.preprocessing.dataset.bounding_box_mode != 1:
             # Calc bbx
             t_eye_left = np.array((landmarks[0], landmarks[1]))
             t_eye_right = np.array((landmarks[2], landmarks[3]))
@@ -155,7 +155,7 @@ class AffactTransformer():
             placeholder_out = np.minimum(np.maximum(((placeholder_out / 255.0) ** gamma) * 255.0, 0.0), 255.0)
 
 
-        # Apply Picture Temperature
+        # Apply Picture Temperature, own contribution and not part of the AFFACT paper
         # if self.config.preprocessing.transformation.temperature.enabled:
         if self.config.preprocessing.transformation.temperature.enabled:
             r, g, b = self.kelvin_table[random.choice(list(self.kelvin_table.keys()))]
@@ -167,7 +167,11 @@ class AffactTransformer():
             placeholder_out = np.asarray(temp_img)
             placeholder_out = np.transpose(placeholder_out, (2, 0, 1))
 
-
+        # to create a numpy array of shape H x W x C
         placeholder_out = np.transpose(placeholder_out, (1, 2, 0))
+
+        # convert each pixel to uint8
         placeholder_out = placeholder_out.astype(np.uint8)
+
+        # to_tensor normalizes the numpy array (HxWxC) in the range [0. 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
         return to_tensor(placeholder_out), bbx

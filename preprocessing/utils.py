@@ -1,150 +1,36 @@
-import logging
-
-import torch
-from torchvision.transforms import transforms
-import pandas as pd
-import numpy as np
-
-from config.config_utils import save_config_to_file
-from preprocessing.affact_dataset import AffactDataset
-from preprocessing.affact_transformer import AffactTransformer
 import os
 
+import pandas as pd
+import torch
+from torchvision.transforms import transforms
 
-#TODO refactor!! check if shuffle needed, evtl use functions for df transformations
+from utils.config_utils import save_config_to_file
+from preprocessing.affact_transformer import AffactTransformer
+from preprocessing.celeb_a_dataset import CelebADataset
+
+
 def get_train_val_dataset(config):
+    bounding_boxes, labels, landmarks, partition_df = _load_dataframes(config)
+
+    df_train_labels, df_train_landmarks, df_train_bounding_boxes = _get_partition_dataframes(partition_df,
+                                                                                             0,
+                                                                                             labels,
+                                                                                             landmarks,
+                                                                                             bounding_boxes)
+
+    df_val_labels, df_val_landmarks, df_val_bounding_boxes = _get_partition_dataframes(partition_df,
+                                                                                       1,
+                                                                                       labels,
+                                                                                       landmarks,
+                                                                                       bounding_boxes)
+
     data_transforms = transforms.Compose([AffactTransformer(config)])
 
-    assert (config.preprocessing.dataset.uses_bounding_boxes + config.preprocessing.dataset.uses_landmarks + config.preprocessing.dataset.uses_automatic_landmarks) == 1, "Either use landmarks or bounding boxes or automatic landmark detection"
+    dataset_train, training_generator = generate_dataset_and_loader(data_transforms, df_train_labels,
+                                                                    df_train_landmarks, df_train_bounding_boxes, config)
 
-    labels = pd.read_csv(config.preprocessing.dataset.dataset_labels_filename,
-                         delim_whitespace=True, skiprows=1)
-    # idx = np.random.permutation(labels.index)
-    # TODO: uncomment
-    # labels = labels.reindex(idx)
-    landmarks = None
-    if config.preprocessing.dataset.uses_landmarks:
-        landmarks = pd.read_csv(config.preprocessing.dataset.landmarks_filename,
-                                delim_whitespace=True, skiprows=1)
-
-        assert labels.shape[0] == landmarks.shape[0], "Label and Landmarks not of same shape"
-        # TODO: uncomment
-        # landmarks = landmarks.reindex(idx)
-
-    bounding_boxes = None
-    if config.preprocessing.dataset.uses_bounding_boxes:
-        bounding_boxes = pd.read_csv(config.preprocessing.dataset.bounding_boxes_filename,
-                                delim_whitespace=True, skiprows=1)
-
-        assert labels.shape[0] == bounding_boxes.shape[0], "Label and bounding boxes not of same shape"
-        # TODO: uncomment
-        # bounding_boxes = bounding_boxes.reindex(idx)
-
-    # If number of samples is -1 --> use whole dataset
-    if config.preprocessing.dataset.number_of_samples == -1:
-        size = labels.shape[0]
-    else:
-        size = config.preprocessing.dataset.number_of_samples
-
-
-    assert config.preprocessing.dataset.train_fraction + config.preprocessing.dataset.val_fraction + config.preprocessing.dataset.test_fraction == 1, "Train/Val/Test split must sum up to 1"
-
-    df_train_labels, df_val_labels, df_test_labels = None, None, None
-    df_train_bounding_boxes, df_val_bounding_boxes, df_test_bounding_boxes = None, None, None
-    df_train_landmarks, df_val_landmarks, df_test_landmarks = None, None, None
-
-    if config.preprocessing.dataset.use_partition_file:
-        assert config.preprocessing.dataset.partition_filename, "Partition filename must be set if partition file is used"
-        partition_df = pd.read_csv(config.preprocessing.dataset.partition_filename,
-                             delim_whitespace=True, header=None)
-        partition_df.columns = ['filename', 'partition']
-        partition_df["partition"] = pd.to_numeric(partition_df["partition"])
-
-        train_partition_df = partition_df.loc[partition_df["partition"] == 0]
-        val_partition_df = partition_df.loc[partition_df["partition"] == 1]
-        test_partition_df = partition_df.loc[partition_df["partition"] == 2]
-
-        df_train_labels = pd.merge(labels, train_partition_df, left_index=True, right_on='filename', how='inner')
-        df_train_labels.set_index('filename', inplace=True)
-
-        df_val_labels = pd.merge(labels, val_partition_df, left_index=True, right_on='filename', how='inner')
-        df_val_labels.set_index('filename', inplace=True)
-
-        df_test_labels = pd.merge(labels, test_partition_df, left_index=True, right_on='filename', how='inner')
-        df_test_labels.set_index('filename', inplace=True)
-
-
-        df_train_labels.drop(columns=["partition"], inplace=True)
-        df_val_labels.drop(columns=["partition"], inplace=True)
-        df_test_labels.drop(columns=["partition"], inplace=True)
-
-        if config.preprocessing.dataset.uses_landmarks:
-            df_train_landmarks = pd.merge(landmarks, train_partition_df, left_index=True, right_on='filename', how='inner')
-            df_train_landmarks.set_index('filename', inplace=True)
-
-            df_val_landmarks = pd.merge(landmarks, val_partition_df, left_index=True, right_on='filename', how='inner')
-            df_val_landmarks.set_index('filename', inplace=True)
-
-            df_test_landmarks = pd.merge(landmarks, test_partition_df, left_index=True, right_on='filename', how='inner')
-            df_test_landmarks.set_index('filename', inplace=True)
-
-            df_train_landmarks.drop(columns=["partition"], inplace=True)
-            df_val_landmarks.drop(columns=["partition"], inplace=True)
-            df_test_landmarks.drop(columns=["partition"], inplace=True)
-
-        if config.preprocessing.dataset.uses_bounding_boxes:
-            df_train_bounding_boxes = pd.merge(bounding_boxes, train_partition_df, left_on='image_id', right_on='filename', how='inner')
-
-            df_val_bounding_boxes = pd.merge(bounding_boxes, val_partition_df, left_on='image_id', right_on='filename', how='inner')
-
-            df_test_bounding_boxes = pd.merge(bounding_boxes, test_partition_df, left_on='image_id', right_on='filename', how='inner')
-
-
-            df_train_bounding_boxes.drop(columns=["filename", "partition"], inplace=True)
-            df_val_bounding_boxes.drop(columns=["filename", "partition"], inplace=True)
-            df_test_bounding_boxes.drop(columns=["filename", "partition"], inplace=True)
-
-
-
-    else:
-        df_train_labels, df_val_labels, df_test_labels = calculate_split(config, labels, size)
-
-
-        if config.preprocessing.dataset.uses_landmarks:
-            df_train_landmarks, df_val_landmarks, df_test_landmarks = calculate_split(config, landmarks, size)
-
-
-
-        if config.preprocessing.dataset.uses_bounding_boxes:
-            df_train_bounding_boxes, df_val_bounding_boxes, df_test_bounding_boxes = calculate_split(config, bounding_boxes, size)
-
-
-    df_train_labels.to_pickle('{}/train_labels.pkl'.format(config.basic.result_directory), compression='zip')
-    df_val_labels.to_pickle('{}/val_labels.pkl'.format(config.basic.result_directory), compression='zip')
-    df_test_labels.to_pickle(os.path.join(config.basic.result_directory, 'test_labels.pkl'), compression='zip')
-    config.evaluation.test_labels_pickle_filename = 'test_labels.pkl'
-
-    if config.preprocessing.dataset.uses_landmarks:
-        df_train_landmarks.to_pickle('{}/train_landmarks.pkl'.format(config.basic.result_directory), compression='zip')
-        df_val_landmarks.to_pickle('{}/val_landmarks.pkl'.format(config.basic.result_directory), compression='zip')
-        df_test_landmarks.to_pickle(os.path.join(config.basic.result_directory, 'test_landmarks.pkl'),
-                                    compression='zip')
-
-        config.evaluation.test_landmarks_pickle_filename = 'test_landmarks.pkl'
-
-    if config.preprocessing.dataset.uses_bounding_boxes:
-        df_train_bounding_boxes.to_pickle('{}/train_bounding_boxes.pkl'.format(config.basic.result_directory),
-                                          compression='zip')
-        df_val_bounding_boxes.to_pickle('{}/val_bounding_boxes.pkl'.format(config.basic.result_directory),
-                                        compression='zip')
-        df_test_bounding_boxes.to_pickle(os.path.join(config.basic.result_directory, 'test_bounding_boxes.pkl'),
-                                         compression='zip')
-
-        config.evaluation.test_bounding_boxes = 'test_bounding_boxes.pkl'
-
-
-    dataset_train, training_generator = generate_dataset_and_loader(data_transforms, df_train_labels, df_train_landmarks, df_train_bounding_boxes, config)
-    dataset_val, validation_generator = generate_dataset_and_loader(data_transforms, df_val_labels, df_val_landmarks, df_val_bounding_boxes, config)
+    dataset_val, validation_generator = generate_dataset_and_loader(data_transforms, df_val_labels, df_val_landmarks,
+                                                                    df_val_bounding_boxes, config)
 
     dataloaders = {
         'train': training_generator,
@@ -161,7 +47,8 @@ def get_train_val_dataset(config):
     config.evaluation.train_majority_pickle_filename = 'train_majority.pkl'
 
     # Save for evaluation
-    train_attribute_baseline_majority_value.to_pickle(os.path.join(config.basic.result_directory, 'train_majority.pkl'), compression='zip')
+    train_attribute_baseline_majority_value.to_pickle(os.path.join(config.basic.result_directory, 'train_majority.pkl'),
+                                                      compression='zip')
     save_config_to_file(config)
 
     attribute_baseline_accuracy = {
@@ -181,20 +68,40 @@ def get_train_val_dataset(config):
     result_dict['dataset_meta_information'] = dataset_meta_information
     return result_dict
 
+
+def _load_dataframes(config):
+    labels = pd.read_csv(config.preprocessing.dataset.dataset_labels_filename,
+                         delim_whitespace=True, skiprows=1)
+    landmarks = pd.read_csv(config.preprocessing.dataset.landmarks_filename,
+                            delim_whitespace=True, skiprows=1)
+    bounding_boxes = pd.read_csv(config.preprocessing.dataset.bounding_boxes_filename,
+                                 delim_whitespace=True, skiprows=1)
+    partition_df = pd.read_csv(config.preprocessing.dataset.partition_filename,
+                               delim_whitespace=True, header=None)
+
+    return bounding_boxes, labels, landmarks, partition_df
+
+
+def _get_partition_dataframes(partition_df, partition, labels, landmarks, bounding_boxes):
+    partition_df.columns = ['filename', 'partition']
+    partition_df["partition"] = pd.to_numeric(partition_df["partition"])
+
+    train_partition_df = partition_df.loc[partition_df["partition"] == partition]
+    df_labels = pd.merge(labels, train_partition_df, left_index=True, right_on='filename', how='inner')
+    df_labels.set_index('filename', inplace=True)
+
+    df_labels.drop(columns=["partition"], inplace=True)
+    df_landmarks = pd.merge(landmarks, train_partition_df, left_index=True, right_on='filename', how='inner')
+    df_landmarks.set_index('filename', inplace=True)
+    df_landmarks.drop(columns=["partition"], inplace=True)
+    df_bounding_boxes = pd.merge(bounding_boxes, train_partition_df, left_on='image_id', right_on='filename',
+                                 how='inner')
+    df_bounding_boxes.drop(columns=["filename", "partition"], inplace=True)
+    return df_labels, df_landmarks, df_bounding_boxes
+
+
 def generate_dataset_and_loader(transform, labels, landmarks, bounding_boxes, config):
-    dataset = AffactDataset(transform=transform, labels=labels, landmarks=landmarks, bounding_boxes=bounding_boxes,
-                  config=config)
-    if config.basic.mode == 'train' or config.basic.mode == 'trainEval':
-        dataloader = torch.utils.data.DataLoader(dataset, **config.preprocessing.dataloader)
-    else:
-        sampler = torch.utils.data.SequentialSampler(dataset)
-        dataloader = torch.utils.data.DataLoader(dataset, **config.evaluation.dataloader, sampler=sampler)
-
+    dataset = CelebADataset(transform=transform, labels=labels, landmarks=landmarks, bounding_boxes=bounding_boxes,
+                            config=config)
+    dataloader = torch.utils.data.DataLoader(dataset, **config.preprocessing.dataloader)
     return dataset, dataloader
-
-def calculate_split(config, df, size):
-    df_train = df[0: int(size * config.preprocessing.dataset.train_fraction)]
-    df_val = df[int(size * config.preprocessing.dataset.train_fraction): int(
-        size * (config.preprocessing.dataset.val_fraction + config.preprocessing.dataset.train_fraction))]
-    df_test = df[int(size * (config.preprocessing.dataset.val_fraction + config.preprocessing.dataset.train_fraction)): size]
-    return df_train, df_val, df_test
