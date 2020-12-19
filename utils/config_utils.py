@@ -75,11 +75,38 @@ def _read_arguments():
         '--basic.experiment_description',
         default=None,
         type=str)
-    parser.add_argument('--basic.model', default=None, type=str)
-    parser.add_argument('--basic.pretrained', default=None, type=int)
     parser.add_argument('--basic.result_directory', default=None, type=str)
     parser.add_argument(
         '--basic.enable_wand_reporting',
+        default=None,
+        type=int)
+
+    parser.add_argument('--model.name', default=None, type=str)
+    parser.add_argument('--model.pretrained', default=None, type=int)
+    parser.add_argument('--model.dropout', default=None, type=float)
+
+    parser.add_argument(
+        '--dataset.partition_filename',
+        default=None,
+        type=str)
+    parser.add_argument(
+        '--dataset.dataset_labels_filename',
+        default=None,
+        type=str)
+    parser.add_argument(
+        '--dataset.dataset_image_folder',
+        default=None,
+        type=str)
+    parser.add_argument(
+        '--dataset.landmarks_filename',
+        default=None,
+        type=str)
+    parser.add_argument(
+        '--dataset.bounding_boxes_filename',
+        default=None,
+        type=str)
+    parser.add_argument(
+        '--dataset.bounding_box_mode',
         default=None,
         type=int)
 
@@ -108,32 +135,8 @@ def _read_arguments():
         '--training.lr_scheduler.patience',
         default=None,
         type=float)
-    parser.add_argument('--training.dropout', default=None, type=float)
 
-    parser.add_argument(
-        '--preprocessing.dataset.partition_filename',
-        default=None,
-        type=str)
-    parser.add_argument(
-        '--preprocessing.dataset.dataset_labels_filename',
-        default=None,
-        type=str)
-    parser.add_argument(
-        '--preprocessing.dataset.dataset_image_folder',
-        default=None,
-        type=str)
-    parser.add_argument(
-        '--preprocessing.dataset.landmarks_filename',
-        default=None,
-        type=str)
-    parser.add_argument(
-        '--preprocessing.dataset.bounding_boxes_filename',
-        default=None,
-        type=str)
-    parser.add_argument(
-        '--preprocessing.dataset.bounding_box_mode',
-        default=None,
-        type=int)
+
 
     parser.add_argument(
         '--preprocessing.dataloader.batch_size',

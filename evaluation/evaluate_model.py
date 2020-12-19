@@ -13,7 +13,7 @@ from torchvision.transforms import transforms
 from evaluation.charts import generate_attribute_accuracy_chart, accuracy_table, generate_model_accuracy_of_testsets
 from evaluation.utils import tensor_to_image, image_grid_and_accuracy_plot
 from preprocessing.affact_transformer import AffactTransformer
-from preprocessing.dataset_generator import get_train_val_dataset, generate_dataset_and_loader
+from preprocessing.dataset_generator import get_train_val_dataset, generate_dataset_and_loader, generate_test_dataset
 from training.model_manager import ModelManager
 
 
@@ -21,76 +21,18 @@ class EvalModel(ModelManager):
     def __init__(self, config, device):
         super().__init__(config, device)
         # load pickle based on config
-        self.labels = pd.read_pickle(
-            os.path.join(self.config.basic.result_directory, self.config.evaluation.test_labels_pickle_filename),
-            compression='zip')
-
-        self.landmarks, self.bounding_boxes = None, None
-        if self.config.preprocessing.dataset.uses_landmarks:
-            self.landmarks = pd.read_pickle(
-                os.path.join(self.config.basic.result_directory, self.config.evaluation.test_landmarks_pickle_filename),
-                compression='zip')
-        if self.config.preprocessing.dataset.uses_bounding_boxes:
-            self.bounding_boxes = pd.read_pickle(
-                os.path.join(self.config.basic.result_directory, self.config.evaluation.test_bounding_boxes_filename),
-                compression='zip')
-
-        # Config for eval TestSet A
-        config.preprocessing.dataset.uses_bounding_boxes = 0
-        config.preprocessing.dataset.uses_landmarks = 0
-        config.preprocessing.dataset.uses_automatic_landmarks = 1
-        config.preprocessing.transformation.scale_jitter.enabled = 0
-        config.preprocessing.transformation.angle_jitter.enabled = 0
-        config.preprocessing.transformation.shift_jitter.enabled = 0
-        config.preprocessing.transformation.mirror.enabled = 0
-        config.preprocessing.transformation.gaussian_blur.enabled = 0
-        config.preprocessing.transformation.gamma.enabled = 0
-        data_transforms_A = transforms.Compose([AffactTransformer(copy.deepcopy(config))])
-
-        # Config for eval TestSet S
-        config.preprocessing.dataset.uses_bounding_boxes = 0
-        config.preprocessing.dataset.uses_landmarks = 1
-        config.preprocessing.dataset.uses_automatic_landmarks = 0
-        config.preprocessing.transformation.scale_jitter.enabled = 1
-        config.preprocessing.transformation.shift_jitter.enabled = 1
-        data_transforms_S = transforms.Compose([AffactTransformer(copy.deepcopy(config))])
-
-        # Config for eval TestSet T
-        config.preprocessing.dataset.uses_bounding_boxes = 0
-        config.preprocessing.dataset.uses_landmarks = 0
-        config.preprocessing.dataset.uses_automatic_landmarks = 1
-        config.preprocessing.transformation.scale_jitter.enabled = 1
-        config.preprocessing.transformation.shift_jitter.enabled = 1
-        config.preprocessing.transformation.angle_jitter.enabled = 1
-        config.preprocessing.transformation.mirror.enabled = 1
-        config.preprocessing.transformation.gaussian_blur.enabled = 1
-        config.preprocessing.transformation.gamma.enabled = 1
-        data_transforms_T = transforms.Compose([AffactTransformer(copy.deepcopy(config))])
-
-
-        # config for eval TestSet A
-
-        self.dataset_test_A, self.test_generator_A = generate_dataset_and_loader(data_transforms_A, self.labels,
-                                                                             self.landmarks, self.bounding_boxes, config)
-        self.dataset_test_S, self.test_generator_S = generate_dataset_and_loader(data_transforms_S, self.labels,
-                                                                             self.landmarks, self.bounding_boxes, config)
-        self.dataset_test_T, self.test_generator_T = generate_dataset_and_loader(data_transforms_T, self.labels,
-                                                                             self.landmarks, self.bounding_boxes, config)
-
-        self.generator_list = [self.test_generator_A, self.test_generator_S, self.test_generator_T]
+        self.labels, _, _ = generate_test_dataset(config)
 
         train_attribute_baseline_majority_value = pd.read_pickle(
             os.path.join(self.config.basic.result_directory, self.config.evaluation.train_majority_pickle_filename),
             compression='zip')
         self.test_attribute_baseline_accuracy = self.dataset_test_A.get_attribute_baseline_accuracy_val(
             train_attribute_baseline_majority_value)
-        self.optimizer = self._get_optimizer()
 
     def eval(self):
         checkpoint = torch.load(
             os.path.join(self.config.basic.result_directory, self.config.evaluation.model_weights_filename), map_location=self.config.basic.cuda_device_name.split(',')[0])
         self.model_device.load_state_dict(checkpoint['model_state_dict'])
-        self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
 
         if self.config.evaluation.quantitative.enabled:
             self.quantitative_analysis(self.model_device)

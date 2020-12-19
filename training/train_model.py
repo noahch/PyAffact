@@ -3,6 +3,7 @@ import os
 import time
 
 import torch
+from torch import optim, nn
 from torch.optim import lr_scheduler
 
 from utils.config_utils import save_config_to_file
@@ -24,13 +25,13 @@ class TrainModel(ModelManager):
         self.lr_scheduler = self._get_lr_scheduler()
 
     def train(self):
-        if self.config.basic.model == "resnet_51":
+        if self.config.model.name == "resnet_51":
             return self._train_resnet_51()
         # same training routine for our network
-        elif self.config.basic.model == "resnet_noahAndYves":
+        elif self.config.model.name == "resnet_51_ext":
             return self._train_resnet_51()
         else:
-            raise Exception("Model {} does not have a training routine".format(self.config.basic.model))
+            raise Exception("Model {} does not have a training routine".format(self.config.model.name))
 
     def _get_lr_scheduler(self):
         if self.config.training.lr_scheduler.type == "StepLR":
@@ -48,6 +49,47 @@ class TrainModel(ModelManager):
             'model_state_dict': model_state_dict,
             'optimizer_state_dict': optimizer_state_dict
         }, os.path.join(self.config.basic.result_directory, filename))
+
+    def _get_optimizer(self):
+        """
+        Get different optimizers for different experiments
+
+        Returns
+        -------
+        An Optimizer
+        """
+
+        # SGD Optimizer
+        if self.config.training.optimizer.type == "SGD":
+            return optim.SGD(self.model_device.parameters(),
+                             lr=self.config.training.optimizer.learning_rate,
+                             momentum=self.config.training.optimizer.momentum)
+
+        # Adam Optimizer
+        if self.config.training.optimizer.type == "Adam":
+            return optim.Adam(self.model_device.parameters(),
+                              lr=self.config.training.optimizer.learning_rate)
+
+        raise Exception("Optimizer {} does not exist".format(self.config.training.optimizer.type))
+
+    def _get_criterion(self):
+        """
+        Get different criterions for different experiments
+
+        Returns
+        -------
+        Loss Function
+        """
+
+        # Binary Cross Entropy with Logits Loss
+        if self.config.training.criterion.type == "BCEWithLogitsLoss":
+            return nn.BCEWithLogitsLoss()
+
+        # Binary Cross Entropy Loss
+        if self.config.training.criterion.type == "BCELoss":
+            return nn.BCELoss()
+
+        raise Exception("Criterion {} does not exist".format(self.config.training.criterion.type))
 
     def _train_resnet_51(self):
         if self.config.basic.enable_wand_reporting:

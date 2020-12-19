@@ -12,6 +12,19 @@
     "result_directory_name": "2020-12-01-13-17-07-baseline",
     "enable_wand_reporting": 0
   },
+  "model": {
+    "name": "resnet_51",
+    "pretrained": 1,
+    "dropout": 0.2
+  },
+  "dataset": {
+      "partition_filename": "dataset/CelebA/list_eval_partition.txt",
+      "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
+      "dataset_image_folder": "dataset/CelebA/Img",
+      "bounding_box_mode": 0,
+      "landmarks_filename": "dataset/CelebA/list_landmarks_celeba.txt",
+      "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt"
+  },
   "training": {
     "epochs": 2,
     "save_frequency": 10,
@@ -28,18 +41,9 @@
       "step_size": 7,
       "gamma": 0.1,
       "patience": 4
-    },
-    "dropout": 0.2
+    }
   },
   "preprocessing": {
-    "dataset": {
-      "partition_filename": "dataset/CelebA/list_eval_partition.txt",
-      "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
-      "dataset_image_folder": "dataset/CelebA/Img",
-      "bounding_box_mode": 0,
-      "landmarks_filename": "dataset/CelebA/list_landmarks_celeba.txt",
-      "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt"
-    },
     "dataloader": {
       "batch_size": 32,
       "shuffle": "True",

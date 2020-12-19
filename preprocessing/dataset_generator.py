@@ -117,13 +117,13 @@ def _load_dataframes(config):
     -------
     bounding_boxes, labels, landmarks, partition dataframe
     """
-    labels = pd.read_csv(config.preprocessing.dataset.dataset_labels_filename,
+    labels = pd.read_csv(config.dataset.dataset_labels_filename,
                          delim_whitespace=True, skiprows=1)
-    landmarks = pd.read_csv(config.preprocessing.dataset.landmarks_filename,
+    landmarks = pd.read_csv(config.dataset.landmarks_filename,
                             delim_whitespace=True, skiprows=1)
-    bounding_boxes = pd.read_csv(config.preprocessing.dataset.bounding_boxes_filename,
+    bounding_boxes = pd.read_csv(config.dataset.bounding_boxes_filename,
                                  delim_whitespace=True, skiprows=1)
-    partition_df = pd.read_csv(config.preprocessing.dataset.partition_filename,
+    partition_df = pd.read_csv(config.dataset.partition_filename,
                                delim_whitespace=True, header=None)
 
     return bounding_boxes, labels, landmarks, partition_df

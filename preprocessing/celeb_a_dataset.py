@@ -16,11 +16,11 @@ class CelebADataset(torch.utils.data.Dataset):
         'Initialization'
 
         self.labels = labels
-        if config.preprocessing.dataset.bounding_box_mode == 0:
+        if config.dataset.bounding_box_mode == 0:
             self.landmarks = landmarks
-        elif config.preprocessing.dataset.bounding_box_mode == 1:
+        elif config.dataset.bounding_box_mode == 1:
             self.bounding_boxes = bounding_boxes
-        elif config.preprocessing.dataset.bounding_box_mode == 2:
+        elif config.dataset.bounding_box_mode == 2:
             self.mtcnn = MTCNN(select_largest=False, device=config.basic.cuda_device_name.split(',')[0])
         else:
             raise Exception("Chose a valid bounding_box_mode (0=landmarks hand-labeled, 1=bbx hand-labeled, 2=bbx detected")
@@ -45,18 +45,14 @@ class CelebADataset(torch.utils.data.Dataset):
         # If the AffactTransformer is used, the input format required changes (also includes landmarks, and index)
         if 'AffactTransformer' in '{}'.format(self.transform):
             # Load data and get label
-            image = bob.io.base.load('{}/{}'.format(self.config.preprocessing.dataset.dataset_image_folder, x))
+            image = bob.io.base.load('{}/{}'.format(self.config.dataset.dataset_image_folder, x))
             landmarks, bounding_boxes = None, None
-            if self.config.preprocessing.dataset.bounding_box_mode == 0:
+            if self.config.dataset.bounding_box_mode == 0:
                 landmarks = self.landmarks.iloc[index].tolist()
                 landmarks = landmarks[:4] + landmarks[6:]
-            elif self.config.preprocessing.dataset.bounding_box_mode == 1:
+            elif self.config.dataset.bounding_box_mode == 1:
                 bounding_boxes = self.bounding_boxes.iloc[index].tolist()
                 bounding_boxes = bounding_boxes[1:]
-            elif self.config.preprocessing.dataset.bounding_box_mode == 2:
-                boxes, probs, lm = self.mtcnn.detect(Image.fromarray(np.transpose(image, (1, 2, 0)), 'RGB'), landmarks=True)
-                landmarks = [lm[0][0][0], lm[0][0][1], lm[0][1][0], lm[0][1][1],
-                             lm[0][3][0], lm[0][3][1], lm[0][4][0], lm[0][4][1]]
 
             input = {
                 'image': image,
@@ -64,14 +60,15 @@ class CelebADataset(torch.utils.data.Dataset):
                 'bounding_boxes': bounding_boxes,
                 'index': index
             }
-            X, bbx = self.transform(input)
+            X = self.transform(input)
+            bbx = None
             # TODO: Report -> This serves a check to see if each image is augmented differently in each epoch
             # if x == '003529.jpg' or x=='003530.jpg':
             #     import time
             #     ms = int(round(time.time() * 1000))
             #     save_image(X, self.config.basic.result_directory, x+str(ms))
         else:
-            image = Image.open('{}/{}'.format(self.config.preprocessing.dataset.dataset_image_folder, x))
+            image = Image.open('{}/{}'.format(self.config.dataset.dataset_image_folder, x))
             X = self.transform(image)
             bbx = None
 

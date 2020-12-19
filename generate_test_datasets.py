@@ -43,13 +43,13 @@ def create_test_images(config, df_test_labels, df_test_landmarks, df_test_boundi
     for index, (i, row) in enumerate(df_test_labels.iterrows()):
         image = bob.io.base.load('{}/{}'.format(config.preprocessing.dataset.dataset_image_folder, row.name))
         landmarks, bounding_boxes = None, None
-        if config.preprocessing.dataset.bounding_box_mode == 0:
+        if config.dataset.bounding_box_mode == 0:
             landmarks = df_test_landmarks.iloc[index].tolist()
             landmarks = landmarks[:4] + landmarks[6:]
-        elif config.preprocessing.dataset.bounding_box_mode == 1:
+        elif config.dataset.bounding_box_mode == 1:
             bounding_boxes = df_test_bounding_boxes.iloc[index].tolist()
             bounding_boxes = bounding_boxes[1:]
-        elif config.preprocessing.dataset.bounding_box_mode == 2:
+        elif config.dataset.bounding_box_mode == 2:
             bounding_boxes, probs, lm = mtcnn.detect(Image.fromarray(np.transpose(image, (1, 2, 0)), 'RGB'),
                                                      landmarks=True)
             # print(bounding_boxes)
