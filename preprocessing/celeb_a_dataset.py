@@ -76,8 +76,8 @@ class CelebADataset(torch.utils.data.Dataset):
             bbx = None
 
         # Save every X picture to validate preprocessing
-        if self.config.preprocessing.transformation.save_transformation_image.enabled:
-            if index % self.config.preprocessing.transformation.save_transformation_image.frequency == 0:
+        if self.config.preprocessing.save_preprocessed_image.enabled:
+            if index % self.config.preprocessing.save_preprocessed_image.frequency == 0:
                 save_input_transform_output_image(index, image, X, self.config.basic.result_directory, bbx)
 
 

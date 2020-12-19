@@ -82,6 +82,28 @@ def get_train_val_dataset(config):
     result_dict['dataset_meta_information'] = dataset_meta_information
     return result_dict
 
+def generate_test_dataset(config):
+    """
+    Generate dataframe for testing
+
+    Parameters
+    ----------
+    config Configuration file
+
+    Returns
+    -------
+    labels, landmarks, bounding boxes of test partition
+    """
+    # Loads the bounding boxes, labels, landmarks and partition df from disk
+    bounding_boxes, labels, landmarks, partition_df = _load_dataframes(config)
+
+    # Gets the training labels, landmarks, bounding boxes according to the partition file
+    df_test_labels, df_test_landmarks, df_test_bounding_boxes = _get_partition_dataframes(partition_df,
+                                                                                             2,
+                                                                                             labels,
+                                                                                             landmarks,
+                                                                                             bounding_boxes)
+    return df_test_labels, df_test_landmarks, df_test_bounding_boxes
 
 def _load_dataframes(config):
     """

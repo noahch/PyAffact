@@ -46,11 +46,11 @@
       "num_workers": 8,
       "prefetch_factor": 10
     },
-    "transformation": {
-      "save_transformation_image": {
+    "save_preprocessed_image": {
         "enabled": 1,
         "frequency": 10
-      },
+    },
+    "transformation": {
       "crop_size": {
         "x": 224,
         "y": 224

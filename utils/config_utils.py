@@ -153,11 +153,11 @@ def _read_arguments():
         type=int)
 
     parser.add_argument(
-        '--preprocessing.transformation.save_transformation_image.enabled',
+        '--preprocessing.save_preprocessed_image.enabled',
         default=None,
         type=int)
     parser.add_argument(
-        '--preprocessing.transformation.save_transformation_image.frequency',
+        '--preprocessing.save_preprocessed_image.frequency',
         default=None,
         type=int)
     parser.add_argument(

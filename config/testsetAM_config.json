@@ -1,4 +1,5 @@
 {
+  "dataset_result_folder": "evaluation/dataset/testsetAM",
   "preprocessing": {
     "dataset": {
       "partition_filename": "dataset/CelebA/list_eval_partition.txt",
@@ -6,18 +7,16 @@
       "landmarks_filename": "dataset/CelebA/list_landmarks_celeba.txt",
       "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt",
       "dataset_image_folder": "dataset/CelebA/Img",
-      "uses_landmarks": 1,
-      "uses_bounding_boxes": 0,
-      "uses_automatic_landmarks": 0
+      "bounding_box_mode": 1
+    },
+    "save_transformation_image": {
+        "enabled": 0,
+        "frequency": 10
     },
     "transformation": {
-      "save_transformation_image": {
-        "enabled": 1,
-        "frequency": 10
-      },
       "crop_size": {
-        "x": 224,
-        "y": 224
+        "x": 256,
+        "y": 256
       },
       "scale_jitter": {
         "enabled": 0,
@@ -27,7 +26,7 @@
         }
       },
       "angle_jitter": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 0,
           "std": 20

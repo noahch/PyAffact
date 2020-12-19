@@ -1,8 +1,11 @@
 """
 Environment Utils File
 """
+import os
 import random
 import logging
+import shutil
+
 import torch
 import numpy as np
 
@@ -49,3 +52,29 @@ def init_environment(config):
         level=logging.INFO)
 
     return device
+
+
+def create_directory(directory, recreate=False):
+    """
+    Helper function to create a directory
+
+    Parameters
+    ----------
+    directory Directory Path
+    recreate If True, removes folder and creates new one
+
+    Returns
+    -------
+
+    """
+    if not os.path.exists(directory):
+        try:
+            os.makedirs(directory)
+        except BaseException as exc:
+            raise Exception('directory could not be created') from exc
+    else:
+        if recreate:
+            shutil.rmtree(directory, ignore_errors=True)
+            create_directory(directory)
+        else:
+            raise Exception('directory already exists')
