@@ -15,24 +15,30 @@ from utils.utils import create_directory
 
 
 
-def create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, transformer):
+def create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, transformer, uses_tencrop=False):
     """
+    Generates test images based on dataframes
 
     Parameters
     ----------
-    config
-    df_test_landmarks
-    df_test_bounding_boxes
-    transformer
+    config Configuration File
+    df_test_labels labels dataframe
+    df_test_landmarks Landmark dataframe
+    df_test_bounding_boxes bounding boxes dataframe
+    transformer transformer
 
     Returns
     -------
 
     """
 
-    create_directory(config.dataset_result_folder, recreate=True)
+    # TODO
+    # create_directory(config.dataset_result_folder, recreate=True)
+    create_directory(config.dataset_result_folder)
+    print("created {}".format(config.dataset_result_folder))
     pbar = tqdm(range(len(df_test_labels.index)))
-    pbar.clear()
+    # pbar.clear()
+    mtcnn = MTCNN(select_largest=False, post_process=False, device='cuda:0')
 
     for index, (i, row) in enumerate(df_test_labels.iterrows()):
         image = bob.io.base.load('{}/{}'.format(config.preprocessing.dataset.dataset_image_folder, row.name))
@@ -44,10 +50,26 @@ def create_test_images(config, df_test_labels, df_test_landmarks, df_test_boundi
             bounding_boxes = df_test_bounding_boxes.iloc[index].tolist()
             bounding_boxes = bounding_boxes[1:]
         elif config.preprocessing.dataset.bounding_box_mode == 2:
-            mtcnn = MTCNN(select_largest=False, device=config.basic.cuda_device_name.split(',')[0])
-            boxes, probs, lm = mtcnn.detect(Image.fromarray(np.transpose(image, (1, 2, 0)), 'RGB'), landmarks=True)
-            landmarks = [lm[0][0][0], lm[0][0][1], lm[0][1][0], lm[0][1][1],
-                         lm[0][3][0], lm[0][3][1], lm[0][4][0], lm[0][4][1]]
+            bounding_boxes, probs, lm = mtcnn.detect(Image.fromarray(np.transpose(image, (1, 2, 0)), 'RGB'),
+                                                     landmarks=True)
+            # print(bounding_boxes)
+            scale = 2.5
+
+            # If the MTCNN cannot find a bounding box, we load the bounding box from the disk
+            try:
+                bounding_boxes = bounding_boxes[0]
+                bounding_boxes[2] = bounding_boxes[2] - bounding_boxes[0]
+                bounding_boxes[3] = bounding_boxes[3] - bounding_boxes[1]
+            except:
+                print(row.name)
+                bounding_boxes = df_test_bounding_boxes.iloc[index].tolist()
+                bounding_boxes = bounding_boxes[1:]
+
+
+            bounding_boxes[0] = bounding_boxes[0] - ((scale - 1) / 2 * bounding_boxes[2])
+            bounding_boxes[1] = bounding_boxes[1] - ((scale - 1) / 2 * bounding_boxes[3])
+            bounding_boxes[2] = scale * (bounding_boxes[2])
+            bounding_boxes[3] = scale * (bounding_boxes[3])
 
         input = {
             'image': image,
@@ -57,16 +79,16 @@ def create_test_images(config, df_test_labels, df_test_landmarks, df_test_boundi
         }
         X = transformer(input)
 
-        if config.preprocessing.dataset.bounding_box_mode != 2:
+        if not uses_tencrop:
             img = tensor_to_image(X)
             img.save('{}/{}'.format(config.dataset_result_folder, row.name))
         else:
+            for i in range(10):
+                img = tensor_to_image(X[i])
+                img.save('{}/{}_{}'.format(config.dataset_result_folder, i, row.name))
 
         pbar.update(1)
-
-
-
-
+    pbar.close()
 
 
 
@@ -78,50 +100,26 @@ df_test_labels, df_test_landmarks, df_test_bounding_boxes = generate_test_datase
 
 # Define transformations for dataset AM (aligned, manual)
 # Consists of images aligned according to the hand-labled landmarks
-data_transforms_A = transforms.Compose([AffactTransformer(config), TenCrop(224)])
+print('Creating testset AM (aligned, manual)')
+data_transforms_AM= transforms.Compose([AffactTransformer(config)])
+create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_AM)
 
-# print('Creating testset AM (aligned, manual)')
-# create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_A)
+# Define transformations for dataset AA (aligned, automatically)
+# Consists of images aligned according to the face detector
+print('Creating testset AA (aligned, automatically)')
+config = get_config('testsetAA_config')
+data_transforms_AA = transforms.Compose([AffactTransformer(config)])
+create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_AA)
 
 # face detector -> grösser bbx -> 10crop
+config = get_config('testsetC_config')
+print('Creating testset C (10 crop)')
+data_transforms_C = transforms.Compose([AffactTransformer(config), TenCrop(224)])
+create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_C, uses_tencrop=True)
 
-image = bob.io.base.load('{}/{}'.format(config.preprocessing.dataset.dataset_image_folder, '182638.jpg'))
-landmarks, bounding_boxes = None, None
+# face detector -> bigger bbx -> AFFACT Transformations
+config = get_config('testsetT_config')
+print('Creating testset T (AFFACT transformations)')
+data_transforms_T = transforms.Compose([AffactTransformer(config)])
+create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_T)
 
-mtcnn = MTCNN(margin=40, select_largest=False, post_process=False, device='cuda:0')
-bounding_boxes, probs, lm = mtcnn.detect(Image.fromarray(np.transpose(image, (1, 2, 0)), 'RGB'), landmarks=True)
-# print(bounding_boxes)
-scale = 2.5
-bounding_boxes = bounding_boxes[0]
-
-bounding_boxes[2] = bounding_boxes[2] - bounding_boxes[0]
-bounding_boxes[3] = bounding_boxes[3] - bounding_boxes[1]
-
-
-bounding_boxes[0] = bounding_boxes[0] - ((scale-1)/2 * bounding_boxes[2])
-bounding_boxes[1] = bounding_boxes[1] - ((scale-1)/2 * bounding_boxes[3])
-bounding_boxes[2] = scale * (bounding_boxes[2])
-bounding_boxes[3] = scale * (bounding_boxes[3])
-print(bounding_boxes)
-
-
-input = {
-    'image': image,
-    'landmarks': landmarks,
-    'bounding_boxes': bounding_boxes,
-    'index': 0
-}
-X = data_transforms_A(input)
-
-img = tensor_to_image(X[6])
-img.save('image2.jpg')
-
-
-# face detector -> bounding box -> transformation
-
-
-
-
-
-
-# read data and generate folder with transformed images

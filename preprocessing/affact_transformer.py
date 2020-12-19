@@ -52,7 +52,7 @@ class AffactTransformer():
 
         im, landmarks, bounding_boxes, index = sample['image'], sample['landmarks'], sample['bounding_boxes'], sample['index']
         bbx = None
-        if self.config.preprocessing.dataset.bounding_box_mode != 1:
+        if self.config.preprocessing.dataset.bounding_box_mode == 0:
             # Calc bbx
             t_eye_left = np.array((landmarks[0], landmarks[1]))
             t_eye_right = np.array((landmarks[2], landmarks[3]))
