@@ -1,0 +1,114 @@
+{
+  "config": {
+    "name": "affact_scale"
+  },
+  "basic": {
+    "cuda_device_name": "cuda:2,cuda:3",
+    "experiment_name": "AFFACT with positive scale",
+    "experiment_description": "Run experiment on more positive scaling",
+    "model": "resnet_51",
+    "pretrained": 1,
+    "result_directory": "/local/scratch/noahAndYves/affact_experiment_results",
+    "result_directory_name": "2020-12-01-13-17-07-baseline",
+    "enable_wand_reporting": 1
+  },
+  "model": {
+    "name": "resnet_51",
+    "pretrained": 1,
+    "dropout": 0
+  },
+  "dataset": {
+    "partition_filename": "/local/scratch/datasets/CelebA/protocol/list_eval_partition.txt",
+    "dataset_labels_filename": "/local/scratch/datasets/CelebA/protocol/list_attr_celeba.txt",
+    "dataset_image_folder": "/local/scratch/datasets/CelebA/img_celeba",
+    "bounding_box_mode": 1,
+    "bounding_box_scale": 2,
+    "landmarks_filename": "/local/scratch/datasets/CelebA/protocol/list_landmarks_celeba.txt",
+    "bounding_boxes_filename": "/local/scratch/datasets/CelebA/protocol/list_bbox_celeba.txt"
+  },
+  "training": {
+    "epochs": 35,
+    "save_frequency": 5,
+    "optimizer": {
+      "type": "SGD",
+      "learning_rate": 0.1,
+      "momentum": 0
+    },
+    "criterion": {
+      "type": "BCEWithLogitsLoss"
+    },
+    "lr_scheduler": {
+      "type": "ReduceLROnPlateau",
+      "step_size": 7,
+      "gamma": 0.1,
+      "patience": 4
+    }
+  },
+  "preprocessing": {
+    "dataloader": {
+      "batch_size": 128,
+      "shuffle": "True",
+      "num_workers": 8,
+      "prefetch_factor": 10
+    },
+    "save_preprocessed_image": {
+      "enabled": 0,
+      "frequency": 1000
+    },
+    "transformation": {
+      "crop_size": {
+        "x": 224,
+        "y": 224
+      },
+      "scale_jitter": {
+        "enabled": 1,
+        "normal_distribution": {
+          "mean": 1,
+          "std": 0.1
+        }
+      },
+      "angle_jitter": {
+        "enabled": 1,
+        "normal_distribution": {
+          "mean": 0,
+          "std": 20
+        }
+      },
+      "shift_jitter": {
+        "enabled": 1,
+        "normal_distribution": {
+          "mean": 0,
+          "std": 0.05
+        }
+      },
+      "mirror": {
+        "enabled": 1,
+        "probability": 0.5
+      },
+      "gaussian_blur": {
+        "enabled": 1,
+        "normal_distribution": {
+          "mean": 0,
+          "std": 0.3
+        }
+      },
+      "gamma": {
+        "enabled": 1,
+        "normal_distribution": {
+          "mean": 0,
+          "std": 1
+        }
+      },
+      "positive_scale": {
+        "enabled": 1,
+        "normal_distribution": {
+          "mean": 1.2,
+          "std": 0.3
+        }
+      },
+      "temperature": {
+        "enabled": 0
+      }
+    }
+  }
+}

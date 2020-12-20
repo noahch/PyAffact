@@ -1,5 +1,4 @@
 import bob
-import pandas as pd
 from PIL import Image
 from facenet_pytorch.models.mtcnn import MTCNN
 
@@ -14,8 +13,43 @@ from preprocessing.affact_transformer import AffactTransformer
 from utils.utils import create_directory
 
 
+def main():
+    """
+    Starts creation of test datasets
 
-def create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, transformer, uses_tencrop=False):
+    Returns
+    -------
+
+    """
+    config = get_config('dataset/testsetAM_config')
+    # Load dataframes for testing
+    df_test_labels, df_test_landmarks, df_test_bounding_boxes = generate_test_dataset(config)
+    # Define transformations for dataset AM (aligned, manual)
+    # Consists of images aligned according to the hand-labled landmarks
+    print('Creating testset AM (aligned, manual)')
+    data_transforms_AM = transforms.Compose([AffactTransformer(config)])
+    _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_AM)
+    # # Define transformations for dataset AA (aligned, automatically)
+    # # Consists of images aligned according to the face detector
+    # print('Creating testset AA (aligned, automatically)')
+    # config = get_config('dataset/testsetAA_config')
+    # data_transforms_AA = transforms.Compose([AffactTransformer(config)])
+    # _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_AA)
+    # # face detector -> grösser bbx -> 10crop
+    # config = get_config('dataset/testsetC_config')
+    # print('Creating testset C (10 crop)')
+    # data_transforms_C = transforms.Compose([AffactTransformer(config), TenCrop(224)])
+    # _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_C,
+    #                    uses_tencrop=True)
+    # # face detector -> bigger bbx -> AFFACT Transformations
+    # config = get_config('dataset/testsetT_config')
+    # print('Creating testset T (AFFACT transformations)')
+    # data_transforms_T = transforms.Compose([AffactTransformer(config)])
+    # _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_T)
+
+
+
+def _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, transformer, uses_tencrop=False):
     """
     Generates test images based on dataframes
 
@@ -41,7 +75,7 @@ def create_test_images(config, df_test_labels, df_test_landmarks, df_test_boundi
     mtcnn = MTCNN(select_largest=False, post_process=False, device='cuda:0')
 
     for index, (i, row) in enumerate(df_test_labels.iterrows()):
-        image = bob.io.base.load('{}/{}'.format(config.preprocessing.dataset.dataset_image_folder, row.name))
+        image = bob.io.base.load('{}/{}'.format(config.dataset.dataset_image_folder, row.name))
         landmarks, bounding_boxes = None, None
         if config.dataset.bounding_box_mode == 0:
             landmarks = df_test_landmarks.iloc[index].tolist()
@@ -91,35 +125,6 @@ def create_test_images(config, df_test_labels, df_test_landmarks, df_test_boundi
     pbar.close()
 
 
-
-config = get_config('testsetAM_config')
-
-# Load dataframes for testing
-df_test_labels, df_test_landmarks, df_test_bounding_boxes = generate_test_dataset(config)
-
-
-# Define transformations for dataset AM (aligned, manual)
-# Consists of images aligned according to the hand-labled landmarks
-print('Creating testset AM (aligned, manual)')
-data_transforms_AM= transforms.Compose([AffactTransformer(config)])
-create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_AM)
-
-# Define transformations for dataset AA (aligned, automatically)
-# Consists of images aligned according to the face detector
-print('Creating testset AA (aligned, automatically)')
-config = get_config('testsetAA_config')
-data_transforms_AA = transforms.Compose([AffactTransformer(config)])
-create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_AA)
-
-# face detector -> grösser bbx -> 10crop
-config = get_config('testsetC_config')
-print('Creating testset C (10 crop)')
-data_transforms_C = transforms.Compose([AffactTransformer(config), TenCrop(224)])
-create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_C, uses_tencrop=True)
-
-# face detector -> bigger bbx -> AFFACT Transformations
-config = get_config('testsetT_config')
-print('Creating testset T (AFFACT transformations)')
-data_transforms_T = transforms.Compose([AffactTransformer(config)])
-create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_T)
+if __name__ == '__main__':
+    main()
 

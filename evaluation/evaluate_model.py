@@ -1,19 +1,18 @@
-import copy
+
 import os
 
-import matplotlib
+import bob
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
+import numpy as np
 import torch
-import torchvision
 import wandb
-from torchvision.transforms import transforms
+from torchvision.transforms.functional import to_tensor
+from tqdm import tqdm
 
 from evaluation.charts import generate_attribute_accuracy_chart, accuracy_table, generate_model_accuracy_of_testsets
 from evaluation.utils import tensor_to_image, image_grid_and_accuracy_plot
-from preprocessing.affact_transformer import AffactTransformer
-from preprocessing.dataset_generator import get_train_val_dataset, generate_dataset_and_loader, generate_test_dataset
+from preprocessing.dataset_generator import generate_test_dataset
 from training.model_manager import ModelManager
 
 
@@ -23,15 +22,13 @@ class EvalModel(ModelManager):
         # load pickle based on config
         self.labels, _, _ = generate_test_dataset(config)
 
-        train_attribute_baseline_majority_value = pd.read_pickle(
-            os.path.join(self.config.basic.result_directory, self.config.evaluation.train_majority_pickle_filename),
-            compression='zip')
-        self.test_attribute_baseline_accuracy = self.dataset_test_A.get_attribute_baseline_accuracy_val(
-            train_attribute_baseline_majority_value)
+
+
+
+
 
     def eval(self):
-        checkpoint = torch.load(
-            os.path.join(self.config.basic.result_directory, self.config.evaluation.model_weights_filename), map_location=self.config.basic.cuda_device_name.split(',')[0])
+        checkpoint = torch.load(self.config.best_weights_path, map_location=self.config.basic.cuda_device_name.split(',')[0])
         self.model_device.load_state_dict(checkpoint['model_state_dict'])
 
         if self.config.evaluation.quantitative.enabled:
@@ -45,12 +42,59 @@ class EvalModel(ModelManager):
 
         per_attribute_accuracy_list = []
         all_attribute_accuracy_list = []
-        for generator in self.generator_list:
+
+        # loop through all files of folder
+        test_folders = os.listdir(self.config.dataset.testsets_path)
+
+        for testset in test_folders:
+
+            test_folder = os.path.join(self.config.dataset.testsets_path, testset)
+            image_names = [f for f in os.listdir(test_folder) if os.path.isfile(os.path.join(test_folder, f))]
+            pbar = tqdm(range(len(image_names)))
             correct_classifications = 0
             attributes_correct_count = torch.zeros(self.labels.shape[1])
             attributes_correct_count = attributes_correct_count.to(self.device)
-            for inputs, labels, _ in generator:
+            is_ten_crop = False
+
+            for img in image_names:
+
+                # Load image from disk yields numpy array of shape C x H x W
+                img_path = '{}/{}/{}'.format(self.config.dataset.testsets_path, testset, img)
+                # print(img_path)
+                image = bob.io.base.load(img_path)
+
+                if img[1] == '_':
+                    is_ten_crop = True
+                    img = img[2:]
+                # Reshape to a numpy array of shape H x W x C
+                image = np.transpose(image, (1, 2, 0))
+
+                # convert each pixel to uint8
+                image = image.astype(np.uint8)
+
+                # to_tensor normalizes the numpy array (HxWxC) in the range [0. 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
+                image = to_tensor(image)
+
+
+                # Get true Y label for image
+                y = np.array(self.labels.loc[img].array)
+
+                # -1 --> 0
+                y = np.where(y < 0, 0, y)
+
+                # image of shape H x W x C --> 1 x H x W x C
+                inputs = image.unsqueeze(0)
+
+                # Convert labels to tensor
+                labels = torch.Tensor(y)
+
+                # Also expand labels dimension by 1
+                labels = labels.unsqueeze(0)
+
+                # X on GPU
                 inputs = inputs.to(self.device)
+
+                # Y on GPU
                 labels = labels.to(self.device)
 
                 # track history if only in train
@@ -61,22 +105,35 @@ class EvalModel(ModelManager):
 
                     attributes_correct_count += torch.sum(outputs == labels.type_as(outputs), dim=0)
                     correct_classifications += torch.sum(outputs == labels.type_as(outputs))
+                pbar.update()
 
-            per_attribute_accuracy = attributes_correct_count / self.labels.shape[0]
+            per_attribute_accuracy = attributes_correct_count / len(image_names)
             per_attribute_accuracy_list.append(per_attribute_accuracy.tolist())
-            all_attributes_accuracy = correct_classifications / (self.labels.shape[0] * self.labels.shape[1])
+            all_attributes_accuracy = correct_classifications / (len(image_names) * self.labels.shape[1])
             all_attribute_accuracy_list.append(all_attributes_accuracy.tolist())
 
-        all_attributes_baseline_accuracy = self.test_attribute_baseline_accuracy.sum(axis=0) / self.labels.shape[1]
-        per_attribute_baseline_accuracy = self.test_attribute_baseline_accuracy
 
-        figure = generate_model_accuracy_of_testsets(self.labels.columns.tolist(), per_attribute_accuracy_list,
-                                                   per_attribute_baseline_accuracy.tolist(),
-                                                   all_attribute_accuracy_list, all_attributes_baseline_accuracy)
-        print(all_attribute_accuracy_list)
-        if self.config.basic.enable_wand_reporting:
-            wandb.log({'Accuracy Plot Eval': figure})
-        figure.write_image(os.path.join(self.config.basic.result_directory, 'acurracy_plot.jpg'), scale=5)
+
+
+
+            pbar.close()
+
+        #pd.DataFrame(per_attribute_accuracy.tolist(), columns=[testset])
+        df = pd.DataFrame(np.transpose(per_attribute_accuracy_list), columns=test_folders)
+        df.to_csv('{}/evaluation_result.csv'.format(self.config.dataset.testsets_path))
+
+
+
+        # all_attributes_baseline_accuracy = self.test_attribute_baseline_accuracy.sum(axis=0) / self.labels.shape[1]
+        # per_attribute_baseline_accuracy = self.test_attribute_baseline_accuracy
+        #
+        # figure = generate_model_accuracy_of_testsets(self.labels.columns.tolist(), per_attribute_accuracy_list,
+        #                                            per_attribute_baseline_accuracy.tolist(),
+        #                                            all_attribute_accuracy_list, all_attributes_baseline_accuracy)
+        # print(all_attribute_accuracy_list)
+        # if self.config.basic.enable_wand_reporting:
+        #     wandb.log({'Accuracy Plot Eval': figure})
+        # figure.write_image(os.path.join(self.config.basic.result_directory, 'acurracy_plot.jpg'), scale=5)
 
     def qualitative_analysis(self, model):
         model.eval()

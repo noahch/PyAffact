@@ -110,6 +110,7 @@ def _read_arguments():
         default=None,
         type=int)
 
+    parser.add_argument('--dataset.bounding_box_scale', default=None, type=int)
     parser.add_argument('--training.epochs', default=None, type=int)
     parser.add_argument('--training.save_frequency', default=None, type=int)
     parser.add_argument('--training.optimizer.type', default=None, type=str)
@@ -241,6 +242,18 @@ def _read_arguments():
         type=int)
     parser.add_argument(
         '--preprocessing.transformation.gamma.normal_distribution.std',
+        default=None,
+        type=int)
+    parser.add_argument(
+        '--preprocessing.transformation.positive_scale.enabled',
+        default=None,
+        type=int)
+    parser.add_argument(
+        '--preprocessing.transformation.positive_scale.min',
+        default=None,
+        type=int)
+    parser.add_argument(
+        '--preprocessing.transformation.positive_scale.max',
         default=None,
         type=int)
     parser.add_argument(

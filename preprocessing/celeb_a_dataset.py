@@ -53,6 +53,12 @@ class CelebADataset(torch.utils.data.Dataset):
             elif self.config.dataset.bounding_box_mode == 1:
                 bounding_boxes = self.bounding_boxes.iloc[index].tolist()
                 bounding_boxes = bounding_boxes[1:]
+                if self.config.dataset.bounding_box_scale:
+                    scale = self.config.dataset.bounding_box_scale
+                    bounding_boxes[0] = bounding_boxes[0] - ((scale - 1) / 2 * bounding_boxes[2])
+                    bounding_boxes[1] = bounding_boxes[1] - ((scale - 1) / 2 * bounding_boxes[3])
+                    bounding_boxes[2] = scale * (bounding_boxes[2])
+                    bounding_boxes[3] = scale * (bounding_boxes[3])
 
             input = {
                 'image': image,
@@ -61,6 +67,7 @@ class CelebADataset(torch.utils.data.Dataset):
                 'index': index
             }
             X = self.transform(input)
+
             bbx = None
             # TODO: Report -> This serves a check to see if each image is augmented differently in each epoch
             # if x == '003529.jpg' or x=='003530.jpg':

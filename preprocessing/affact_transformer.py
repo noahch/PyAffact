@@ -68,8 +68,8 @@ class AffactTransformer():
             # TODO: Discuss with Prof.
             if (t_eye_right[0] - t_eye_left[0]) == 0:
                 alpha = 0
-                bob.io.base.save(im, 'error{}.jpg'.format(index))
-                print('error')
+                # bob.io.base.save(im, 'error{}.jpg'.format(index))
+                # print('error')
             else:
                 alpha = np.arctan((t_eye_right[1] - t_eye_left[1]) / (t_eye_right[0] - t_eye_left[0]))
 
@@ -100,6 +100,12 @@ class AffactTransformer():
             jitter_scale_mean = self.config.preprocessing.transformation.scale_jitter.normal_distribution.mean
             jitter_scale_std = self.config.preprocessing.transformation.scale_jitter.normal_distribution.std
             scale *= np.random.normal(jitter_scale_mean, jitter_scale_std)
+
+        if self.config.preprocessing.transformation.positive_scale.enabled:
+            scale_factor = np.random.normal(self.config.preprocessing.transformation.positive_scale.normal_distribution.mean,
+                                            self.config.preprocessing.transformation.positive_scale.normal_distribution.std)
+            scale *= 1/scale_factor
+
 
         if self.config.preprocessing.transformation.angle_jitter.enabled:
             jitter_angle_mean = self.config.preprocessing.transformation.angle_jitter.normal_distribution.mean

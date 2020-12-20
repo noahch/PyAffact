@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-
+import numpy as np
 
 def generate_attribute_accuracy_plot(attribute_name, attribute_accuracy_train, attribute_accuracy_baseline_train,
                                      attribute_accuracy_val, attribute_accuracy_baseline_val):
@@ -154,6 +154,74 @@ def generate_attribute_accuracy_chart(labels, per_attribute_accuracy_list, per_a
     fig.update_layout(barmode='overlay', xaxis_tickangle=-45, bargroupgap=0.1, bargap=0.6)
     return fig
 
+def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attribute_baseline_accuracy, all_attributes_baseline_accuracy):
+    import plotly.graph_objects as go
+    #
+    labels.append('<b>OVERALL</b>')
+    per_attribute_baseline_accuracy.append(all_attributes_baseline_accuracy)
+    names = accuracy_dataframe.columns.tolist() + ['Majority Guess']
+    colors = ['#8895a6', '#519fb0', '#606cbd', '#323c87', '#324487']
+    layout = go.Layout(
+        autosize=False,
+        margin=go.layout.Margin(
+            l=2,
+            r=2,
+            b=2,
+            t=5,
+            pad=2
+        ),
+        height=750,
+        width=550,
+        # paper_bgcolor='rgba(255,255,255,1)',
+        # plot_bgcolor='rgba(255,255,255,0.5)'
+    )
+
+    fig = go.Figure(layout=layout)
+    fig.add_trace(go.Bar(
+        y=labels[::-1],
+        x=[(1-x)*100 for x in per_attribute_baseline_accuracy][::-1],
+        name='Baseline Accuracy',
+        marker_color=colors[0],
+        orientation='h'
+    ))
+
+
+
+    for i, testset in enumerate(accuracy_dataframe.columns.tolist()):
+        accuracies = accuracy_dataframe[testset].tolist()
+        accuracies.append(np.mean(accuracy_dataframe[testset].tolist()))
+        fig.add_trace(go.Bar(
+            y=labels[::-1],
+            x=[(1-x)*100 for x in accuracies][::-1],
+            name=names[i],
+            marker_color=colors[i + 1],
+            orientation='h'
+        ))
+
+    # for index, (i, row) in enumerate(accuracy_dataframe.iterrows()):
+    #     fig.add_trace(go.Bar(
+    #         y=labels[::-1],
+    #         x=row[::-1],
+    #         name=names[i],
+    #         marker_color=colors[i + 1],
+    #         orientation='h'
+    #     ))
+
+    # for i, acc_list in enumerate(per_attribute_accuracy_list):
+    #     acc_list.append(all_attributes_accuracy_list[i])
+    #     fig.add_trace(go.Bar(
+    #         y=labels[::-1],
+    #         x=acc_list[::-1],
+    #         name=names[i],
+    #         marker_color=colors[i+1],
+    #         orientation='h'
+    #     ))
+    fig.update_layout(xaxis = dict(
+        tickmode = 'array',
+        tickvals = [0, 10, 20, 30, 40, 50, 60],
+        ticktext = ['0%', '10%', '20%', '30%', '40%', '50%', '60%']
+    ))
+    return fig
 
 def generate_model_accuracy_of_testsets(labels, per_attribute_accuracy_list, per_attribute_baseline_accuracy,
                                       all_attributes_accuracy_list,
