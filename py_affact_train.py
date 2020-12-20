@@ -15,7 +15,7 @@ def main():
 
     """
     # Load configuration for training
-    config = get_config('train/basic_config')
+    config = get_config()
     # Init environment, use GPU if available, set random seed
     device = init_environment(config)
     # Create result directory
