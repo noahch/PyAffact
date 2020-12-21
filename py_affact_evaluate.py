@@ -20,7 +20,7 @@ def main(generate_accuracy_csv=False):
     -------
 
     """
-    # Load configuration for training
+    # Load configuration for evaluation
     config = get_config('eval/resnet-51-affact-positive-scale_eval_config')
 
     # Calculate accuracies on for prediction of model
@@ -56,7 +56,8 @@ def main(generate_accuracy_csv=False):
                                                    per_attribute_baseline_accuracy.tolist(),
                                                    all_attributes_baseline_accuracy)
     # Save the figure
-    figure.write_image('{}/eval_fig.png'.format(config.experiments_dir))
+    figure.write_image('{}/eval_fig.png'.format(config.experiments_dir), format='png', scale=3)
+    figure.show()
 
 
 if __name__ == '__main__':

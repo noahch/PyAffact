@@ -1,3 +1,5 @@
+import string
+
 import plotly.graph_objects as go
 import numpy as np
 
@@ -154,18 +156,22 @@ def generate_attribute_accuracy_chart(labels, per_attribute_accuracy_list, per_a
     fig.update_layout(barmode='overlay', xaxis_tickangle=-45, bargroupgap=0.1, bargap=0.6)
     return fig
 
-def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attribute_baseline_accuracy, all_attributes_baseline_accuracy):
+def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attribute_baseline_accuracy, all_attributes_baseline_accuracy, cut_off_threshold=25):
     import plotly.graph_objects as go
     #
     labels.append('<b>OVERALL</b>')
     per_attribute_baseline_accuracy.append(all_attributes_baseline_accuracy)
-    names = accuracy_dataframe.columns.tolist() + ['Majority Guess']
-    colors = ['#8895a6', '#519fb0', '#606cbd', '#323c87', '#324487']
+    names = accuracy_dataframe.columns.tolist()
+    table = str.maketrans('', '', string.ascii_lowercase)
+    names_short = [x.translate(table) for x in names]
+    colors = ['#4380b5', '#4aba8d', '#ba4aa5', '#b55c47', '#d4c557']
+    # colors_cut_off = ['#636d7a', '#31616b', '#373d6b', '#0a124a', '#2e1745']
+    colors_cut_off = ['#335d82', '#338262', '#6e2b61', '#6e382b', '#827935']
     layout = go.Layout(
         autosize=False,
         margin=go.layout.Margin(
             l=2,
-            r=2,
+            r=3,
             b=2,
             t=5,
             pad=2
@@ -176,25 +182,67 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
         # plot_bgcolor='rgba(255,255,255,0.5)'
     )
 
+    all_accuracies = []
+    all_labels = []
+    for i, testset in enumerate(accuracy_dataframe.columns.tolist()):
+        accuracies = accuracy_dataframe[testset].tolist()
+        accuracies.append(np.mean(accuracy_dataframe[testset].tolist()))
+        all_accuracies.append(accuracies)
+
+    for i in range(len(per_attribute_baseline_accuracy)):
+        label = ''
+        br_count = 0
+        val = (1- per_attribute_baseline_accuracy[i])*100
+        if val > cut_off_threshold:
+            label += 'MG:{:.2f}%'.format(val)
+            br_count += 1
+        for j in range(len(all_accuracies)):
+            val2 = (1- all_accuracies[j][i])*100
+            if val2 > cut_off_threshold:
+                if label == '':
+                    label = '{}:{:.2f}%'.format(names_short[j], val2)
+                    br_count += 1
+                else:
+                    if br_count % 3 == 0:
+                        label += '<br>{}:{:.2f}%'.format(names_short[j], val2)
+                    else:
+                        label += ', {}:{:.2f}%'.format(names_short[j], val2)
+                    br_count += 1
+        print(label)
+        all_labels.append(label)
+
     fig = go.Figure(layout=layout)
     fig.add_trace(go.Bar(
         y=labels[::-1],
-        x=[(1-x)*100 for x in per_attribute_baseline_accuracy][::-1],
-        name='Baseline Accuracy',
-        marker_color=colors[0],
+        x=[min((1-x)*100, cut_off_threshold) for x in per_attribute_baseline_accuracy][::-1],
+        name='Majority Guess',
+        marker_color=[colors_cut_off[0] if ((1-x)*100)>cut_off_threshold else colors[0] for x in per_attribute_baseline_accuracy][::-1],
+        # text=['{:.2f}xxxxx'.format((1-x)*100) if ((1-x)*100)>cut_off_threshold else '' for x in per_attribute_baseline_accuracy][::-1],
+        # text=all_labels[::-1],
+        textfont= dict(
+            family="sans serif",
+            color="crimson"
+        ),
+        textfont_size=6,
+        textposition="outside",
         orientation='h'
     ))
 
 
 
-    for i, testset in enumerate(accuracy_dataframe.columns.tolist()):
-        accuracies = accuracy_dataframe[testset].tolist()
-        accuracies.append(np.mean(accuracy_dataframe[testset].tolist()))
+    for i, accuracies in enumerate(all_accuracies):
+        # accuracies = accuracy_dataframe[testset].tolist()
+        # accuracies.append(np.mean(accuracy_dataframe[testset].tolist()))
         fig.add_trace(go.Bar(
             y=labels[::-1],
-            x=[(1-x)*100 for x in accuracies][::-1],
+            x=[min((1-x)*100, cut_off_threshold) for x in accuracies][::-1],
             name=names[i],
-            marker_color=colors[i + 1],
+            marker_color=[colors_cut_off[i + 1] if ((1-x)*100)>cut_off_threshold else colors[i + 1] for x in accuracies][::-1],
+            # text=['{:.2f}'.format((1 - x) * 100) if ((1 - x) * 100) > cut_off_threshold else '' for x in
+            #       accuracies][::-1],
+            text=(all_labels[::-1] if i == 0 else []),
+            textfont_size=6,
+            textposition="outside",
             orientation='h'
         ))
 
@@ -217,10 +265,12 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
     #         orientation='h'
     #     ))
     fig.update_layout(xaxis = dict(
+        range = [0, 37],
         tickmode = 'array',
-        tickvals = [0, 10, 20, 30, 40, 50, 60],
-        ticktext = ['0%', '10%', '20%', '30%', '40%', '50%', '60%']
-    ))
+        tickvals = [x for x in range(0, cut_off_threshold+1, (cut_off_threshold//5))],
+        ticktext = ['{:.2f}%'.format(x) for x in range(0, cut_off_threshold+1, (cut_off_threshold//5))]
+    ),
+    uniformtext=dict(minsize=6, mode='show'))
     return fig
 
 def generate_model_accuracy_of_testsets(labels, per_attribute_accuracy_list, per_attribute_baseline_accuracy,
