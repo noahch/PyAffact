@@ -28,7 +28,7 @@ class TrainModel(ModelManager):
         if self.config.model.name == "resnet_51":
             return self._train_resnet_51()
         # same training routine for our network
-        elif self.config.model.name == "resnet_51_ext":
+        elif self.config.model.name == "resnet_51-ext":
             return self._train_resnet_51()
         else:
             raise Exception("Model {} does not have a training routine".format(self.config.model.name))
