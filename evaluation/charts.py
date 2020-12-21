@@ -184,20 +184,28 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
 
     all_accuracies = []
     all_labels = []
+    baseline_labels = []
     for i, testset in enumerate(accuracy_dataframe.columns.tolist()):
         accuracies = accuracy_dataframe[testset].tolist()
         accuracies.append(np.mean(accuracy_dataframe[testset].tolist()))
         all_accuracies.append(accuracies)
+    for i in range(len(all_accuracies)):
+        all_labels.append([])
 
     for i in range(len(per_attribute_baseline_accuracy)):
         label = ''
         br_count = 0
         val = (1- per_attribute_baseline_accuracy[i])*100
-        if val > cut_off_threshold:
+        highest_idx = -1
+        highest_val = min(val, cut_off_threshold)
+        if min(val, cut_off_threshold) > cut_off_threshold:
             label += 'MG:{:.2f}%'.format(val)
             br_count += 1
         for j in range(len(all_accuracies)):
             val2 = (1- all_accuracies[j][i])*100
+            if min(val2, cut_off_threshold) > highest_val:
+                highest_idx = j
+                highest_val = min(val2, cut_off_threshold)
             if val2 > cut_off_threshold:
                 if label == '':
                     label = '{}:{:.2f}%'.format(names_short[j], val2)
@@ -208,8 +216,18 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
                     else:
                         label += ', {}:{:.2f}%'.format(names_short[j], val2)
                     br_count += 1
-        print(label)
-        all_labels.append(label)
+        if highest_idx == -1:
+            baseline_labels.append(label)
+            for i in range(len(all_accuracies)):
+                all_labels[i].append('')
+        else:
+            baseline_labels.append('')
+            for i in range(len(all_accuracies)):
+                if i != highest_idx:
+                    all_labels[i].append('')
+                else:
+                    all_labels[i].append(label)
+
 
     fig = go.Figure(layout=layout)
     fig.add_trace(go.Bar(
@@ -218,11 +236,7 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
         name='Majority Guess',
         marker_color=[colors_cut_off[0] if ((1-x)*100)>cut_off_threshold else colors[0] for x in per_attribute_baseline_accuracy][::-1],
         # text=['{:.2f}xxxxx'.format((1-x)*100) if ((1-x)*100)>cut_off_threshold else '' for x in per_attribute_baseline_accuracy][::-1],
-        # text=all_labels[::-1],
-        textfont= dict(
-            family="sans serif",
-            color="crimson"
-        ),
+        text=baseline_labels[::-1],
         textfont_size=6,
         textposition="outside",
         orientation='h'
@@ -240,7 +254,7 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
             marker_color=[colors_cut_off[i + 1] if ((1-x)*100)>cut_off_threshold else colors[i + 1] for x in accuracies][::-1],
             # text=['{:.2f}'.format((1 - x) * 100) if ((1 - x) * 100) > cut_off_threshold else '' for x in
             #       accuracies][::-1],
-            text=(all_labels[::-1] if i == 0 else []),
+            text=all_labels[i][::-1],
             textfont_size=6,
             textposition="outside",
             orientation='h'
