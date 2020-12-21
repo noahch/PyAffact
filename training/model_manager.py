@@ -29,7 +29,7 @@ class ModelManager():
                 x[-1]) for x in self.config.basic.cuda_device_name.split(',')])
         # Get model for training on one GPU
         else:
-            self.model = self._get_model()
+            self.model = nn.DataParallel(self._get_model())
 
         # Transfer model to GPU
         self.model_device = self.model.to(self.device)

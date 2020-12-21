@@ -28,7 +28,7 @@ class EvalModel(ModelManager):
 
 
     def eval(self):
-        checkpoint = torch.load(self.config.best_weights_path, map_location=self.config.basic.cuda_device_name.split(',')[0])
+        checkpoint = torch.load('{}/{}'.format(self.config.experiments_dir, self.config.weights_name), map_location=self.config.basic.cuda_device_name.split(',')[0])
         self.model_device.load_state_dict(checkpoint['model_state_dict'])
 
         if self.config.evaluation.quantitative.enabled:
@@ -112,28 +112,13 @@ class EvalModel(ModelManager):
             all_attributes_accuracy = correct_classifications / (len(image_names) * self.labels.shape[1])
             all_attribute_accuracy_list.append(all_attributes_accuracy.tolist())
 
-
-
-
-
             pbar.close()
 
         #pd.DataFrame(per_attribute_accuracy.tolist(), columns=[testset])
         df = pd.DataFrame(np.transpose(per_attribute_accuracy_list), columns=test_folders)
-        df.to_csv('{}/evaluation_result.csv'.format(self.config.dataset.testsets_path))
+        return df
 
 
-
-        # all_attributes_baseline_accuracy = self.test_attribute_baseline_accuracy.sum(axis=0) / self.labels.shape[1]
-        # per_attribute_baseline_accuracy = self.test_attribute_baseline_accuracy
-        #
-        # figure = generate_model_accuracy_of_testsets(self.labels.columns.tolist(), per_attribute_accuracy_list,
-        #                                            per_attribute_baseline_accuracy.tolist(),
-        #                                            all_attribute_accuracy_list, all_attributes_baseline_accuracy)
-        # print(all_attribute_accuracy_list)
-        # if self.config.basic.enable_wand_reporting:
-        #     wandb.log({'Accuracy Plot Eval': figure})
-        # figure.write_image(os.path.join(self.config.basic.result_directory, 'acurracy_plot.jpg'), scale=5)
 
     def qualitative_analysis(self, model):
         model.eval()

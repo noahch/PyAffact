@@ -87,7 +87,7 @@ def _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bound
             bounding_boxes, probs, lm = mtcnn.detect(Image.fromarray(np.transpose(image, (1, 2, 0)), 'RGB'),
                                                      landmarks=True)
             # print(bounding_boxes)
-            scale = 2.5
+            scale = 1.5
 
             # If the MTCNN cannot find a bounding box, we load the bounding box from the disk
             try:
