@@ -146,15 +146,15 @@ class ResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
-        self.fcRelu = nn.ReLU(inplace=True)
+        self.fcRelu = nn.LeakyReLU(inplace=True)
         if dropout:
             self.dropout1 = nn.Dropout(self.dropout)
         self.fc51 = nn.Linear(num_classes, 40)
-        self.fcRelu2 = nn.ReLU(inplace=True)
+        self.fcRelu2 = nn.LeakyReLU(inplace=True)
         if dropout:
             self.dropout2 = nn.Dropout(self.dropout)
         self.fc52 = nn.Linear(40, 100)
-        self.fcRelu3 = nn.ReLU(inplace=True)
+        self.fcRelu3 = nn.LeakyReLU(inplace=True)
         if dropout:
             self.dropout3 = nn.Dropout(self.dropout)
         self.fc53 = nn.Linear(100, 40)

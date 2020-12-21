@@ -1,5 +1,5 @@
 {
-  "dataset_result_folder": "evaluation/dataset/testsetC",
+  "dataset_result_folder": "evaluation/dataset/testsetAZ",
   "dataset": {
     "partition_filename": "dataset/CelebA/list_eval_partition.txt",
     "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
@@ -7,7 +7,7 @@
     "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt",
     "dataset_image_folder": "dataset/CelebA/Img",
     "bounding_box_mode": 2,
-    "bounding_box_scale": 1.5
+    "bounding_box_scale": 2.5
   },
   "preprocessing": {
     "save_transformation_image": {
@@ -16,8 +16,8 @@
     },
     "transformation": {
       "crop_size": {
-        "x": 256,
-        "y": 256
+        "x": 224,
+        "y": 224
       },
       "scale_jitter": {
         "enabled": 0,
