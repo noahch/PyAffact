@@ -1,5 +1,5 @@
 {
-  "dataset_result_folder": "evaluation/dataset3/testsetAM",
+  "dataset_result_folder": "evaluation/dataset/testsetAM",
   "dataset": {
     "partition_filename": "dataset/CelebA/list_eval_partition.txt",
     "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",

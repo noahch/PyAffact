@@ -16,7 +16,7 @@
     "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt",
     "dataset_image_folder": "dataset/CelebA/Img",
     "majority_class_file": "config/majority_classes_training_partition.pkl",
-    "testsets_path": "evaluation/dataset3"
+    "testsets_path": "evaluation/dataset"
   },
   "evaluation": {
     "quantitative": {

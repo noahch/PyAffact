@@ -156,7 +156,7 @@ def generate_attribute_accuracy_chart(labels, per_attribute_accuracy_list, per_a
     fig.update_layout(barmode='overlay', xaxis_tickangle=-45, bargroupgap=0.1, bargap=0.6)
     return fig
 
-def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attribute_baseline_accuracy, all_attributes_baseline_accuracy, cut_off_threshold=25):
+def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attribute_baseline_accuracy, all_attributes_baseline_accuracy, cut_off_threshold=15):
     import plotly.graph_objects as go
     #
     labels.append('<b>OVERALL</b>')
@@ -164,9 +164,9 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
     names = accuracy_dataframe.columns.tolist()
     table = str.maketrans('', '', string.ascii_lowercase)
     names_short = [x.translate(table) for x in names]
-    colors = ['#4380b5', '#4aba8d', '#ba4aa5', '#b55c47', '#d4c557']
+    colors = ['#4380b5', '#4aba8d', '#ba4aa5', '#b55c47', '#d4c557', '#a7cdd1']
     # colors_cut_off = ['#636d7a', '#31616b', '#373d6b', '#0a124a', '#2e1745']
-    colors_cut_off = ['#335d82', '#338262', '#6e2b61', '#6e382b', '#827935']
+    colors_cut_off = ['#335d82', '#338262', '#6e2b61', '#6e382b', '#827935', '#8bacb0']
     layout = go.Layout(
         autosize=False,
         margin=go.layout.Margin(
@@ -198,7 +198,7 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
         val = (1- per_attribute_baseline_accuracy[i])*100
         highest_idx = -1
         highest_val = min(val, cut_off_threshold)
-        if min(val, cut_off_threshold) > cut_off_threshold:
+        if min(val, cut_off_threshold) >= cut_off_threshold:
             label += 'MG:{:.2f}%'.format(val)
             br_count += 1
         for j in range(len(all_accuracies)):
@@ -279,7 +279,7 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
     #         orientation='h'
     #     ))
     fig.update_layout(xaxis = dict(
-        range = [0, 37],
+        range = [0, 27],
         tickmode = 'array',
         tickvals = [x for x in range(0, cut_off_threshold+1, (cut_off_threshold//5))],
         ticktext = ['{:.2f}%'.format(x) for x in range(0, cut_off_threshold+1, (cut_off_threshold//5))]

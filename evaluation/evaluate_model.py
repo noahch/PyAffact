@@ -32,10 +32,12 @@ class EvalModel(ModelManager):
         self.model_device.load_state_dict(checkpoint['model_state_dict'])
 
         if self.config.evaluation.quantitative.enabled:
-            self.quantitative_analysis(self.model_device)
+            df =  self.quantitative_analysis(self.model_device)
 
         if self.config.evaluation.qualitative.enabled:
             self.qualitative_analysis(self.model_device)
+
+        return df
 
     def quantitative_analysis(self, model):
         model.eval()
@@ -56,40 +58,67 @@ class EvalModel(ModelManager):
             attributes_correct_count = attributes_correct_count.to(self.device)
             is_ten_crop = False
 
-            for img in image_names:
-
-                # Load image from disk yields numpy array of shape C x H x W
-                img_path = '{}/{}/{}'.format(self.config.dataset.testsets_path, testset, img)
-                # print(img_path)
-                image = bob.io.base.load(img_path)
-
-                if img[1] == '_':
-                    is_ten_crop = True
-                    img = img[2:]
-                # Reshape to a numpy array of shape H x W x C
-                image = np.transpose(image, (1, 2, 0))
-
-                # convert each pixel to uint8
-                image = image.astype(np.uint8)
-
-                # to_tensor normalizes the numpy array (HxWxC) in the range [0. 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
-                image = to_tensor(image)
+            batch_size = 32
+            image_name_batches = [image_names[i:i + batch_size] for i in range(0, len(image_names), batch_size)]
 
 
-                # Get true Y label for image
-                y = np.array(self.labels.loc[img].array)
+            for img_batch in image_name_batches:
 
-                # -1 --> 0
-                y = np.where(y < 0, 0, y)
+                inputs = []
+                labels = []
+
+                for img in img_batch:
+
+                    # Load image from disk yields numpy array of shape C x H x W
+                    img_path = '{}/{}/{}'.format(self.config.dataset.testsets_path, testset, img)
+                    # print(img_path)
+                    image = bob.io.base.load(img_path)
+
+                    if img[1] == '_':
+                        is_ten_crop = True
+                        img = img[2:]
+
+
+                    # Reshape to a numpy array of shape H x W x C
+                    image = np.transpose(image, (1, 2, 0))
+
+                    # convert each pixel to uint8
+                    image = image.astype(np.uint8)
+
+                    # to_tensor normalizes the numpy array (HxWxC) in the range [0. 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
+                    image = to_tensor(image)
+
+                    # Add image to inputs batch list
+                    inputs.append(image)
+
+                    # Get true Y label for image
+                    y = np.array(self.labels.loc[img].array)
+
+                    # -1 --> 0
+                    y = np.where(y < 0, 0, y)
+
+                    labels.append(torch.Tensor(y))
+
+
+
+                # turn list of tensors to 1 tensor of shape batch size C x H x W
+                inputs = torch.stack(inputs)
+
+                # # Get true Y label for image
+                # y = np.array(self.labels.loc[img].array)
+                #
+                # # -1 --> 0
+                # y = np.where(y < 0, 0, y)
 
                 # image of shape H x W x C --> 1 x H x W x C
-                inputs = image.unsqueeze(0)
+                # inputs = image.unsqueeze(0)
 
                 # Convert labels to tensor
-                labels = torch.Tensor(y)
+                # labels = torch.Tensor(y)
 
+                labels = torch.stack(labels)
                 # Also expand labels dimension by 1
-                labels = labels.unsqueeze(0)
+                # labels = labels.unsqueeze(0)
 
                 # X on GPU
                 inputs = inputs.to(self.device)
@@ -105,7 +134,7 @@ class EvalModel(ModelManager):
 
                     attributes_correct_count += torch.sum(outputs == labels.type_as(outputs), dim=0)
                     correct_classifications += torch.sum(outputs == labels.type_as(outputs))
-                pbar.update()
+                pbar.update(len(img_batch))
 
             per_attribute_accuracy = attributes_correct_count / len(image_names)
             per_attribute_accuracy_list.append(per_attribute_accuracy.tolist())
