@@ -69,7 +69,7 @@ def tensor_to_image(tensor):
 
     return output_image
 
-def image_grid_and_accuracy_plot(images, accuracy_list, number_of_img_per_row=3, result_directory=None, saveOnly = True):
+def image_grid_and_accuracy_plot(images, accuracy_list, number_of_img_per_row=3, saveOnly = True):
     if saveOnly:
         matplotlib.use('Agg')
     else:

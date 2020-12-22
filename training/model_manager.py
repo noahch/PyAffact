@@ -23,13 +23,13 @@ class ModelManager():
         self.config = config
         self.device = device
 
-        # Get model for training on multiple GPUs
-        # if len(self.config.basic.cuda_device_name.split(',')) > 1:
-        self.model = nn.DataParallel(self._get_model(), device_ids=[int(
-            x[-1]) for x in self.config.basic.cuda_device_name.split(',')])
-        # Get model for training on one GPU
-        # else:
-        #     self.model = nn.DataParallel(self._get_model())
+        # Flag to check if model was trained using data parallel
+        if self.config.model.data_parallel:
+            # Get model for training on multiple GPUs
+            self.model = nn.DataParallel(self._get_model(), device_ids=[int(
+                x[-1]) for x in self.config.basic.cuda_device_name.split(',')])
+        else:
+            self.model = self._get_model()
 
         # Transfer model to GPU
         self.model_device = self.model.to(self.device)

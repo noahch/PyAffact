@@ -2,14 +2,9 @@
 """
 main evaluation file
 """
-from evaluation.charts import generate_model_accuracy_of_testsets_2
-from generate_evaluation_charts import _get_attribute_baseline_accuracy_val
-from preprocessing.dataset_generator import generate_test_dataset
-from utils.config_utils import get_config
 from evaluation.evaluate_model import EvalModel
+from utils.config_utils import get_config
 from utils.utils import init_environment
-import torch
-import pandas as pd
 
 
 def main(generate_accuracy_csv=False):
@@ -21,43 +16,31 @@ def main(generate_accuracy_csv=False):
 
     """
     # Load configuration for evaluation
-    config = get_config('eval/resnet-51-affact-positive-scale_eval_config')
+    config = get_config('eval/2020-12-21-23-37-42-affactLeakyDropout')
+
+    # Init environment, use GPU if available, set random seed
+    device = init_environment(config)
+
+    # Create an evaluation instance with the loaded configuration on the loaded device
+    eval_instance = EvalModel(config, device)
 
     # Calculate accuracies on for prediction of model
     if generate_accuracy_csv:
 
-        # Init environment, use GPU if available, set random seed
-        device = init_environment(config)
-
-        # Create an evaluation instance with the loaded configuration on the loaded device
-        eval_instance = EvalModel(config, device)
-
         # Run the evaluation
-        df = eval_instance.eval()
+        df = eval_instance.evaluate()
 
         # Save csv
         df.to_csv('{}/evaluation_result.csv'.format(config.experiments_dir))
 
+    # execute quantitative analysis
+    if config.evaluation.quantitative.enabled:
+        eval_instance.quantitative_analysis()
 
-    # Load true labels
-    labels, _, _ = generate_test_dataset(config)
+    # execute qualitative analysis
+    if config.evaluation.qualitative.enabled:
+        eval_instance.qualitative_analysis()
 
-    # Load accuracy DF from disk
-    accuracy_df = pd.read_csv('{}/evaluation_result.csv'.format(config.experiments_dir),
-                              index_col=0)
-
-    # Calculate baseline Accuracies
-    test_attribute_baseline_accuracy = _get_attribute_baseline_accuracy_val(labels, config)
-    all_attributes_baseline_accuracy = test_attribute_baseline_accuracy.sum(axis=0) / labels.shape[1]
-    per_attribute_baseline_accuracy = test_attribute_baseline_accuracy
-
-    # Generate figure with accuracies on different test sets for model and baseline
-    figure = generate_model_accuracy_of_testsets_2(labels.columns.tolist(), accuracy_df,
-                                                   per_attribute_baseline_accuracy.tolist(),
-                                                   all_attributes_baseline_accuracy)
-    # Save the figure
-    figure.write_image('{}/eval_fig.png'.format(config.experiments_dir), format='png', scale=3)
-    figure.show()
 
 
 if __name__ == '__main__':
