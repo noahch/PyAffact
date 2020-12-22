@@ -3,9 +3,9 @@
     "name": "extended_config_rolf"
   },
   "basic": {
-    "cuda_device_name": "cuda:6,cuda:7",
-    "experiment_name": "AFFACT Leaky RELU dropout Temp positive scale",
-    "experiment_description": "run own AFFACT with Leaky RELU dropout Temp positive scale",
+    "cuda_device_name": "cuda:4,cuda:5,cuda:6,cuda:7",
+    "experiment_name": "AFFACTLeakyRELUNoDropoutTempPositiveScaleLR024Gamma05",
+    "experiment_description": "run own AFFACT with Leaky RELU  no dropout Temp positive scale LR024Gamma05",
     "result_directory": "/local/scratch/noahAndYves/affact_experiment_results",
     "result_directory_name": "2020-12-01-13-17-07-baseline",
     "enable_wand_reporting": 1
@@ -13,7 +13,7 @@
   "model": {
     "name": "resnet_51-ext",
     "pretrained": 1,
-    "dropout": 0.13
+    "dropout": 0
   },
   "dataset": {
     "partition_filename": "/local/scratch/datasets/CelebA/protocol/list_eval_partition.txt",
@@ -25,11 +25,11 @@
     "bounding_boxes_filename": "/local/scratch/datasets/CelebA/protocol/list_bbox_celeba.txt"
   },
   "training": {
-    "epochs": 50,
+    "epochs": 75,
     "save_frequency": 5,
     "optimizer": {
       "type": "SGD",
-      "learning_rate": 0.1,
+      "learning_rate": 0.24,
       "momentum": 0
     },
     "criterion": {
@@ -38,15 +38,15 @@
     "lr_scheduler": {
       "type": "ReduceLROnPlateau",
       "step_size": 7,
-      "gamma": 0.1,
+      "gamma": 0.5,
       "patience": 4
     }
   },
   "preprocessing": {
     "dataloader": {
-      "batch_size": 128,
+      "batch_size": 256,
       "shuffle": "True",
-      "num_workers": 64,
+      "num_workers": 96,
       "prefetch_factor": 10
     },
     "save_preprocessed_image": {
