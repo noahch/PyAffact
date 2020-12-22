@@ -144,7 +144,7 @@ class TrainModel(ModelManager):
                 correct_classifications = 0
 
                 pbar = tqdm(range(self.datasets['dataset_sizes'][phase]))
-                pbar.clear()
+
 
                 # Iterate over data.
                 for inputs, labels, _ in self.datasets['dataloaders'][phase]:
@@ -249,6 +249,8 @@ class TrainModel(ModelManager):
                     epoch_accuracy_store_dict['train'] = epoch_attributes_correct_count_dict['train'].unsqueeze(
                         0).clone()
                     epoch_accuracy_store_dict['val'] = epoch_attributes_correct_count_dict['val'].unsqueeze(0).clone()
+
+            pbar.close()
 
         time_elapsed = time.time() - since
         logging.info('Training complete in {:.0f}m {:.0f}s'.format(

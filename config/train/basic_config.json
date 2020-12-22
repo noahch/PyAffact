@@ -46,7 +46,7 @@
   },
   "preprocessing": {
     "dataloader": {
-      "batch_size": 32,
+      "batch_size": 64,
       "shuffle": "True",
       "num_workers": 8,
       "prefetch_factor": 10
