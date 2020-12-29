@@ -16,7 +16,7 @@ def main(generate_accuracy_csv=False):
 
     """
     # Load configuration for evaluation
-    config = get_config('eval/2020-12-21-23-37-42-affactLeakyDropout')
+    config = get_config('eval/2020-12-22-17-26-28-affactLeakyDropout')
 
     # Init environment, use GPU if available, set random seed
     device = init_environment(config)
@@ -25,6 +25,7 @@ def main(generate_accuracy_csv=False):
     eval_instance = EvalModel(config, device)
 
     # Calculate accuracies on for prediction of model
+    # TODO: Check if csv not available.. then generate anyway
     if generate_accuracy_csv:
 
         # Run the evaluation
@@ -44,4 +45,4 @@ def main(generate_accuracy_csv=False):
 
 
 if __name__ == '__main__':
-    main(generate_accuracy_csv=False)
+    main(generate_accuracy_csv=True)

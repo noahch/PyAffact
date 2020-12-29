@@ -287,6 +287,7 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
     uniformtext=dict(minsize=6, mode='show'))
     return fig
 
+
 def generate_model_accuracy_of_testsets(labels, per_attribute_accuracy_list, per_attribute_baseline_accuracy,
                                       all_attributes_accuracy_list,
                                       all_attributes_baseline_accuracy):
