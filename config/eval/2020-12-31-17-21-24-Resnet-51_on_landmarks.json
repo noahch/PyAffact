@@ -1,6 +1,6 @@
 {
-  "weights_name": "015.pt",
-  "experiments_dir": "/home/noah/Desktop/affact/experts/2020-12-31-17-21-24-Resnet-51_on_landmarks",
+  "weights_name": "010.pt",
+  "experiments_dir": "/home/noah/Desktop/affact/experts/2021-resnet51-512",
   "basic": {
     "cuda_device_name": "cuda:0"
   },
