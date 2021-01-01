@@ -65,13 +65,13 @@ class AffactTransformer():
             # TODO: 5.5 and offsets AS PARAM
             w = h = 5.5 * d
 
-            # TODO: Replace with arctan2
-            if (t_eye_right[0] - t_eye_left[0]) == 0:
-                alpha = 0
-                # bob.io.base.save(im, 'error{}.jpg'.format(index))
-                # print('error')
-            else:
-                alpha = np.arctan((t_eye_right[1] - t_eye_left[1]) / (t_eye_right[0] - t_eye_left[0]))
+            # # TODO: Replace with arctan2
+            # if (t_eye_right[0] - t_eye_left[0]) == 0:
+            #     alpha = 0
+            #     # bob.io.base.save(im, 'error{}.jpg'.format(index))
+            #     # print('error')
+            # else:
+            alpha = np.arctan2((t_eye_right[1] - t_eye_left[1]) / (t_eye_right[0] - t_eye_left[0]))
 
             bbx = [t_eye[0] - 0.5 * w,
                    t_eye[1] - 0.45 * h,
@@ -99,7 +99,7 @@ class AffactTransformer():
         if self.config.preprocessing.transformation.scale_jitter.enabled:
             jitter_scale_mean = self.config.preprocessing.transformation.scale_jitter.normal_distribution.mean
             jitter_scale_std = self.config.preprocessing.transformation.scale_jitter.normal_distribution.std
-            scale *= np.random.normal(jitter_scale_mean, jitter_scale_std)
+            scale *= 2 ** np.random.normal(jitter_scale_mean, jitter_scale_std)
 
         if self.config.preprocessing.transformation.positive_scale.enabled:
             scale_factor = np.random.normal(self.config.preprocessing.transformation.positive_scale.normal_distribution.mean,
@@ -150,6 +150,9 @@ class AffactTransformer():
             sigma_mean = self.config.preprocessing.transformation.gaussian_blur.normal_distribution.mean
             sigma_std = self.config.preprocessing.transformation.gaussian_blur.normal_distribution.std
             sigma = np.random.normal(sigma_mean, sigma_std)
+            if sigma == 0.0:
+                sigma = 0.000001
+                print('sigma in gaussian was 0.0')
             gaussian = bob.ip.base.Gaussian((sigma, sigma), (int(3. * sigma), int(3. * sigma)))
             gaussian.filter(placeholder_out, placeholder_out)
 
