@@ -71,7 +71,7 @@ class AffactTransformer():
             #     # bob.io.base.save(im, 'error{}.jpg'.format(index))
             #     # print('error')
             # else:
-            alpha = np.arctan2((t_eye_right[1] - t_eye_left[1]) / (t_eye_right[0] - t_eye_left[0]))
+            alpha = np.arctan2((t_eye_right[1] - t_eye_left[1]), (t_eye_right[0] - t_eye_left[0]))
 
             bbx = [t_eye[0] - 0.5 * w,
                    t_eye[1] - 0.45 * h,
