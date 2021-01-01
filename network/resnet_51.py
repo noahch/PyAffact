@@ -7,7 +7,8 @@ __all__ = ['ResNet', 'resnet51']
 
 
 model_urls = {
-    'resnet50': 'https://download.pytorch.org/models/resnet50-19c8e357.pth'
+    'resnet50': 'https://download.pytorch.org/models/resnet50-19c8e357.pth',
+
 }
 
 
@@ -146,7 +147,7 @@ class ResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
-        self.fcRelu = nn.ReLU(inplace=True)
+        # self.fcRelu = nn.ReLU(inplace=True)
         self.fc51 = nn.Linear(num_classes, 40)
         # self.fc51Sigmoid = nn.Sigmoid()
 
@@ -207,7 +208,7 @@ class ResNet(nn.Module):
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.fc(x)
-        x = self.fcRelu(x)
+        # x = self.fcRelu(x)
         x = self.fc51(x)
         # x = self.fc51Sigmoid(x)
 
