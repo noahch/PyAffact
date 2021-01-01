@@ -3,7 +3,7 @@
     "name": "resnet51_s"
   },
   "basic": {
-    "cuda_device_name": "cuda:4,cuda:5,cuda:6,cuda:7",
+    "cuda_device_name": "cuda:2,cuda:3,cuda:4,cuda:5,cuda:6,cuda:7",
     "experiment_name": "Resnet-51_on_landmarks",
     "experiment_description": "Run experiment on landmarks",
     "model": "resnet_51",
@@ -46,7 +46,7 @@
   },
   "preprocessing": {
     "dataloader": {
-      "batch_size": 256,
+      "batch_size": 512,
       "shuffle": "True",
       "num_workers": 96,
       "prefetch_factor": 10
