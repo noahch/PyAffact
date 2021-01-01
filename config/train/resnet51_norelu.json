@@ -3,7 +3,7 @@
     "name": "resnet51_norelu"
   },
   "basic": {
-    "cuda_device_name": "cuda:7",
+    "cuda_device_name": "cuda:6",
     "experiment_name": "Resnet-51_on_landmarks_rms_norelu",
     "experiment_description": "Run experiment without relu between fc layers",
     "model": "resnet_51",
