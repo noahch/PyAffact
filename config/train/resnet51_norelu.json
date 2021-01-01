@@ -1,6 +1,6 @@
 {
   "config": {
-    "name": "resnet51_rms"
+    "name": "resnet51_norelu"
   },
   "basic": {
     "cuda_device_name": "cuda:7",
