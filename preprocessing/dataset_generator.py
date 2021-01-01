@@ -31,8 +31,9 @@ def get_train_val_dataset(config):
                                                                                              bounding_boxes)
 
     # Gets the validation labels, landmarks, bounding boxes according to the partition file
+    # TODO: Change partition back to 1
     df_val_labels, df_val_landmarks, df_val_bounding_boxes = _get_partition_dataframes(partition_df,
-                                                                                       1,
+                                                                                       2,
                                                                                        labels,
                                                                                        landmarks,
                                                                                        bounding_boxes)

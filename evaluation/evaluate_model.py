@@ -32,6 +32,8 @@ class EvalModel(ModelManager):
         # loop through all files of folder
         test_folders = os.listdir(self.config.dataset.testsets_path)
         test_folders.sort()
+        # TODO: Remove
+        test_folders = ['testsetAM']
 
         for testset in test_folders:
             print("Calculating Accuracy for: {}".format(testset))

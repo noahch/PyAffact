@@ -16,7 +16,7 @@ def main(generate_accuracy_csv=False):
 
     """
     # Load configuration for evaluation
-    config = get_config('eval/2020-12-22-17-26-28-affactLeakyDropout')
+    config = get_config('eval/2020-12-31-17-21-24-Resnet-51_on_landmarks')
 
     # Init environment, use GPU if available, set random seed
     device = init_environment(config)

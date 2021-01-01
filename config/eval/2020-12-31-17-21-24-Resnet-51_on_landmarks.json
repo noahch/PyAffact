@@ -1,0 +1,34 @@
+{
+  "weights_name": "015.pt",
+  "experiments_dir": "/home/noah/Desktop/affact/experts/2020-12-31-17-21-24-Resnet-51_on_landmarks",
+  "basic": {
+    "cuda_device_name": "cuda:0"
+  },
+  "model": {
+    "name": "resnet_51",
+    "pretrained": 1,
+    "dropout": 0,
+    "data_parallel": 1
+  },
+  "dataset": {
+    "partition_filename": "dataset/CelebA/list_eval_partition.txt",
+    "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
+    "landmarks_filename": "dataset/CelebA/list_landmarks_celeba.txt",
+    "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt",
+    "dataset_image_folder": "dataset/CelebA/Img",
+    "majority_class_file": "config/majority_classes_training_partition.pkl",
+    "testsets_path": "evaluation/dataset"
+  },
+  "evaluation": {
+    "quantitative": {
+      "enabled": 1
+    },
+    "qualitative": {
+      "enabled": 1,
+      "number_of_rows" : 2,
+      "number_of_images_per_row" : 3,
+      "testset_name": "testsetAA"
+    }
+  }
+}
+
