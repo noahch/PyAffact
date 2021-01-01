@@ -65,7 +65,7 @@ class AffactTransformer():
             # TODO: 5.5 and offsets AS PARAM
             w = h = 5.5 * d
 
-            # TODO: Discuss with Prof.
+            # TODO: Replace with arctan2
             if (t_eye_right[0] - t_eye_left[0]) == 0:
                 alpha = 0
                 # bob.io.base.save(im, 'error{}.jpg'.format(index))

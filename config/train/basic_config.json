@@ -8,21 +8,22 @@
     "experiment_description": "sample description",
     "model": "resnet_51",
     "pretrained": 1,
-    "result_directory": "/home/yves/Desktop/uzh/affact/results",
+    "result_directory": "/home/noah/Desktop/affact/PyAffact/PyAffact/experiments/results",
     "result_directory_name": "2020-12-01-13-17-07-baseline",
     "enable_wand_reporting": 0
   },
   "model": {
     "name": "resnet_51",
     "pretrained": 1,
-    "dropout": 0.2
+    "dropout": 0,
+    "data_parallel": 1
   },
   "dataset": {
     "partition_filename": "dataset/CelebA/list_eval_partition.txt",
     "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
     "dataset_image_folder": "dataset/CelebA/Img",
     "bounding_box_mode": 0,
-    "bounding_box_scale": 5,
+    "bounding_box_scale": 2,
     "landmarks_filename": "dataset/CelebA/list_landmarks_celeba.txt",
     "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt"
   },
@@ -30,8 +31,8 @@
     "epochs": 2,
     "save_frequency": 10,
     "optimizer": {
-      "type": "SGD",
-      "learning_rate": 0.1,
+      "type": "RMSprop",
+      "learning_rate": 0.0001,
       "momentum": 0
     },
     "criterion": {

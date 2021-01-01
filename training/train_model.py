@@ -65,6 +65,12 @@ class TrainModel(ModelManager):
                              lr=self.config.training.optimizer.learning_rate,
                              momentum=self.config.training.optimizer.momentum)
 
+        # RMSprop Optimizer
+        if self.config.training.optimizer.type == "RMSprop":
+            return optim.RMSprop(self.model_device.parameters(),
+                             lr=self.config.training.optimizer.learning_rate,
+                             momentum=self.config.training.optimizer.momentum)
+
         # Adam Optimizer
         if self.config.training.optimizer.type == "Adam":
             return optim.Adam(self.model_device.parameters(),
