@@ -4,6 +4,7 @@ Model Manager Class which helps setting up the model for training
 from torch import nn
 from network.resnet_51 import resnet51
 from network.resnet_51_ext import resnet51_ext
+from network.resnet_152 import resnet152
 
 
 class ModelManager():
@@ -43,9 +44,16 @@ class ModelManager():
         A model
         """
 
+        print(self.config.model.name)
+
         # ResNet-51 used for baseline and AFFACT experiments
         if self.config.model.name == "resnet_51":
             return resnet51(pretrained=bool(self.config.model.pretrained))
+
+        # ResNet-51 used for baseline and AFFACT experiments
+        if self.config.model.name == "resnet_152":
+            print("choosing model name resnet 152")
+            return resnet152(pretrained=bool(self.config.model.pretrained))
 
         # ResNet-51-ext which extends the Resnet-51 with additional layers
         if self.config.model.name == "resnet_51-ext":
