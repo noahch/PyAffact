@@ -15,7 +15,8 @@
   "model": {
     "name": "resnet_51",
     "pretrained": 1,
-    "dropout": 0
+    "dropout": 0,
+    "data_parallel": 1
   },
   "dataset": {
     "partition_filename": "/local/scratch/datasets/CelebA/protocol/list_eval_partition.txt",
