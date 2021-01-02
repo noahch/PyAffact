@@ -1,6 +1,6 @@
 {
   "config": {
-    "name": "resnet_152"
+    "name": "resnet152"
   },
   "basic": {
     "cuda_device_name": "cuda:2",
