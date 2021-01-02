@@ -8,7 +8,7 @@ import torch
 import random
 
 from torchvision.transforms import transforms
-from torchvision.transforms.functional import to_tensor
+from torchvision.transforms.functional import to_tensor, normalize
 
 from evaluation.utils import save_input_transform_output_image
 
@@ -183,4 +183,4 @@ class AffactTransformer():
         placeholder_out = placeholder_out.astype(np.uint8)
 
         # to_tensor normalizes the numpy array (HxWxC) in the range [0. 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
-        return to_tensor(placeholder_out)
+        return normalize(to_tensor(placeholder_out), mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
