@@ -3,9 +3,9 @@
     "name": "resnet51_rms"
   },
   "basic": {
-    "cuda_device_name": "cuda:5",
-    "experiment_name": "Resnet-51_64_rms_norm_xavier",
-    "experiment_description": "Run experiment on landmarks with RMS with norm from imagenet paper and fc51 xavier",
+    "cuda_device_name": "cuda:3",
+    "experiment_name": "Resnet-51_64_rms_norm_xavier_res",
+    "experiment_description": "Run experiment on landmarks with RMS with norm from imagenet paper and fc51 xavier residual true",
     "model": "resnet_51",
     "pretrained": 1,
     "result_directory": "/local/scratch/noahAndYves/affact_experiment_results",
