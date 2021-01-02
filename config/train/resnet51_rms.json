@@ -3,7 +3,7 @@
     "name": "resnet51_rms"
   },
   "basic": {
-    "cuda_device_name": "cuda:7",
+    "cuda_device_name": "cuda:4",
     "experiment_name": "Resnet-51_on_landmarks_rms",
     "experiment_description": "Run experiment on landmarks with RMS",
     "model": "resnet_51",
@@ -42,7 +42,7 @@
       "type": "ReduceLROnPlateau",
       "step_size": 7,
       "gamma": 0.1,
-      "patience": 4
+      "patience": 2
     }
   },
   "preprocessing": {
