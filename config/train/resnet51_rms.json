@@ -4,8 +4,8 @@
   },
   "basic": {
     "cuda_device_name": "cuda:4",
-    "experiment_name": "Resnet-51_on_landmarks_rms",
-    "experiment_description": "Run experiment on landmarks with RMS",
+    "experiment_name": "Resnet-51_on_landmarks_rms_norm",
+    "experiment_description": "Run experiment on landmarks with RMS with norm from imagenet paper",
     "model": "resnet_51",
     "pretrained": 1,
     "result_directory": "/local/scratch/noahAndYves/affact_experiment_results",
