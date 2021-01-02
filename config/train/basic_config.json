@@ -6,14 +6,14 @@
     "cuda_device_name": "cuda:0",
     "experiment_name": "baseline on own network",
     "experiment_description": "sample description",
-    "model": "resnet_152",
+    "model": "resnet_51",
     "pretrained": 1,
     "result_directory": "results",
     "result_directory_name": "2020-12-01-13-17-07-baseline",
     "enable_wand_reporting": 0
   },
   "model": {
-    "name": "resnet_152",
+    "name": "resnet_51",
     "pretrained": 1,
     "dropout": 0,
     "data_parallel": 0

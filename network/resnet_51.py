@@ -149,6 +149,10 @@ class ResNet(nn.Module):
         self.fc = nn.Linear(512 * block.expansion, num_classes)
         # self.fcRelu = nn.ReLU(inplace=True)
         self.fc51 = nn.Linear(num_classes, 40)
+        torch.nn.init.xavier_uniform_(self.fc51.weight)
+        torch.nn.init.zeros_(self.fc51.bias)
+
+
         # self.fc51Sigmoid = nn.Sigmoid()
 
         for m in self.modules():
@@ -223,6 +227,7 @@ def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     if pretrained:
         state_dict = load_state_dict_from_url(model_urls[arch],
                                               progress=progress)
+
         # for k,v in state_dict.items():
         #     print(k)
         model.load_state_dict(state_dict, strict=False)
