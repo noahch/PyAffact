@@ -149,8 +149,8 @@ class ResNet(nn.Module):
         self.fc = nn.Linear(512 * block.expansion, num_classes)
         # self.fcRelu = nn.ReLU(inplace=True)
         self.fc51 = nn.Linear(num_classes, 40)
-        torch.nn.init.xavier_uniform_(self.fc51.weight)
-        torch.nn.init.zeros_(self.fc51.bias)
+        # torch.nn.init.xavier_uniform_(self.fc51.weight)
+        # torch.nn.init.zeros_(self.fc51.bias)
 
 
         # self.fc51Sigmoid = nn.Sigmoid()
