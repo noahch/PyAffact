@@ -185,6 +185,8 @@ class ResNet(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
         self.fc2 = nn.Linear(num_classes, 40)
+        self.fc3 = nn.Linear(40, 128)
+        self.fc4 = nn.Linear(128, 40)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -243,7 +245,12 @@ class ResNet(nn.Module):
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.fc(x)
+        x = nn.LeakyReLU(x)
         x = self.fc2(x)
+        x = nn.LeakyReLU(x)
+        x = self.fc3(x)
+        x = nn.LeakyReLU(x)
+        x = self.fc4(x)
 
         return x
 

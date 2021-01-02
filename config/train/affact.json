@@ -1,11 +1,11 @@
 {
   "config": {
-    "name": "resnet51_s"
+    "name": "affact"
   },
   "basic": {
-    "cuda_device_name": "cuda:4",
-    "experiment_name": "Resnet-51-S",
-    "experiment_description": "Train Baseline Network ResNet-51-S",
+    "cuda_device_name": "cuda:7",
+    "experiment_name": "AFFACT",
+    "experiment_description": "Train the AFFACT Network",
     "model": "resnet_51",
     "pretrained": 1,
     "result_directory": "/local/scratch/noahAndYves/affact_experiment_results",
@@ -28,8 +28,8 @@
     "bounding_boxes_filename": "/local/scratch/datasets/CelebA/protocol/list_bbox_celeba.txt"
   },
   "training": {
-    "epochs": 10,
-    "save_frequency": 2,
+    "epochs": 35,
+    "save_frequency": 5,
     "optimizer": {
       "type": "RMSprop",
       "learning_rate": 0.0001,
@@ -62,39 +62,39 @@
         "y": 224
       },
       "scale_jitter": {
-        "enabled": 0,
+        "enabled": 1,
         "normal_distribution": {
           "mean": 0,
           "std": 0.1
         }
       },
       "angle_jitter": {
-        "enabled": 0,
+        "enabled": 1,
         "normal_distribution": {
           "mean": 0,
           "std": 20
         }
       },
       "shift_jitter": {
-        "enabled": 0,
+        "enabled": 1,
         "normal_distribution": {
           "mean": 0,
           "std": 0.05
         }
       },
       "mirror": {
-        "enabled": 0,
+        "enabled": 1,
         "probability": 0.5
       },
       "gaussian_blur": {
-        "enabled": 0,
+        "enabled": 1,
         "normal_distribution": {
           "mean": 0,
           "std": 3
         }
       },
       "gamma": {
-        "enabled": 0,
+        "enabled": 1,
         "normal_distribution": {
           "mean": 0,
           "std": 1

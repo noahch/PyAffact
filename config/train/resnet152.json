@@ -3,13 +3,13 @@
     "name": "resnet152"
   },
   "basic": {
-    "cuda_device_name": "cuda:2",
-    "experiment_name": "Resnet-152-32-Res-NoRelu-Norm",
-    "experiment_description": "Run experiment with resnet 152 instead of resnet 50",
+    "cuda_device_name": "cuda:5",
+    "experiment_name": "Resnet-152",
+    "experiment_description": "Train ResNet-152 AFFACT",
     "model": "resnet_152",
     "pretrained": 1,
     "result_directory": "/local/scratch/noahAndYves/affact_experiment_results",
-    "result_directory_name": "2020-12-01-13-17-07-baseline",
+    "result_directory_name": "",
     "enable_wand_reporting": 1
   },
   "model": {
@@ -62,35 +62,35 @@
         "y": 224
       },
       "scale_jitter": {
-        "enabled": 0,
+        "enabled": 1,
         "normal_distribution": {
-          "mean": 1,
+          "mean": 0,
           "std": 0.1
         }
       },
       "angle_jitter": {
-        "enabled": 0,
+        "enabled": 1,
         "normal_distribution": {
           "mean": 0,
           "std": 20
         }
       },
       "shift_jitter": {
-        "enabled": 0,
+        "enabled": 1,
         "normal_distribution": {
           "mean": 0,
           "std": 0.05
         }
       },
       "mirror": {
-        "enabled": 0,
+        "enabled": 1,
         "probability": 0.5
       },
       "gaussian_blur": {
-        "enabled": 0,
+        "enabled": 1,
         "normal_distribution": {
           "mean": 0,
-          "std": 0.3
+          "std": 3
         }
       },
       "gamma": {
@@ -108,7 +108,7 @@
         }
       },
       "temperature": {
-        "enabled": 0
+        "enabled": 1
       }
     }
   }
