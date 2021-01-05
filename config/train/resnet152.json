@@ -3,7 +3,7 @@
     "name": "resnet152"
   },
   "basic": {
-    "cuda_device_name": "cuda:2,cuda:3,cuda:4,cuda:5",
+    "cuda_device_name": "cuda:5",
     "experiment_name": "Resnet-152",
     "experiment_description": "Train ResNet-152 AFFACT",
     "model": "resnet_152",
@@ -31,8 +31,8 @@
     "epochs": 35,
     "save_frequency": 5,
     "optimizer": {
-      "type": "SGD",
-      "learning_rate": 0.1,
+      "type": "RMSprop",
+      "learning_rate": 0.0001,
       "momentum": 0
     },
     "criterion": {
@@ -47,9 +47,9 @@
   },
   "preprocessing": {
     "dataloader": {
-      "batch_size": 256,
+      "batch_size": 16,
       "shuffle": "True",
-      "num_workers": 72,
+      "num_workers": 12,
       "prefetch_factor": 10
     },
     "save_preprocessed_image": {
@@ -94,7 +94,7 @@
         }
       },
       "gamma": {
-        "enabled": 0,
+        "enabled": 1,
         "normal_distribution": {
           "mean": 0,
           "std": 1

@@ -184,12 +184,8 @@ class ResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
-        self.fcLeakyRelu = nn.SiLU()
-        self.fc2 = nn.Linear(num_classes, 40)
-        self.fc2LeakyRelu = nn.SiLU()
-        self.fc3 = nn.Linear(40, 128)
-        self.fc3LeakyRelu = nn.SiLU()
-        self.fc4 = nn.Linear(128, 40)
+        self.fc1 = nn.Linear(num_classes, 40)
+
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -248,12 +244,7 @@ class ResNet(nn.Module):
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.fc(x)
-        x = self.fcLeakyRelu(x)
-        x = self.fc2(x)
-        x = self.fc2LeakyRelu(x)
-        x = self.fc3(x)
-        x = self.fc3LeakyRelu(x)
-        x = self.fc4(x)
+        x = self.fc1(x)
 
         return x
 
