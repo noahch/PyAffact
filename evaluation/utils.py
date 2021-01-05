@@ -76,7 +76,7 @@ def image_grid_and_accuracy_plot(images, accuracy_list, number_of_img_per_row=3,
         matplotlib.use('TkAgg')
     plt.ion()
     plt.clf()
-    plot_rows = math.ceil(images.shape[0] / number_of_img_per_row)
+    plot_rows = math.ceil(len(images) / number_of_img_per_row)
     fig = plt.figure()
     fig.set_size_inches(5 * number_of_img_per_row, 5.5 * plot_rows)
     fig.tight_layout()

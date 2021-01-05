@@ -1,5 +1,5 @@
 {
-  "dataset_result_folder": "evaluation/dataset/testsetAM2",
+  "dataset_result_folder": "evaluation/dataset/testsetAM",
   "dataset": {
     "partition_filename": "dataset/CelebA/list_eval_partition.txt",
     "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
@@ -22,7 +22,7 @@
       "scale_jitter": {
         "enabled": 0,
         "normal_distribution": {
-          "mean": 1,
+          "mean": 0,
           "std": 0.1
         }
       },

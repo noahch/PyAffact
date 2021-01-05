@@ -1,6 +1,6 @@
 {
-  "weights_name": "best-42.pt",
-  "experiments_dir": "/home/noah/Desktop/affact/experts/2020-12-08-16-37-10-affact",
+  "weights_name": "best-25.pt",
+  "experiments_dir": "/home/noah/Desktop/affact/final_results/affact",
   "basic": {
     "cuda_device_name": "cuda:0"
   },
@@ -8,7 +8,7 @@
     "name": "resnet_51",
     "pretrained": 1,
     "dropout": 0,
-    "data_parallel": 0
+    "data_parallel": 1
   },
   "dataset": {
     "partition_filename": "dataset/CelebA/list_eval_partition.txt",
@@ -28,7 +28,7 @@
       "enabled": 1,
       "number_of_rows" : 2,
       "number_of_images_per_row" : 3,
-      "testset_name": "testsetAA"
+      "testset_name": "testsetAM"
     }
   }
 }

@@ -2,6 +2,8 @@
 """
 main evaluation file
 """
+import random
+
 from evaluation.evaluate_model import EvalModel
 from utils.config_utils import get_config
 from utils.utils import init_environment
@@ -16,7 +18,9 @@ def main(generate_accuracy_csv=False):
 
     """
     # Load configuration for evaluation
-    config = get_config('eval/2020-12-31-17-21-24-Resnet-51_on_landmarks')
+    config = get_config('eval/resnet152')
+    config = get_config('eval/affact')
+    config = get_config('eval/resnet51')
 
     # Init environment, use GPU if available, set random seed
     device = init_environment(config)
@@ -45,4 +49,4 @@ def main(generate_accuracy_csv=False):
 
 
 if __name__ == '__main__':
-    main(generate_accuracy_csv=True)
+    main(generate_accuracy_csv=False)

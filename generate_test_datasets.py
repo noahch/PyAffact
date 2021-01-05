@@ -1,3 +1,5 @@
+import random
+
 import bob
 from PIL import Image
 from facenet_pytorch.models.mtcnn import MTCNN
@@ -29,6 +31,7 @@ def main():
     print('Creating testset AM (aligned, manual)')
     data_transforms_AM = transforms.Compose([AffactTransformer(config)])
     _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_AM)
+
     # Define transformations for dataset AA (aligned, automatically)
     # Consists of images aligned according to the face detector
     print('Creating testset AA (aligned, automatically)')
@@ -38,9 +41,8 @@ def main():
     # face detector -> grösser bbx -> 10crop
     config = get_config('dataset/testsetC_config')
     print('Creating testset C (10 crop)')
-    data_transforms_C = transforms.Compose([AffactTransformer(config), TenCrop(224)])
-    _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_C,
-                       uses_tencrop=True)
+    data_transforms_C = transforms.Compose([AffactTransformer(config)])
+    _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_C)
     # face detector -> bigger bbx -> AFFACT Transformations
     config = get_config('dataset/testsetT_config')
     print('Creating testset T (AFFACT transformations)')
@@ -55,7 +57,8 @@ def main():
 
 
 
-def _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, transformer, uses_tencrop=False):
+
+def _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, transformer):
     """
     Generates test images based on dataframes
 
@@ -74,7 +77,7 @@ def _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bound
 
     # TODO
     # create_directory(config.dataset_result_folder, recreate=True)
-    create_directory(config.dataset_result_folder)
+    create_directory(config.dataset_result_folder, recreate=True)
     print("created {}".format(config.dataset_result_folder))
     pbar = tqdm(range(len(df_test_labels.index)))
     # pbar.clear()
@@ -101,7 +104,7 @@ def _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bound
                 bounding_boxes[2] = bounding_boxes[2] - bounding_boxes[0]
                 bounding_boxes[3] = bounding_boxes[3] - bounding_boxes[1]
             except:
-                print(row.name)
+                # print(row.name)
                 bounding_boxes = df_test_bounding_boxes.iloc[index].tolist()
                 bounding_boxes = bounding_boxes[1:]
 
@@ -119,18 +122,17 @@ def _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bound
         }
         X = transformer(input)
 
-        if not uses_tencrop:
-            img = tensor_to_image(X)
-            img.save('{}/{}'.format(config.dataset_result_folder, row.name))
-        else:
-            for i in range(10):
-                img = tensor_to_image(X[i])
-                img.save('{}/{}_{}'.format(config.dataset_result_folder, i, row.name))
+
+        img = tensor_to_image(X)
+        img.save('{}/{}'.format(config.dataset_result_folder, row.name[:-3] + 'png'))
+
 
         pbar.update(1)
     pbar.close()
 
 
 if __name__ == '__main__':
+    random.seed(a=0, version=2)
+    np.random.seed(0)
     main()
 

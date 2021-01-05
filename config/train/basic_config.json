@@ -62,7 +62,7 @@
         "y": 224
       },
       "scale_jitter": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 0,
           "std": 0.1
@@ -101,7 +101,7 @@
         }
       },
       "positive_scale": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 1.2,
           "std": 0.3

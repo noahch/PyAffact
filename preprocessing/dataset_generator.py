@@ -4,7 +4,7 @@ function to generate the training and validation dataset
 import os
 import pandas as pd
 import torch
-from torchvision.transforms import transforms
+from torchvision.transforms import transforms, Normalize
 from preprocessing.affact_transformer import AffactTransformer
 from preprocessing.celeb_a_dataset import CelebADataset
 
@@ -38,7 +38,8 @@ def get_train_val_dataset(config):
                                                                                        bounding_boxes)
 
     # Define the transformations that are applied to each image
-    data_transforms = transforms.Compose([AffactTransformer(config)])
+    data_transforms = transforms.Compose([AffactTransformer(config),
+                                          Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
     # Generates the data for training
     dataset_train, training_generator = generate_dataset_and_loader(data_transforms, df_train_labels,

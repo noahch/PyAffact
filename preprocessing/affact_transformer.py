@@ -1,13 +1,12 @@
+import math
+
 import bob.io.image
 import bob.ip.base
 import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
-import torch
 import random
 
-from torchvision.transforms import transforms
 from torchvision.transforms.functional import to_tensor, normalize
 
 from evaluation.utils import save_input_transform_output_image
@@ -71,7 +70,7 @@ class AffactTransformer():
             #     # bob.io.base.save(im, 'error{}.jpg'.format(index))
             #     # print('error')
             # else:
-            alpha = np.arctan2((t_eye_right[1] - t_eye_left[1]), (t_eye_right[0] - t_eye_left[0]))
+            alpha = math.degrees(np.arctan2((t_eye_right[1] - t_eye_left[1]), (t_eye_right[0] - t_eye_left[0])))
 
             bbx = [t_eye[0] - 0.5 * w,
                    t_eye[1] - 0.45 * h,
@@ -183,4 +182,4 @@ class AffactTransformer():
         placeholder_out = placeholder_out.astype(np.uint8)
 
         # to_tensor normalizes the numpy array (HxWxC) in the range [0. 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
-        return normalize(to_tensor(placeholder_out), mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        return to_tensor(placeholder_out)

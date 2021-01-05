@@ -22,7 +22,7 @@
       "scale_jitter": {
         "enabled": 0,
         "normal_distribution": {
-          "mean": 1,
+          "mean": 0,
           "std": 0.1
         }
       },

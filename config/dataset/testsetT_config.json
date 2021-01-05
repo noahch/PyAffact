@@ -22,7 +22,7 @@
       "scale_jitter": {
         "enabled": 1,
         "normal_distribution": {
-          "mean": 1,
+          "mean": 0,
           "std": 0.1
         }
       },
@@ -45,7 +45,7 @@
         "probability": 0.5
       },
       "gaussian_blur": {
-        "enabled": 1,
+        "enabled": 0,
         "normal_distribution": {
           "mean": 0,
           "std": 0.3
