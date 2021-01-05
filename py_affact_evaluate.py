@@ -49,4 +49,4 @@ def main(generate_accuracy_csv=False):
 
 
 if __name__ == '__main__':
-    main(generate_accuracy_csv=False)
+    main(generate_accuracy_csv=True)

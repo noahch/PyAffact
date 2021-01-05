@@ -44,3 +44,43 @@ python py_affact_main.py --preprocessing.dataset.use_partition_file=0 --preproce
     - erst bei subset netzwerk besser als baseline
     
                         /local/scratch/datasets/CelebA/protocol/list_eval_partition.txt
+                        
+                        
+                       
+######
+
+# Intro
+ - Abstract
+ - Struktur
+ - Prerequisites
+    - CelebA Dataset
+    
+# Setup
+- Install bob with conda
+- Clone Repo
+- Install
+- WandB
+- MultiGPU
+- CUDA
+ 
+# Training a model
+## Resnet51
+    - Results
+## Affact
+    - Result
+    
+ - config
+ - welches file
+ - resultat ordner
+ - transformer
+
+# Evaluate
+## Generate Test datasets
+
+## Evaluate model
+- config
+- qualitative
+- qunatitative
+
+
+

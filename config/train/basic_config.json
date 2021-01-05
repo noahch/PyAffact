@@ -65,7 +65,7 @@
         "enabled": 0,
         "normal_distribution": {
           "mean": 0,
-          "std": 0.1
+          "std": 0.5
         }
       },
       "angle_jitter": {

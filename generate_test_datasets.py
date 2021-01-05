@@ -26,28 +26,30 @@ def main():
     config = get_config('dataset/testsetA_config')
     # Load dataframes for testing
     df_test_labels, df_test_landmarks, df_test_bounding_boxes = generate_test_dataset(config)
-    # Define transformations for dataset AM (aligned, manual)
+    # Define transformations for dataset A (aligned)
     # Consists of images aligned according to the hand-labled landmarks
     print('Creating testset A (aligned)')
-    data_transforms_AM = transforms.Compose([AffactTransformer(config)])
-    _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_AM)
+    data_transforms_A = transforms.Compose([AffactTransformer(config)])
+    _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_A)
 
-    # # Define transformations for dataset D (detected bounding boxes)
-    # # Consists of images aligned according to the face detector
-    # print('Creating testset D (detected bounding boxes)')
-    # config = get_config('dataset/testsetD_config')
-    # data_transforms_D= transforms.Compose([AffactTransformer(config)])
-    # _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_D)
-    # # face detector -> grösser bbx -> 10crop
-    # config = get_config('dataset/testsetC_config')
-    # print('Creating testset C (10 crop)')
-    # data_transforms_C = transforms.Compose([AffactTransformer(config)])
-    # _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_C)
+    # Define transformations for dataset D (detected bounding boxes)
+    # Consists of images aligned according to the face detector
+    print('Creating testset D (detected bounding boxes)')
+    config = get_config('dataset/testsetD_config')
+    data_transforms_D= transforms.Compose([AffactTransformer(config)])
+    _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_D)
+
+    # face detector -> grösser bbx -> 10crop
+    config = get_config('dataset/testsetC_config')
+    print('Creating testset C (10 crop)')
+    data_transforms_C = transforms.Compose([AffactTransformer(config)])
+    _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_C)
+
     # # face detector -> bigger bbx -> AFFACT Transformations
-    # config = get_config('dataset/testsetT_config')
-    # print('Creating testset T (AFFACT transformations)')
-    # data_transforms_T = transforms.Compose([AffactTransformer(config)])
-    # _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_T)
+    config = get_config('dataset/testsetT_config')
+    print('Creating testset T (AFFACT transformations)')
+    data_transforms_T = transforms.Compose([AffactTransformer(config)])
+    _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_T)
     #
     # # Face detector --> bbx scale 2.5
     # config = get_config('dataset/testsetAZ_config')

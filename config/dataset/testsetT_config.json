@@ -7,7 +7,7 @@
     "bounding_boxes_filename": "dataset/CelebA/list_bbox_celeba.txt",
     "dataset_image_folder": "dataset/CelebA/Img",
     "bounding_box_mode": 2,
-    "bounding_box_scale": 1.5
+    "bounding_box_scale": 2
   },
   "preprocessing": {
     "save_transformation_image": {

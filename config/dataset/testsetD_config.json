@@ -1,5 +1,5 @@
 {
-  "dataset_result_folder": "evaluation/dataset/testsetC",
+  "dataset_result_folder": "evaluation/dataset/testsetD",
   "dataset": {
     "partition_filename": "dataset/CelebA/list_eval_partition.txt",
     "dataset_labels_filename": "dataset/CelebA/list_attr_celeba.txt",
@@ -16,8 +16,8 @@
     },
     "transformation": {
       "crop_size": {
-        "x": 256,
-        "y": 256
+        "x": 224,
+        "y": 224
       },
       "scale_jitter": {
         "enabled": 0,

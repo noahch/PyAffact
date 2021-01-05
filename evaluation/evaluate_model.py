@@ -85,54 +85,54 @@ class EvalModel(ModelManager):
             pbar.close()
 
 
-        # # validate 10 crop
-        # testset = 'testsetC'
-        # print("Calculating Accuracy for: {}".format(testset))
-        # test_folder = os.path.join(self.config.dataset.testsets_path, testset)
-        # image_names = [f for f in os.listdir(test_folder) if os.path.isfile(os.path.join(test_folder, f))]
-        # pbar = tqdm(range(len(image_names)))
-        # attributes_correct_count = torch.zeros(self.labels.shape[1])
-        # attributes_correct_count = attributes_correct_count.to(self.device)
-        # for img in image_names:
-        #     image, y, _ = self._image_and_label_to_tensor(img, testset)
-        #     transf = transforms.Compose([TenCrop(224)])
-        #     x = transf(image)
-        #
-        #     # turn list of tensors to 1 tensor of shape batch size C x H x W
-        #     inputs = torch.stack(x)
-        #
-        #     # turn list of tensors to 1 tensor of shape batch size x number of labels
-        #     labels = torch.stack([y]*10)
-        #
-        #     # inputs on GPU
-        #     inputs = inputs.to(self.device)
-        #
-        #     # labels on GPU
-        #     labels = labels.to(self.device)
-        #
-        #     # do not track history if inference
-        #     with torch.no_grad():
-        #         outputs = self.model_device(inputs)
-        #
-        #         # round percentages to 0 or 1
-        #         outputs[outputs < 0.5] = 0
-        #         outputs[outputs >= 0.5] = 1
-        #
-        #         # sum the outputs of the 10 crops
-        #         outputs_sum = torch.sum(outputs, dim=0)  # size = [1, ncol]
-        #
-        #         # take majority guess
-        #         outputs_sum[outputs_sum < 5] = 0
-        #         outputs_sum[outputs_sum >= 5] = 1
-        #
-        #         attributes_correct_count += torch.sum(outputs_sum == labels[0].unsqueeze(0), dim=0)
-        #     pbar.update(1)
-        #
-        # per_attribute_accuracy = attributes_correct_count / len(image_names)
-        # per_attribute_accuracy_list.append(per_attribute_accuracy.tolist())
-        #
-        # pbar.close()
-        # test_folders.append('testsetC')
+        # validate 10 crop
+        testset = 'testsetC'
+        print("Calculating Accuracy for: {}".format(testset))
+        test_folder = os.path.join(self.config.dataset.testsets_path, testset)
+        image_names = [f for f in os.listdir(test_folder) if os.path.isfile(os.path.join(test_folder, f))]
+        pbar = tqdm(range(len(image_names)))
+        attributes_correct_count = torch.zeros(self.labels.shape[1])
+        attributes_correct_count = attributes_correct_count.to(self.device)
+        for img in image_names:
+            image, y, _ = self._image_and_label_to_tensor(img, testset)
+            transf = transforms.Compose([TenCrop(224)])
+            x = transf(image)
+
+            # turn list of tensors to 1 tensor of shape batch size C x H x W
+            inputs = torch.stack(x)
+
+            # turn list of tensors to 1 tensor of shape batch size x number of labels
+            labels = torch.stack([y]*10)
+
+            # inputs on GPU
+            inputs = inputs.to(self.device)
+
+            # labels on GPU
+            labels = labels.to(self.device)
+
+            # do not track history if inference
+            with torch.no_grad():
+                outputs = self.model_device(inputs)
+
+                # round percentages to 0 or 1
+                outputs[outputs < 0.5] = 0
+                outputs[outputs >= 0.5] = 1
+
+                # sum the outputs of the 10 crops
+                outputs_sum = torch.sum(outputs, dim=0)  # size = [1, ncol]
+
+                # take majority guess
+                outputs_sum[outputs_sum < 5] = 0
+                outputs_sum[outputs_sum >= 5] = 1
+
+                attributes_correct_count += torch.sum(outputs_sum == labels[0].unsqueeze(0), dim=0)
+            pbar.update(1)
+
+        per_attribute_accuracy = attributes_correct_count / len(image_names)
+        per_attribute_accuracy_list.append(per_attribute_accuracy.tolist())
+
+        pbar.close()
+        test_folders.append('testsetC')
 
         df = pd.DataFrame(np.transpose(per_attribute_accuracy_list), columns=test_folders)
         return df

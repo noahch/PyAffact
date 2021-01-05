@@ -28,7 +28,7 @@
       "enabled": 1,
       "number_of_rows" : 2,
       "number_of_images_per_row" : 3,
-      "testset_name": "testsetAM"
+      "testset_name": "testsetA"
     }
   }
 }
