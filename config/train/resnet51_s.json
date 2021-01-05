@@ -3,7 +3,7 @@
     "name": "resnet51_s"
   },
   "basic": {
-    "cuda_device_name": "cuda:4",
+    "cuda_device_name": "cuda:6",
     "experiment_name": "Resnet-51-S",
     "experiment_description": "Train Baseline Network ResNet-51-S",
     "model": "resnet_51",
