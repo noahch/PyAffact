@@ -37,6 +37,9 @@ Abstract
     ```bash
     # create a new Conda environment with Python 3.7
     conda create -n affact python=3.7
+   
+    # activate environment
+    conda activate affact
 
     # install all requirements for bob (image processing library)
     # UNIX based system needed
