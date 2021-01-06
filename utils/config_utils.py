@@ -6,6 +6,8 @@ import os
 import argparse
 import collections
 from datetime import datetime
+
+import yaml
 from dotmap import DotMap
 
 
@@ -30,9 +32,9 @@ def get_config(config_name=None):
         config_name = args.__dict__['config.name']
 
     # load the file and parse it to a DotMap
-    with open("config/" + config_name + ".json", "r") as file:
-        my_dict = json.load(file)
-    config = DotMap(my_dict)
+    with open("config/" + config_name + ".yml", "r") as file:
+        config_dict = yaml.safe_load(file)
+    config = DotMap(config_dict)
 
     # Overwrite default values
     return _overwrite_defaults(config, args)

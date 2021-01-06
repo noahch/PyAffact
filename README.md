@@ -1,59 +1,75 @@
 # PyAffact
 PyTorch implementation of the Affact Paper
 
-# CMDs
-- conda install -c https://www.idiap.ch/software/bob/conda bob.io.image
-- conda install -c https://www.idiap.ch/software/bob/conda bob.ip.base
-- conda install pytorch torchvision torchaudio cudatoolkit=11.0 -c pytorch
-- conda install -c plotly plotly-orca
+Abstract
 
-#Today
-- baseline
+## Table of contents
 
-# TODO
-- landmark detector
-- color temp shift
-- Multi GPU
-- continue training
-- report
-- refactoring
+* [Table of contents](#table-of-contents)
+* [Quick start](#quick-start)
+  + [*Configuration file*](#configuration-file)
+  + [*WandB*](#wandb)
+* [Pretrained models](#pretrained-models)
+* [Training a model](#training-a-model)
+  + [*Resnet51-S*](#training-resnet51-s)
+  + [*AFFACT*](#training-affact)
+  + [*Resnet152*](#training-resnet152)
+* [Evaluation of a model](#evaluation-of-a-model)
+  + [*Generate test datasets*](#generate-test-datasets)
+  + [*Resnet51-S*](#training-resnet51-s)
+  + [*AFFACT*](#training-affact)
+  + [*Resnet152*](#training-resnet152)
+* [Training on multiple GPUs](#training-on-multiple-gpus)
+* [References](#references)
 
+## Quick start
 
-- hyperopt, with multiple arguments
-- POS_weight with BCEWithLogitsLoss
-
-# Experiments
-affact:
-    - sgd: 0.1 und denn lr --> 0.01 (ohne momentum)
-        --config.name=affact_config_rolf --basic.cuda_device_name=cuda:7 --basic.experiment_name=affactSgdNoMomentumLR001 --training.optimizer.momentum=0
-    - adam: 0.1, gamma: 0.1, lr step = 10, 20 epochs
-        --config.name=affact_config_rolf --basic.cuda_device_name=cuda:6 --basic.experiment_name=affactAdamLR01 --training.lr_scheduler.step_size=10 --training.optimizer.type=Adam
-    - adam: 0.01, 30 epochs
-        --config.name=affact_config_rolf --basic.cuda_device_name=cuda:5 --basic.experiment_name=affactAdamLR001 --training.optimizer.type=Adam --training.lr_scheduler.step_size=10 --training.optimizer.learning_rate=0.01
-baseline:
-    - adam: 0.1
-        --config.name=baseline_config_rolf --basic.cuda_device_name=cuda:4 --basic.experiment_name=baselineAdamLR01 --training.optimizer.type=Adam --training.lr_scheduler.step_size=10
-
-
-python py_affact_main.py --preprocessing.dataset.use_partition_file=0 --preprocessing.dataset.number_of_samples=500 --training.epochs=1
-
-
-# Questions
-- evaluation:
-    - welche bilder zur evaluation brauchen um performance von unserem und ihres zu vergleichen?
-    - erst bei subset netzwerk besser als baseline
+1. Clone the repository:
     
-                        /local/scratch/datasets/CelebA/protocol/list_eval_partition.txt
-                        
-                        
-                       
-######
+    ```bash
+    git clone https://github.com/noahch/PyAffact
+   ```
+
+2. Create a new Conda environment and install all dependencies:
+
+    ```bash
+    # create a new Conda environment with Python 3.7
+    conda create -n affact python=3.7
+    
+    # install all requirements for bob (image processing library)
+    # UNIX based system needed
+    conda install -c https://www.idiap.ch/software/bob/conda bob.io.image
+    conda install -c https://www.idiap.ch/software/bob/conda bob.ip.base
+   
+    # install pytorch according to your system's specification (e.g. for RTX 3070):
+    conda install pytorch torchvision torchaudio cudatoolkit=11.0 -c pytorch
+    
+    # install all other dependencies
+    pip install -r requirements.txt
+   ```    
+   
+3. Evaluate a pretrained model:
+    
+    ```bash
+    # inside the conda environment, run the following command:
+   python py_affact_evaluate.py --config.name=eval/affact     
+    ```
+    
+4. Train a model:
+    
+    ```bash
+    # inside the conda environment, run the following command:
+   python py_affact_train.py --config.name=train/affact     
+    ```
+
+See `help(py_affact_train)` and `help(py_affact_evaluate)` for usage and implementation details.
+
+## Prerequisites
+In order to train a model, download the CelebA dataset [here](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)
 
 # Intro
  - Abstract
- - Struktur
- - Prerequisites
-    - CelebA Dataset
+
     
 # Setup
 - Install bob with conda
@@ -81,6 +97,3 @@ python py_affact_main.py --preprocessing.dataset.use_partition_file=0 --preproce
 - config
 - qualitative
 - qunatitative
-
-
-

@@ -100,12 +100,6 @@ class AffactTransformer():
             jitter_scale_std = self.config.preprocessing.transformation.scale_jitter.normal_distribution.std
             scale *= 2 ** np.random.normal(jitter_scale_mean, jitter_scale_std)
 
-        if self.config.preprocessing.transformation.positive_scale.enabled:
-            scale_factor = np.random.normal(self.config.preprocessing.transformation.positive_scale.normal_distribution.mean,
-                                            self.config.preprocessing.transformation.positive_scale.normal_distribution.std)
-            scale *= 1/scale_factor
-
-
         if self.config.preprocessing.transformation.angle_jitter.enabled:
             jitter_angle_mean = self.config.preprocessing.transformation.angle_jitter.normal_distribution.mean
             jitter_angle_std = self.config.preprocessing.transformation.angle_jitter.normal_distribution.std

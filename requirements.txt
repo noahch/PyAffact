@@ -1,54 +1,95 @@
+appdirs==1.4.4
+argh==0.26.2
+astroid @ file:///tmp/build/80754af9/astroid_1592495881661/work
+autopep8==1.5.4
 backcall==0.2.0
-certifi==2020.6.20
-chardet==3.0.4
+black==20.8b1
+bob.blitz==2.0.22
+bob.core==2.2.6
+bob.extension==5.0.1
+bob.io.base==3.0.9
+bob.io.image==2.4.6
+bob.ip.base==2.2.6
+bob.math==3.1.7
+bob.sp==2.0.16
+brotlipy==0.7.0
+certifi==2020.12.5
+cffi @ file:///tmp/build/80754af9/cffi_1606255099073/work
+chardet @ file:///tmp/build/80754af9/chardet_1605303159953/work
 click==7.1.2
 click-plugins==1.1.1
-configparser==5.0.1
+configparser @ file:///tmp/build/80754af9/configparser_1602256123427/work
+cryptography @ file:///tmp/build/80754af9/cryptography_1605544449973/work
 cycler==0.10.0
+dataclasses==0.6
 decorator==4.4.2
 docker-pycreds==0.4.0
 dotmap==1.3.23
+facenet-pytorch==2.5.1
+flake8==3.8.4
+future==0.18.2
 gitdb==4.0.5
-GitPython==3.1.11
-idna==2.10
-ipython==7.19.0
-ipython-genutils==0.2.0
-jedi==0.17.2
+GitPython @ file:///tmp/build/80754af9/gitpython_1603928675344/work
+idna @ file:///tmp/build/80754af9/idna_1593446292537/work
+importlib-metadata==3.3.0
+ipython @ file:///tmp/build/80754af9/ipython_1604101195213/work
+ipython-genutils @ file:///tmp/build/80754af9/ipython_genutils_1606773439826/work
+isort @ file:///tmp/build/80754af9/isort_1602603989581/work
+jedi @ file:///tmp/build/80754af9/jedi_1606932558467/work
 kiwisolver==1.3.1
-matplotlib==3.3.2
-numpy==1.19.2
+lazy-object-proxy @ file:///tmp/build/80754af9/lazy-object-proxy_1607707315973/work
+matplotlib @ file:///tmp/build/80754af9/matplotlib-base_1603376012865/work
+mccabe==0.6.1
+mkl-fft==1.2.0
+mkl-random==1.0.4
+mkl-service==2.3.0
+mypy-extensions==0.4.3
+numpy @ file:///tmp/build/80754af9/numpy_and_numpy_base_1603479632437/work
 olefile==0.46
 pandas==1.1.4
 parso==0.7.1
+pathspec==0.8.1
 pathtools==0.1.2
-pexpect==4.8.0
-pickleshare==0.7.5
-Pillow==8.0.1
-plotly==4.12.0
-promise==2.3
-prompt-toolkit==3.0.8
+pexpect @ file:///tmp/build/80754af9/pexpect_1605563209008/work
+pickleshare @ file:///tmp/build/80754af9/pickleshare_1606932040724/work
+Pillow @ file:///tmp/build/80754af9/pillow_1603822253009/work
+plotly @ file:///tmp/build/80754af9/plotly_1605121809988/work
+promise @ file:///tmp/build/80754af9/promise_1598040863588/work
+prompt-toolkit @ file:///tmp/build/80754af9/prompt-toolkit_1602688806899/work
 protobuf==3.13.0
 psutil==5.7.3
-ptyprocess==0.6.0
-Pygments==2.7.2
+ptyprocess @ file:///tmp/build/80754af9/ptyprocess_1605560620615/work/dist/ptyprocess-0.6.0-py2.py3-none-any.whl
+pycodestyle==2.6.0
+pycparser @ file:///tmp/build/80754af9/pycparser_1594388511720/work
+pyflakes==2.2.0
+Pygments @ file:///tmp/build/80754af9/pygments_1604103097372/work
+pylint @ file:///tmp/build/80754af9/pylint_1598624038450/work
+pyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1606517880428/work
 pyparsing==2.4.7
+PySocks @ file:///tmp/build/80754af9/pysocks_1594394576006/work
 python-dateutil==2.8.1
-pytz==2020.4
+pytz @ file:///tmp/build/80754af9/pytz_1606604771399/work
 PyYAML==5.3.1
-requests==2.24.0
+regex==2020.11.13
+requests @ file:///tmp/build/80754af9/requests_1592841827918/work
 retrying==1.3.3
 sentry-sdk==0.19.2
 shortuuid==1.0.1
-six==1.15.0
-smmap==3.0.4
-subprocess32==3.5.4
+six @ file:///tmp/build/80754af9/six_1605205313296/work
+smmap @ file:///tmp/build/80754af9/smmap_1597003226630/work
+subprocess32 @ file:///tmp/build/80754af9/subprocess32_1602000156065/work
+toml==0.10.2
 torch==1.7.0
 torchaudio==0.7.0a0+ac17b64
 torchvision==0.8.1
-tqdm==4.54.1
-traitlets==5.0.5
-typing-extensions==3.7.4.3
-urllib3==1.25.11
+tornado @ file:///tmp/build/80754af9/tornado_1606942283357/work
+tqdm @ file:///tmp/build/80754af9/tqdm_1607369919789/work
+traitlets @ file:///tmp/build/80754af9/traitlets_1602787416690/work
+typed-ast==1.4.1
+typing-extensions @ file:///tmp/build/80754af9/typing_extensions_1598376058250/work
+urllib3 @ file:///tmp/build/80754af9/urllib3_1603305693037/work
 wandb==0.10.8
-watchdog==0.10.3
-wcwidth==0.2.5
+watchdog @ file:///tmp/build/80754af9/watchdog_1593447306189/work
+wcwidth @ file:///tmp/build/80754af9/wcwidth_1593447189090/work
+wrapt==1.11.2
+zipp==3.4.0
