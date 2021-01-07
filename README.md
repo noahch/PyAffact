@@ -53,14 +53,16 @@ Abstract
     pip install -r requirements.txt
    ```    
 
-3. Evaluate a pretrained model:
+3. Adjust the dataset path in the configuration files located in config/train and config/eval 
+
+4. Evaluate a pretrained model:
 
     ```bash
     # inside the conda environment, run the following command:
    python py_affact_evaluate.py --config.name=eval/affact     
     ```
 
-4. Train a model:
+5. Train a model:
 
     ```bash
     # inside the conda environment, run the following command:
