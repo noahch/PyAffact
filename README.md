@@ -69,8 +69,6 @@ Abstract
    python py_affact_train.py --config.name=train/affact     
     ```
 
-See `help(py_affact_train)` and `help(py_affact_evaluate)` for usage and implementation details.
-
 ### Dataset
 In order to train a model, download the CelebA dataset [here](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html).
 
@@ -131,7 +129,8 @@ In the qualitative analysis we look at 6 samples of images and evaluate the pred
 All the results are saved in a result folder, marked by the timestamp and specific chosen model.
 
 ### Generate Test datasets
-Generate 5 transformations (AA, AM, AZ, C, T) on the test partition of the CelebA dataset:
+Generate 4 different test sets (A, D, C, T) based on the test partition of the CelebA dataset. 
+The configuration files in the config/dataset folder control the transformation of the test set images. 
 
  ```bash
  # inside the conda environment, run the following command:
@@ -143,7 +142,7 @@ Run the following command to evaluate the ResNet-51-S model:
 
  ```bash
  # inside the conda environment, run the following command:
- python py_affact_evaluate.py --config.name=train/resnet51_s     
+ python py_affact_evaluate.py --config.name=eval/resnet51_s     
  ```
 
 ### AFFACT
@@ -151,7 +150,7 @@ Run the following command to evaluate the AFFACT model:
 
  ```bash
  # inside the conda environment, run the following command:
- python py_affact_evaluate.py --config.name=train/affact     
+ python py_affact_evaluate.py --config.name=eval/affact     
  ```
 
 ### ResNet-152
@@ -159,18 +158,19 @@ Run the following command to evaluate the ResNet-152 model:
 
  ```bash
  # inside the conda environment, run the following command:
- python py_affact_evaluate.py --config.name=train/resnet152     
+ python py_affact_evaluate.py --config.name=eval/resnet152     
  ```
 
 ## Training on multiple GPUs
-It is possible to add several cuda IDs seperated by comma in a training configuration file or by using a flag in order to train the model on multiple GPUs. For example, run the following command to train the AFFACT model on cuda:0 and cuda:1.
+It is possible to add several cuda IDs separated by comma in a training configuration file or by using a flag in order to train the model on multiple GPUs. For example, run the following command to train the AFFACT model on cuda:0 and cuda:1.
 
 ```bash
 # inside the conda environment, run the following command:
-python py_affact_evaluate.py --config.name=train/affact --config.basic.cuda_device_name=cuda:0,cuda:1     
+python py_affact_evaluate.py --config.name=eval/affact --config.basic.cuda_device_name=cuda:0,cuda:1     
 ```
 
 ## References
 AFFACT \
 pytorch \
-our report
+our report \
+wandb
