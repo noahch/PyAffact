@@ -1,0 +1,64 @@
+---
+# resulting test dataset folder path
+dataset_result_folder: evaluation/dataset/testsetD
+dataset:
+  # Path to the partition file
+  partition_filename: dataset/CelebA/list_eval_partition.txt
+  # Path to the labels' file
+  dataset_labels_filename: dataset/CelebA/list_attr_celeba.txt
+  # Path to the folder which contains the images
+  dataset_image_folder: dataset/CelebA/Img
+  # bounding box mode (0 = align with landmarks, 1 = crop with the bounding box file, 2 = crop with a face detector)
+  bounding_box_mode: 2
+  # Scale the bounding box if bounding box mode 2 is selected
+  bounding_box_scale: 2
+  # Path to the file which contains the landmarks information
+  landmarks_filename: dataset/CelebA/list_landmarks_celeba.txt
+  # Path to the bounding box file
+  bounding_boxes_filename: dataset/CelebA/list_bbox_celeba.txt
+preprocessing:
+  save_transformation_image:
+    enabled: 0
+    frequency: 10
+  transformation:
+    crop_size:
+      # image gets aligned/cropped and then resized before training
+      x: 224
+      y: 224
+    scale_jitter:
+      # Enable scale jitter (0 = disabled, 1 = enabled)
+      enabled: 0
+      normal_distribution:
+        mean: 0
+        std: 0.1
+    angle_jitter:
+      # Enable angle jitter (0 = disabled, 1 = enabled)
+      enabled: 0
+      normal_distribution:
+        mean: 0
+        std: 20
+    shift_jitter:
+      # Enable shift jitter (0 = disabled, 1 = enabled)
+      enabled: 0
+      normal_distribution:
+        mean: 0
+        std: 0.05
+    mirror:
+      # Enable mirroring (0 = disabled, 1 = enabled)
+      enabled: 0
+      probability: 0.5
+    gaussian_blur:
+      # Enable gaussian blur (0 = disabled, 1 = enabled)
+      enabled: 0
+      normal_distribution:
+        mean: 0
+        std: 0.3
+    gamma:
+      # Enable gamma (0 = disabled, 1 = enabled)
+      enabled: 0
+      normal_distribution:
+        mean: 0
+        std: 1
+    temperature:
+      # Enable temperature (0 = disabled, 1 = enabled)
+      enabled: 0

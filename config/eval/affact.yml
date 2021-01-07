@@ -1,0 +1,46 @@
+---
+# Name of the weights file to load
+weights_name: best-25.pt
+# Directory of model (weights)
+experiments_dir: "/home/noah/Desktop/affact/final_results/affact"
+basic:
+  # The Cuda device ID, that is needed to enable GPU acceleration during inference
+  cuda_device_name: cuda:0
+model:
+  # The name of the model
+  name: resnet_51
+  # TODO refactor not needed!
+  pretrained: 1
+  # TODO check if needed
+  dropout: 0
+  # If the model has been trained on multiple GPUs (1) or a single GPU (0)
+  data_parallel: 1
+dataset:
+  # Path to the partition file
+  partition_filename: dataset/CelebA/list_eval_partition.txt
+  # Path to the labels' file
+  dataset_labels_filename: dataset/CelebA/list_attr_celeba.txt
+  # Path to the file which contains the landmarks information
+  landmarks_filename: dataset/CelebA/list_landmarks_celeba.txt
+  # Path to the bounding box file
+  bounding_boxes_filename: dataset/CelebA/list_bbox_celeba.txt
+  # Path to the folder which contains the images
+  dataset_image_folder: dataset/CelebA/Img
+  # Path to the folder which contains the majority class files (baseline guess)
+  majority_class_file: config/majority_classes_training_partition.pkl
+  # Path to the testsets
+  testsets_path: evaluation/dataset
+evaluation:
+  # batch size used during inference (only for speed purpose)
+  batch_size: 128
+  quantitative:
+    # Enable quantitative analysis (0 = disabled, 1 = enabled)
+    enabled: 1
+  qualitative:
+    # Enable qualitative analysis (0 = disabled, 1 = enabled)
+    enabled: 1
+    # settings for matplotlib plot (choose how many samples are shown)
+    number_of_rows: 2
+    number_of_images_per_row: 3
+    # choose the testset for the random samples
+    testset_name: testsetA

@@ -2,7 +2,7 @@
 config:
   name: resnet51_s # name of the configuration file
 basic:
-  # The Cuda device ID, that is needed to enable GPU accleration. Can also be several IDs seperated by Comma
+  # The Cuda device ID, that is needed to enable GPU acceleration. Can also be several IDs seperated by Comma
   cuda_device_name: cuda:6
   # The name of the experiment
   experiment_name: Resnet-51-S
