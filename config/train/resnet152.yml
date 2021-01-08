@@ -5,9 +5,9 @@ basic:
   # The Cuda device ID, that is needed to enable GPU acceleration. Can also be several IDs seperated by Comma
   cuda_device_name: cuda:5
   # The name of the experiment
-  experiment_name: Resnet-152
+  experiment_name: Resnet-152-SGD
   # The description and purpose of the experiment
-  experiment_description: Train ResNet-152 AFFACT
+  experiment_description: Train ResNet-152 AFFACT with SGF
   # The type of model that should be used for training
   model: resnet_152
   # The path to the result directory
@@ -42,16 +42,16 @@ dataset:
   bounding_boxes_filename: "/local/scratch/datasets/CelebA/protocol/list_bbox_celeba.txt"
 training:
   # How many epochs the model should be trained on
-  epochs: 35
+  epochs: 40
   # How often the to save the model's weight during training (e.g. 10 safes the model's weights every 10 epochs)
   save_frequency: 5
   optimizer:
     # Type of Optimizer (e.g. SGD for stochastic gradient descent)
-    type: RMSprop
+    type: SGD
     # Learning rate (e.g. 0.001, 0.01, 0.1, 1)
     learning_rate: 0.0001
     # Momentum
-    momentum: 0
+    momentum: 0.9
   criterion:
     # Loss function that should be used (e.g. "BCEWithLogitsLoss")
     type: BCEWithLogitsLoss

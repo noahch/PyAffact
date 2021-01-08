@@ -18,9 +18,9 @@ def main(generate_accuracy_csv=False):
 
     """
     # Load configuration for evaluation
-    config = get_config('eval/resnet152')
+    # config = get_config('eval/resnet152')
     config = get_config('eval/affact')
-    config = get_config('eval/resnet51')
+    # config = get_config('eval/resnet51_s')
 
     # Init environment, use GPU if available, set random seed
     device = init_environment(config)
@@ -49,4 +49,4 @@ def main(generate_accuracy_csv=False):
 
 
 if __name__ == '__main__':
-    main(generate_accuracy_csv=True)
+    main(generate_accuracy_csv=False)
