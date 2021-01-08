@@ -3,11 +3,11 @@ config:
   name: resnet152 # name of the configuration file
 basic:
   # The Cuda device ID, that is needed to enable GPU acceleration. Can also be several IDs seperated by Comma
-  cuda_device_name: cuda:5
+  cuda_device_name: cuda:6
   # The name of the experiment
-  experiment_name: Resnet-152-SGD
+  experiment_name: Resnet-152-SGD-ExtraLayer
   # The description and purpose of the experiment
-  experiment_description: Train ResNet-152 AFFACT with SGF
+  experiment_description: Train ResNet-152 AFFACT with SGD and extra Relu Layers
   # The type of model that should be used for training
   model: resnet_152
   # The path to the result directory
@@ -49,7 +49,7 @@ training:
     # Type of Optimizer (e.g. SGD for stochastic gradient descent)
     type: SGD
     # Learning rate (e.g. 0.001, 0.01, 0.1, 1)
-    learning_rate: 0.0001
+    learning_rate: 0.001
     # Momentum
     momentum: 0.9
   criterion:
@@ -67,11 +67,11 @@ training:
 preprocessing:
   dataloader:
     # Batch size of training and validation data (training data is split in equal sets of size batch size)
-    batch_size: 16
+    batch_size: 32
     # If the data is shuffled before it is split in batches (True for shuffling and False for not shuffling)
     shuffle: 'True'
     # how many images to preprocess at the same time (>1 uses multiprocessing, suggested around 8 if training on 1 gpu)
-    num_workers: 12
+    num_workers: 24
     # TODO do we need this? how many batches to preload (multiprocessing)
     prefetch_factor: 10
   save_preprocessed_image:
