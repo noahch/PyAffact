@@ -217,9 +217,9 @@ class ResNet(nn.Module):
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.fc(x)
-        x = self.fcRelu(x)
-        if self.dropout:
-            x = self.dropout1(x)
+        # x = self.fcRelu(x)
+        # if self.dropout:
+        #     x = self.dropout1(x)
         x = self.fc51(x)
         # x = self.fcRelu2(x)
         # if self.dropout:
