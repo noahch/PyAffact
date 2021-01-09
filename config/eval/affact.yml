@@ -35,7 +35,7 @@ evaluation:
   batch_size: 128
   quantitative:
     # Enable quantitative analysis (0 = disabled, 1 = enabled)
-    enabled: 1
+    enabled: 0
   qualitative:
     # Enable qualitative analysis (0 = disabled, 1 = enabled)
     enabled: 1
@@ -43,4 +43,4 @@ evaluation:
     number_of_rows: 2
     number_of_images_per_row: 3
     # choose the testset for the random samples
-    testset_name: testsetA
+    testset_name: testsetT

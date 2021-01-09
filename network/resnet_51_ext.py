@@ -146,18 +146,18 @@ class ResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
-        self.fcRelu = nn.LeakyReLU(inplace=True)
-        if dropout:
-            self.dropout1 = nn.Dropout(self.dropout)
+        # self.fcRelu = nn.LeakyReLU(inplace=True)
+        # if dropout:
+        #     self.dropout1 = nn.Dropout(self.dropout)
         self.fc51 = nn.Linear(num_classes, 40)
-        self.fcRelu2 = nn.LeakyReLU(inplace=True)
-        if dropout:
-            self.dropout2 = nn.Dropout(self.dropout)
-        self.fc52 = nn.Linear(40, 100)
-        self.fcRelu3 = nn.LeakyReLU(inplace=True)
-        if dropout:
-            self.dropout3 = nn.Dropout(self.dropout)
-        self.fc53 = nn.Linear(100, 40)
+        # self.fcRelu2 = nn.LeakyReLU(inplace=True)
+        # if dropout:
+        #     self.dropout2 = nn.Dropout(self.dropout)
+        self.fc52 = nn.Linear(40, 40)
+        # self.fcRelu3 = nn.LeakyReLU(inplace=True)
+        # if dropout:
+        #     self.dropout3 = nn.Dropout(self.dropout)
+        # self.fc53 = nn.Linear(100, 40)
         # self.fc52Sigmoid = nn.Sigmoid()
 
         for m in self.modules():
@@ -221,14 +221,14 @@ class ResNet(nn.Module):
         if self.dropout:
             x = self.dropout1(x)
         x = self.fc51(x)
-        x = self.fcRelu2(x)
-        if self.dropout:
-            x = self.dropout2(x)
+        # x = self.fcRelu2(x)
+        # if self.dropout:
+        #     x = self.dropout2(x)
         x = self.fc52(x)
-        x = self.fcRelu3(x)
-        if self.dropout:
-            x = self.dropout3(x)
-        x = self.fc53(x)
+        # x = self.fcRelu3(x)
+        # if self.dropout:
+        #     x = self.dropout3(x)
+        # x = self.fc53(x)
         # x = self.fc52Sigmoid(x)
         return x
 

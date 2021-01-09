@@ -50,7 +50,7 @@ training:
     # Type of Optimizer (e.g. SGD for stochastic gradient descent)
     type: SGD
     # Learning rate (e.g. 0.001, 0.01, 0.1, 1)
-    learning_rate: 0.001
+    learning_rate: 0.0001
     # Momentum
     momentum: 0.9
   criterion:
@@ -69,7 +69,7 @@ preprocessing:
   # Batch size of training and validation data (training data is split in equal sets of size batch size)
   dataloader:
     # If the data is shuffled before it is split in batches (True for shuffling and False for not shuffling)
-    batch_size: 64
+    batch_size: 32
     # If the data is shuffled before it is split in batches (True for shuffling and False for not shuffling)
     shuffle: 'True'
     # how many images to preprocess at the same time (>1 uses multiprocessing, suggested around 8 if training on 1 gpu)

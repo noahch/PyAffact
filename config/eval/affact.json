@@ -1,5 +1,5 @@
 {
-  "weights_name": "best-25.pt",
+  "weights_name": "best-31.pt",
   "experiments_dir": "/home/noah/Desktop/affact/final_results/affact",
   "basic": {
     "cuda_device_name": "cuda:0"
@@ -28,7 +28,7 @@
       "enabled": 1,
       "number_of_rows" : 2,
       "number_of_images_per_row" : 3,
-      "testset_name": "testsetA"
+      "testset_name": "testsetT"
     }
   }
 }

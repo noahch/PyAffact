@@ -9,7 +9,7 @@ basic:
   # The description and purpose of the experiment
   experiment_description: sample description
   # The type of model that should be used for training
-  model: resnet_51
+  model: resnet_51-ext
   # The path to the result directory
   result_directory_name: 2020-12-01-13-17-07-baseline
   # The name of the result folder
@@ -18,13 +18,14 @@ basic:
   enable_wand_reporting: 0
 model:
   # The name of the model
-  name: resnet_51
+  name: resnet_51-ext
   # If pretrained weights should be used (0 = false, 1 = true)
   pretrained: 1
   # The rate of dropout (0.2-0.5 is recommended, only matters if chosen model has a dropout layer)
   dropout: 0
   # If the model should be trained on multiple GPUs (1) or a single GPU (0)
-  data_parallel: 0
+  data_parallel: 1
+  affact_weights: '/home/noah/Desktop/affact/final_results/affact/best-31.pt'
 dataset:
   # Path to the partition file
   partition_filename: dataset/CelebA/list_eval_partition.txt
@@ -75,7 +76,7 @@ preprocessing:
     # TODO do we need this? how many batches to preload (multiprocessing)
     prefetch_factor: 10
   save_preprocessed_image:
-    enabled: 1
+    enabled: 0
     frequency: 1
   transformation:
     crop_size:
@@ -84,38 +85,38 @@ preprocessing:
       y: 224
     scale_jitter:
       # Enable scale jitter (0 = disabled, 1 = enabled)
-      enabled: 0
+      enabled: 1
       normal_distribution:
         mean: 0
-        std: 0.5
+        std: 0.1
     angle_jitter:
       # Enable angle jitter (0 = disabled, 1 = enabled)
-      enabled: 0
+      enabled: 1
       normal_distribution:
         mean: 0
         std: 20
     shift_jitter:
       # Enable shift jitter (0 = disabled, 1 = enabled)
-      enabled: 0
+      enabled: 1
       normal_distribution:
         mean: 0
         std: 0.05
     mirror:
       # Enable mirroring (0 = disabled, 1 = enabled)
-      enabled: 0
+      enabled: 1
       probability: 0.5
     gaussian_blur:
       # Enable gaussian blur (0 = disabled, 1 = enabled)
-      enabled: 0
+      enabled: 1
       normal_distribution:
         mean: 0
         std: 3
     gamma:
       # Enable gamma (0 = disabled, 1 = enabled)
-      enabled: 0
+      enabled: 1
       normal_distribution:
         mean: 0
         std: 1
     temperature:
       # Enable temperature (0 = disabled, 1 = enabled)
-      enabled: 0
+      enabled: 1

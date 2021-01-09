@@ -1,6 +1,6 @@
 ---
 # Name of the weights file to load
-weights_name: best-17.pt
+weights_name: best-30.pt
 # Directory of model (weights)
 experiments_dir: "/home/noah/Desktop/affact/final_results/resnet152"
 basic:

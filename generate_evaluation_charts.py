@@ -19,7 +19,7 @@ def generate_relative_improvement_chart(labels, accuracy_dataframe_left,  accura
         right_trace = []
 
         for i in range(len(left_list)):
-            rel_change = ((right_list[i] - left_list[i]) / left_list[i]) * 100
+            rel_change = ((1 - right_list[i]) - (1-left_list[i])) / (1-left_list[i]) *100
             if rel_change > 10:
                 print(i)
                 print(test_set)
@@ -62,10 +62,10 @@ def generate_relative_improvement_chart(labels, accuracy_dataframe_left,  accura
             orientation='h'
         ))
         fig.update_layout(xaxis=dict(
-            range = [-15, 15],
+            range = [-100, 100],
             tickmode = 'array',
-            tickvals = [-15, -10, -5, 0, 5, 10, 15],
-            ticktext = ['-15%', '-10%', '-5%', '0%', '5%', '10%', '15%']
+            tickvals = [-100, -50, 0, 50, 100],
+            ticktext = ['-100%',  '-50%', '0%',  '50%', '100%']
         ))
         figures.append(fig)
     return figures
@@ -75,8 +75,8 @@ def generate_relative_improvement_chart(labels, accuracy_dataframe_left,  accura
 
 if __name__ == '__main__':
 
-    config_l = get_config('eval/2020-12-08-16-37-43-ResNet51')
-    config_r = get_config('eval/2020-12-08-16-37-10-affact')
+    config_l = get_config('eval/resnet51_s')
+    config_r = get_config('eval/affact')
     left_name = 'ResNet-51'
     right_name = 'AFFACT'
 
@@ -87,8 +87,12 @@ if __name__ == '__main__':
     accuracy_df_r = pd.read_csv('{}/evaluation_result.csv'.format(config_r.experiments_dir),
                               index_col=0)
 
-    figures = generate_relative_improvement_chart(labels, accuracy_df_l, accuracy_df_r, 'ResNet-51', 'AFFACT')
+    figures = generate_relative_improvement_chart(labels, accuracy_df_l, accuracy_df_r, left_name,  right_name)
     for i, test_set in enumerate(accuracy_df_l.columns):
         figures[i].show()
         figures[i].write_image('{}/eval_{}_{}_{}_relative_improvement.png'.format(config_l.experiments_dir, left_name , right_name, test_set), format='png', scale=3)
-        figures[i].write_image('{}/eval_{}_{}_{}_relative_improvement.png'.format(config_r.experiments_dir, right_name, left_name,  test_set), format='png', scale=3)
+
+    figures = generate_relative_improvement_chart(labels, accuracy_df_r, accuracy_df_l, right_name, left_name)
+    for i, test_set in enumerate(accuracy_df_r.columns):
+        figures[i].show()
+        figures[i].write_image('{}/eval_{}_{}_{}_relative_improvement.png'.format(config_r.experiments_dir, right_name, left_name, test_set), format='png', scale=3)
