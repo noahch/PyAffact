@@ -25,7 +25,6 @@ model:
   dropout: 0
   # If the model should be trained on multiple GPUs (1) or a single GPU (0)
   data_parallel: 1
-  affact_weights: '/home/noah/Desktop/affact/final_results/affact/best-31.pt'
 dataset:
   # Path to the partition file
   partition_filename: dataset/CelebA/list_eval_partition.txt

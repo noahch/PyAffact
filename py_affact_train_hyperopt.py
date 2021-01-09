@@ -14,6 +14,7 @@ from training.train_model import TrainModel
 from utils.utils import init_environment
 from functools import partial
 import os
+import wandb
 
 
 
@@ -35,6 +36,8 @@ def main():
     # Run the training
     # training_instance.train()
 
+
+
     prefix = "/home/yves/Desktop/uzh/affact/PyAffact/"
     print(prefix + config.dataset.dataset_labels_filename)
 
@@ -52,7 +55,8 @@ def main():
 
 
     data_dir = os.path.abspath("./data_dir")
-    config.preprocessing.dataloader.batch_size = tune.choice([2, 4, 8, 16])
+    config.preprocessing.dataloader.batch_size = tune.choice([32, 64])
+    wandb.init(config=config)
     # config.training.epochs = tune.choice([1, 2])
 
     scheduler = ASHAScheduler(
@@ -69,7 +73,7 @@ def main():
         partial(train_hyperopt),
         resources_per_trial={"cpu": 2, "gpu": 1},
         config=config,
-        num_samples=2,
+        num_samples=1,
         scheduler=scheduler,
         progress_reporter=reporter)
 
@@ -79,6 +83,10 @@ def main():
         best_trial.last_result["loss"]))
     print("Best trial final validation accuracy: {}".format(
         best_trial.last_result["accuracy"]))
+
+
+    # Create the sweep
+    wandb.sweep(result)
 
     # best_trained_model = Net(best_trial.config["l1"], best_trial.config["l2"])
     # device = "cpu"
