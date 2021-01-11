@@ -7,23 +7,25 @@ import numpy as np
 from PIL import Image
 import random
 
-from torchvision.transforms.functional import to_tensor, normalize
-
-from evaluation.utils import save_original_and_preprocessed_image
+from torchvision.transforms.functional import to_tensor
 
 
 class AffactTransformer():
-    """Crop randomly the image in a sample.
+    """
+    Apply AFFACT transformations (scale, rotate, shift, blur, gamma) and temperature to image
 
-    Args:
-        output_size (tuple or int): Desired output size. If int, square crop
-            is made.
     """
 
     def __init__(self, config):
+        """
+        Init
+        :param config: training configuration file
+        """
         if not config:
             raise Exception("No Config defined")
         self.config = config
+
+        # Kelvin table for temperature shift
         self.kelvin_table = {
             1000: (255, 56, 0),
             1500: (255, 109, 0),
@@ -47,12 +49,17 @@ class AffactTransformer():
 
 
     def __call__(self, sample):
+        """
+        Transform operations of AFFACT (scale, rotate, shift, blur, gamma) and temperature
+        :param sample: dict containing image, landmarks, bounding boxes, index
+        :return: torch tensor of transformed image
+        """
         matplotlib.use('Agg')
 
-        im, landmarks, bounding_boxes, index = sample['image'], sample['landmarks'], sample['bounding_boxes'], sample['index']
-        bbx = None
+        image, landmarks, bounding_boxes, index = sample['image'], sample['landmarks'], sample['bounding_boxes'], sample['index']
+
+        # Calculate bounding box based on landmarks according to the AFFACT paper
         if self.config.dataset.bounding_box_mode == 0:
-            # Calc bbx
             t_eye_left = np.array((landmarks[0], landmarks[1]))
             t_eye_right = np.array((landmarks[2], landmarks[3]))
             t_mouth_left = np.array((landmarks[4], landmarks[5]))
@@ -61,15 +68,7 @@ class AffactTransformer():
             t_eye = (t_eye_left + t_eye_right) / 2
             t_mouth = (t_mouth_left + t_mouth_right) / 2
             d = np.linalg.norm(t_eye - t_mouth)
-            # TODO: 5.5 and offsets AS PARAM
             w = h = 5.5 * d
-
-            # # TODO: Replace with arctan2
-            # if (t_eye_right[0] - t_eye_left[0]) == 0:
-            #     alpha = 0
-            #     # bob.io.base.save(im, 'error{}.jpg'.format(index))
-            #     # print('error')
-            # else:
             alpha = math.degrees(np.arctan2((t_eye_right[1] - t_eye_left[1]), (t_eye_right[0] - t_eye_left[0])))
 
             bbx = [t_eye[0] - 0.5 * w,
@@ -77,6 +76,8 @@ class AffactTransformer():
                    t_eye[0] + 0.5 * w,
                    t_eye[1] + 0.55 * h,
                    alpha]
+
+        # If no landmarks provided, bounding boxes from dataset or face detector with rotation angle = 0
         else:
             bbx = [
                 bounding_boxes[0],
@@ -86,12 +87,16 @@ class AffactTransformer():
                 0
             ]
 
+        # Define Crop size
         crop_size = [self.config.preprocessing.transformation.crop_size.x, self.config.preprocessing.transformation.crop_size.y]
 
-        # Scale paper Version
+        # Calculate Scale factor
         scale = min(crop_size[0] / (bbx[2] - bbx[0]), crop_size[1] / (bbx[3] - bbx[1]))
 
-        angle = bbx[4]
+        # Extract rotation angle from bounding box
+        rotation_angle = bbx[4]
+
+        # Default shift offset (x,y)
         shift = [0., 0.]
 
         # Random jitter scale, angle, shift
@@ -103,7 +108,7 @@ class AffactTransformer():
         if self.config.preprocessing.transformation.angle_jitter.enabled:
             jitter_angle_mean = self.config.preprocessing.transformation.angle_jitter.normal_distribution.mean
             jitter_angle_std = self.config.preprocessing.transformation.angle_jitter.normal_distribution.std
-            angle += np.random.normal(jitter_angle_mean, jitter_angle_std)
+            rotation_angle += np.random.normal(jitter_angle_mean, jitter_angle_std)
 
         if self.config.preprocessing.transformation.shift_jitter.enabled:
             jitter_shift_mean = self.config.preprocessing.transformation.shift_jitter.normal_distribution.mean
@@ -111,26 +116,37 @@ class AffactTransformer():
             shift[0] = int(np.random.normal(jitter_shift_mean, jitter_shift_std) * crop_size[0])
             shift[1] = int(np.random.normal(jitter_shift_mean, jitter_shift_std) * crop_size[1])
 
+        # Calculate crop center
         crop_center = [crop_size[0] / 2. + shift[0], crop_size[1] / 2. + shift[1]]
-        input_mask = np.ones((im.shape[1], im.shape[2]), dtype=bool)
+
+        # Define an input mask
+        input_mask = np.ones((image.shape[1], image.shape[2]), dtype=bool)
+
+        # Define output mask
         out_mask = np.ones((crop_size[0], crop_size[1]), dtype=bool)
+
+        # Calculate Center of bounding box
         center = (bbx[1] + (bbx[3] - bbx[1]) / 2., bbx[0] + (bbx[2] - bbx[0]) / 2.)
 
+        # Empty numpy ndarray (serves as placeholder for new image)
         placeholder_out = np.ones((3, self.config.preprocessing.transformation.crop_size.x, self.config.preprocessing.transformation.crop_size.y))
         placeholder_out[placeholder_out > 0] = 0
 
-        geom = bob.ip.base.GeomNorm(angle, scale, crop_size, crop_center)
+        # define geometric normalization
+        geom = bob.ip.base.GeomNorm(rotation_angle, scale, crop_size, crop_center)
 
+        # Channel-wise application of geonorm and extrapolation of mask
         for i in range(0, 3):
-            in_slice = im[i]
+            in_slice = image[i]
             out_slice = np.ones((crop_size[0], crop_size[1]))
             out_slice = out_slice.astype(np.float)
             x = geom.process(in_slice, input_mask, out_slice, out_mask, center)
             try:
                 bob.ip.base.extrapolate_mask(out_mask, out_slice)
             except:
-                print('error')
-                bob.io.base.save(sample['image'], 'failing_img.jpg')
+                pass
+
+            # Fill channel
             placeholder_out[i] = out_slice
 
         # Mirror/Flip Image if randomly drawn number is below probability threshold
@@ -143,9 +159,9 @@ class AffactTransformer():
             sigma_mean = self.config.preprocessing.transformation.gaussian_blur.normal_distribution.mean
             sigma_std = self.config.preprocessing.transformation.gaussian_blur.normal_distribution.std
             sigma = np.random.normal(sigma_mean, sigma_std)
+            # Fix: sigma of 0 produces a black image
             if sigma == 0.0:
                 sigma = 0.000001
-                print('sigma in gaussian was 0.0')
             gaussian = bob.ip.base.Gaussian((sigma, sigma), (int(3. * sigma), int(3. * sigma)))
             gaussian.filter(placeholder_out, placeholder_out)
 
@@ -156,9 +172,7 @@ class AffactTransformer():
             gamma = 2 ** np.random.normal(gamma_mean, gamma_std)
             placeholder_out = np.minimum(np.maximum(((placeholder_out / 255.0) ** gamma) * 255.0, 0.0), 255.0)
 
-
         # Apply Picture Temperature, own contribution and not part of the AFFACT paper
-        # if self.config.preprocessing.transformation.temperature.enabled:
         if self.config.preprocessing.transformation.temperature.enabled:
             r, g, b = self.kelvin_table[random.choice(list(self.kelvin_table.keys()))]
             matrix = (r / 255.0, 0.0, 0.0, 0.0,
