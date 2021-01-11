@@ -1,7 +1,6 @@
 """
 Configuration Utils Function Collection
 """
-import json
 import os
 import argparse
 import collections
@@ -42,6 +41,7 @@ def get_config(config_name=None):
 
 def _overwrite_defaults(config, args):
     """
+    TODO: check before submission
     Overwrite the default values in the configuration DotMap
 
     Parameters

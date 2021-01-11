@@ -1,3 +1,4 @@
+# Download weights from torch hub
 try:
     from torch.hub import load_state_dict_from_url
 except ImportError:

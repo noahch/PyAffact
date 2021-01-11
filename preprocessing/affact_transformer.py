@@ -9,7 +9,7 @@ import random
 
 from torchvision.transforms.functional import to_tensor, normalize
 
-from evaluation.utils import save_input_transform_output_image
+from evaluation.utils import save_original_and_preprocessed_image
 
 
 class AffactTransformer():

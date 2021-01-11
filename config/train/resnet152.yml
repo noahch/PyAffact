@@ -8,8 +8,6 @@ basic:
   experiment_name: Resnet-152-SGD-ExtraLayer
   # The description and purpose of the experiment
   experiment_description: Train ResNet-152 AFFACT with SGD and extra Relu Layers
-  # The type of model that should be used for training
-  model: resnet_152
   # The path to the result directory
   result_directory: "/local/scratch/noahAndYves/affact_experiment_results"
   # The name of the result folder
@@ -23,8 +21,6 @@ model:
   pretrained: 1
   # The rate of dropout (0.2-0.5 is recommended, only matters if chosen model has a dropout layer)
   dropout: 0
-  # If the model should be trained on multiple GPUs (1) or a single GPU (0)
-  data_parallel: 1
 dataset:
   # Path to the partition file
   partition_filename: "/local/scratch/datasets/CelebA/protocol/list_eval_partition.txt"
@@ -72,9 +68,10 @@ preprocessing:
     shuffle: 'True'
     # how many images to preprocess at the same time (>1 uses multiprocessing, suggested around 8 if training on 1 gpu)
     num_workers: 24
-    # TODO do we need this? how many batches to preload (multiprocessing)
+    # How many batches are preprocessed on each worker
     prefetch_factor: 10
   save_preprocessed_image:
+    # If enabled, saves images in defined frequency
     enabled: 0
     frequency: 1000
   transformation:

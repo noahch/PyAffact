@@ -17,9 +17,6 @@ dataset:
   # Path to the bounding box file
   bounding_boxes_filename: dataset/CelebA/list_bbox_celeba.txt
 preprocessing:
-  save_transformation_image:
-    enabled: 0
-    frequency: 10
   transformation:
     crop_size:
       # image gets aligned/cropped and then resized before training

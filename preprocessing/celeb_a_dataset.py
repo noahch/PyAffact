@@ -8,7 +8,7 @@ import logging
 from facenet_pytorch.models.mtcnn import MTCNN
 from torchvision.transforms import transforms
 
-from evaluation.utils import save_input_transform_output_image, save_image
+from evaluation.utils import save_original_and_preprocessed_image
 
 
 class CelebADataset(torch.utils.data.Dataset):
@@ -42,47 +42,36 @@ class CelebADataset(torch.utils.data.Dataset):
         y = np.array(self.labels.iloc[index].array)
         y = np.where(y<0, 0, y)
 
-        # If the AffactTransformer is used, the input format required changes (also includes landmarks, and index)
-        if 'AffactTransformer' in '{}'.format(self.transform):
-            # Load data and get label
-            image = bob.io.base.load('{}/{}'.format(self.config.dataset.dataset_image_folder, x))
-            landmarks, bounding_boxes = None, None
-            if self.config.dataset.bounding_box_mode == 0:
-                landmarks = self.landmarks.iloc[index].tolist()
-                landmarks = landmarks[:4] + landmarks[6:]
-            elif self.config.dataset.bounding_box_mode == 1:
-                bounding_boxes = self.bounding_boxes.iloc[index].tolist()
-                bounding_boxes = bounding_boxes[1:]
-                if self.config.dataset.bounding_box_scale:
-                    scale = self.config.dataset.bounding_box_scale
-                    bounding_boxes[0] = bounding_boxes[0] - ((scale - 1) / 2 * bounding_boxes[2])
-                    bounding_boxes[1] = bounding_boxes[1] - ((scale - 1) / 2 * bounding_boxes[3])
-                    bounding_boxes[2] = scale * (bounding_boxes[2])
-                    bounding_boxes[3] = scale * (bounding_boxes[3])
 
-            input = {
-                'image': image,
-                'landmarks': landmarks,
-                'bounding_boxes': bounding_boxes,
-                'index': index
-            }
-            X = self.transform(input)
+        # Load data and get label
+        image = bob.io.base.load('{}/{}'.format(self.config.dataset.dataset_image_folder, x))
+        landmarks, bounding_boxes = None, None
+        if self.config.dataset.bounding_box_mode == 0:
+            landmarks = self.landmarks.iloc[index].tolist()
+            landmarks = landmarks[:4] + landmarks[6:]
+        elif self.config.dataset.bounding_box_mode == 1:
+            bounding_boxes = self.bounding_boxes.iloc[index].tolist()
+            bounding_boxes = bounding_boxes[1:]
+            if self.config.dataset.bounding_box_scale:
+                scale = self.config.dataset.bounding_box_scale
+                bounding_boxes[0] = bounding_boxes[0] - ((scale - 1) / 2 * bounding_boxes[2])
+                bounding_boxes[1] = bounding_boxes[1] - ((scale - 1) / 2 * bounding_boxes[3])
+                bounding_boxes[2] = scale * (bounding_boxes[2])
+                bounding_boxes[3] = scale * (bounding_boxes[3])
 
-            bbx = None
-            # TODO: Report -> This serves a check to see if each image is augmented differently in each epoch
-            # if x == '003529.jpg' or x=='003530.jpg':
-            #     import time
-            #     ms = int(round(time.time() * 1000))
-            #     save_image(X, self.config.basic.result_directory, x+str(ms))
-        else:
-            image = Image.open('{}/{}'.format(self.config.dataset.dataset_image_folder, x))
-            X = self.transform(image)
-            bbx = None
+        input = {
+            'image': image,
+            'landmarks': landmarks,
+            'bounding_boxes': bounding_boxes,
+            'index': index
+        }
+        X = self.transform(input)
+
 
         # Save every X picture to validate preprocessing
         if self.config.preprocessing.save_preprocessed_image.enabled:
             if index % self.config.preprocessing.save_preprocessed_image.frequency == 0:
-                save_input_transform_output_image(index, image, X, self.config.basic.result_directory, bbx)
+                save_original_and_preprocessed_image(index, image, X, self.config.basic.result_directory)
 
 
         return X, y, index

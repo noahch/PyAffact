@@ -1,3 +1,6 @@
+"""
+Boilerplate code from PyTorch for ResNet-50
+"""
 import torch
 import torch.nn as nn
 from .utils import load_state_dict_from_url
@@ -147,13 +150,15 @@ class ResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
-        # self.fcRelu = nn.ReLU(inplace=True)
+
+        # Additional layer for ResNet-51-S/AFFACT
         self.fc51 = nn.Linear(num_classes, 40)
+
+        # Different init strategy of layer-51
         # torch.nn.init.xavier_uniform_(self.fc51.weight)
         # torch.nn.init.zeros_(self.fc51.bias)
 
 
-        # self.fc51Sigmoid = nn.Sigmoid()
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -212,9 +217,9 @@ class ResNet(nn.Module):
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.fc(x)
-        # x = self.fcRelu(x)
+
+        # Additional layer for ResNet-51-S/AFFACT
         x = self.fc51(x)
-        # x = self.fc51Sigmoid(x)
 
         return x
 
@@ -228,22 +233,9 @@ def _resnet(arch, block, layers, pretrained, progress, **kwargs):
         state_dict = load_state_dict_from_url(model_urls[arch],
                                               progress=progress)
 
-        # for k,v in state_dict.items():
-        #     print(k)
         model.load_state_dict(state_dict, strict=False)
     return model
 
-# def _resnetInsight(arch, block, layers, pretrained, progress, **kwargs):
-#     model = ResNet(block, layers, **kwargs)
-#     if pretrained:
-#         state_dict = torch.load('./insightface/model_ir_se50.pth')
-#         # for k,v in state_dict.items():
-#         #     # print(k)
-#         model.load_state_dict(state_dict, strict=False)
-#     # print(model.state_dict()['conv1.weight'][0][0][0])
-#     # for k, v in model.state_dict().items():
-#     #     print(k)
-#     return model
 
 
 def resnet51(pretrained=False, progress=True, **kwargs):

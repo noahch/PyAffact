@@ -25,16 +25,13 @@ class ModelManager():
         self.config = config
         self.device = device
 
-        # Flag to check if model was trained using data parallel
-        if self.config.model.data_parallel:
-            # Get model for training on multiple GPUs
-            self.model = nn.DataParallel(self._get_model(), device_ids=[int(
-                x[-1]) for x in self.config.basic.cuda_device_name.split(',')])
-            if self.config.model.affact_weights and self.config.model.name == 'resnet_51-ext':
-                state_dict = torch.load(self.config.model.affact_weights, map_location=self.config.basic.cuda_device_name.split(',')[0])
-                self.model.load_state_dict(state_dict['model_state_dict'], strict=False)
-        else:
-            self.model = self._get_model()
+        # Get model for training on multiple GPUs
+        self.model = nn.DataParallel(self._get_model(), device_ids=[int(
+            x[-1]) for x in self.config.basic.cuda_device_name.split(',')])
+        if self.config.model.affact_weights and self.config.model.name == 'resnet_51-ext':
+            state_dict = torch.load(self.config.model.affact_weights, map_location=self.config.basic.cuda_device_name.split(',')[0])
+            self.model.load_state_dict(state_dict['model_state_dict'], strict=False)
+
 
         # Transfer model to GPU
         self.model_device = self.model.to(self.device)

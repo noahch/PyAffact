@@ -9,12 +9,6 @@ basic:
 model:
   # The name of the model
   name: resnet_152
-  # TODO refactor not needed!
-  pretrained: 1
-  # TODO check if needed
-  dropout: 0
-  # If the model has been trained on multiple GPUs (1) or a single GPU (0)
-  data_parallel: 1
 dataset:
   # Path to the partition file
   partition_filename: dataset/CelebA/list_eval_partition.txt

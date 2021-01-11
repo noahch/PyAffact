@@ -1,3 +1,7 @@
+"""
+Boilerplate code from PyTorch for ResNet-152
+"""
+
 import torch
 from torch import Tensor
 import torch.nn as nn

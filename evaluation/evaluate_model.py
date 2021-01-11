@@ -9,7 +9,8 @@ from torchvision.transforms import transforms, TenCrop, ToTensor
 from torchvision.transforms.functional import to_tensor, normalize
 from tqdm import tqdm
 
-from evaluation.charts import accuracy_table, generate_model_accuracy_of_testsets_2
+from evaluation.charts import prediction_vs_ground_truth_chart, generate_model_accuracy_of_testsets, \
+    accuracy_sample_plot
 from evaluation.utils import image_grid_and_accuracy_plot
 from preprocessing.dataset_generator import generate_test_dataset
 from training.model_manager import ModelManager
@@ -151,9 +152,9 @@ class EvalModel(ModelManager):
         per_attribute_baseline_accuracy = test_attribute_baseline_accuracy
 
         # Generate figure with accuracies on different test sets for model and baseline
-        figure = generate_model_accuracy_of_testsets_2(labels.columns.tolist(), accuracy_df,
-                                                       per_attribute_baseline_accuracy.tolist(),
-                                                       all_attributes_baseline_accuracy)
+        figure = generate_model_accuracy_of_testsets(labels.columns.tolist(), accuracy_df,
+                                                     per_attribute_baseline_accuracy.tolist(),
+                                                     all_attributes_baseline_accuracy)
         # Save the figure
         figure.write_image('{}/eval_fig.png'.format(self.config.experiments_dir), format='png', scale=3)
         figure.show()
@@ -211,14 +212,14 @@ class EvalModel(ModelManager):
 
         per_attribute_correct_classification = per_attribute_correct_classification.cpu().tolist()
 
-        accuracy_table_fig = accuracy_table(self.labels.columns.tolist(), prediction, per_attribute_correct_classification)
-        accuracy_sample = image_grid_and_accuracy_plot(original_images, accuracy_list,
-                                                       number_of_img_per_row=self.config.evaluation.qualitative.number_of_images_per_row,
-                                      saveOnly=True)
+        accuracy_table_fig = prediction_vs_ground_truth_chart(self.labels.columns.tolist(), prediction,
+                                                              per_attribute_correct_classification)
+        accuracy_sample = accuracy_sample_plot(original_images, accuracy_list,
+                                                       number_of_img_per_row=self.config.evaluation.qualitative.number_of_images_per_row)
 
         accuracy_sample.savefig(os.path.join(self.config.experiments_dir, 'accuracy_sample.jpg'))
 
-        accuracy_table_fig.write_image(os.path.join(self.config.experiments_dir, 'acurracy_table.jpg'), scale=5)
+        accuracy_table_fig.write_image(os.path.join(self.config.experiments_dir, 'prediction_vs_ground_truth_table.jpg'), scale=5)
 
     def _image_and_label_to_tensor(self, img_name, testset):
         orig_image, img_name = self._load_image(img_name, testset)
