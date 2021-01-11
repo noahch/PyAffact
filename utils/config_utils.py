@@ -358,6 +358,6 @@ def save_config_to_file(config):
     -------
 
     """
-    file = open(os.path.join(config.basic.result_directory, 'config.json'), "w")
-    file.write(json.dumps(config.toDict(), indent=2))
+    file = open(os.path.join(config.basic.result_directory, 'config.yml'), "w")
+    file.write(yaml.dump(config.toDict()))
     file.close()

@@ -163,10 +163,10 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
     per_attribute_baseline_accuracy.append(all_attributes_baseline_accuracy)
     names = accuracy_dataframe.columns.tolist()
     table = str.maketrans('', '', string.ascii_lowercase)
-    names_short = [x.translate(table) for x in names]
+    names_short = {x: x.translate(table) for x in names}
     colors = ['#4380b5', '#4aba8d', '#ba4aa5', '#b55c47', '#d4c557', '#a7cdd1']
-    # colors_cut_off = ['#636d7a', '#31616b', '#373d6b', '#0a124a', '#2e1745']
-    colors_cut_off = ['#335d82', '#338262', '#6e2b61', '#6e382b', '#827935', '#8bacb0']
+    colors_cut_off = ['#4380b5', '#4aba8d', '#ba4aa5', '#b55c47', '#d4c557', '#a7cdd1']
+    # colors_cut_off = ['#335d82', '#338262', '#6e2b61', '#6e382b', '#827935', '#8bacb0']
     layout = go.Layout(
         autosize=False,
         margin=go.layout.Margin(
@@ -182,15 +182,16 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
         # plot_bgcolor='rgba(255,255,255,0.5)'
     )
 
-    all_accuracies = []
-    all_labels = []
+    all_accuracies = dict()
+    all_labels = dict()
     baseline_labels = []
     for i, testset in enumerate(accuracy_dataframe.columns.tolist()):
         accuracies = accuracy_dataframe[testset].tolist()
         accuracies.append(np.mean(accuracy_dataframe[testset].tolist()))
-        all_accuracies.append(accuracies)
-    for i in range(len(all_accuracies)):
-        all_labels.append([])
+        all_accuracies[testset] = accuracies
+        all_labels[testset] = []
+    # for i in range(len(all_accuracies)):
+    #     all_labels.append([])
 
     for i in range(len(per_attribute_baseline_accuracy)):
         label = ''
@@ -201,7 +202,7 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
         if min(val, cut_off_threshold) >= cut_off_threshold:
             label += 'MG:{:.2f}%'.format(val)
             br_count += 1
-        for j in range(len(all_accuracies)):
+        for j in all_accuracies.keys():
             val2 = (1- all_accuracies[j][i])*100
             if min(val2, cut_off_threshold) > highest_val:
                 highest_idx = j
@@ -218,18 +219,38 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
                     br_count += 1
         if highest_idx == -1:
             baseline_labels.append(label)
-            for i in range(len(all_accuracies)):
-                all_labels[i].append('')
+            for k in all_accuracies.keys():
+                all_labels[k].append('')
         else:
             baseline_labels.append('')
-            for i in range(len(all_accuracies)):
-                if i != highest_idx:
-                    all_labels[i].append('')
+            for k in all_accuracies.keys():
+                if k != highest_idx:
+                    all_labels[k].append('')
                 else:
-                    all_labels[i].append(label)
+                    all_labels[k].append(label)
 
 
     fig = go.Figure(layout=layout)
+
+
+    i = 1
+    for k in ['testsetA', 'testsetC', 'testsetD', 'testsetT'][::-1]:
+
+        v = all_accuracies[k]
+        fig.add_trace(go.Bar(
+            y=labels[::-1],
+            x=[min((1-x)*100, cut_off_threshold) for x in v][::-1],
+            name=k,
+            marker_color=[colors_cut_off[i] if ((1-x)*100)>cut_off_threshold else colors[i] for x in v][::-1],
+            # text=['{:.2f}'.format((1 - x) * 100) if ((1 - x) * 100) > cut_off_threshold else '' for x in
+            #       accuracies][::-1],
+            text=all_labels[k][::-1],
+            textfont_size=6,
+            textposition="outside",
+            orientation='h'
+        ))
+        i = i + 1
+
     fig.add_trace(go.Bar(
         y=labels[::-1],
         x=[min((1-x)*100, cut_off_threshold) for x in per_attribute_baseline_accuracy][::-1],
@@ -242,23 +263,21 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
         orientation='h'
     ))
 
-
-
-    for i, accuracies in enumerate(all_accuracies):
-        # accuracies = accuracy_dataframe[testset].tolist()
-        # accuracies.append(np.mean(accuracy_dataframe[testset].tolist()))
-        fig.add_trace(go.Bar(
-            y=labels[::-1],
-            x=[min((1-x)*100, cut_off_threshold) for x in accuracies][::-1],
-            name=names[i],
-            marker_color=[colors_cut_off[i + 1] if ((1-x)*100)>cut_off_threshold else colors[i + 1] for x in accuracies][::-1],
-            # text=['{:.2f}'.format((1 - x) * 100) if ((1 - x) * 100) > cut_off_threshold else '' for x in
-            #       accuracies][::-1],
-            text=all_labels[i][::-1],
-            textfont_size=6,
-            textposition="outside",
-            orientation='h'
-        ))
+    # for i, accuracies in enumerate(all_accuracies):
+    #     # accuracies = accuracy_dataframe[testset].tolist()
+    #     # accuracies.append(np.mean(accuracy_dataframe[testset].tolist()))
+    #     fig.add_trace(go.Bar(
+    #         y=labels[::-1],
+    #         x=[min((1-x)*100, cut_off_threshold) for x in accuracies][::-1],
+    #         name=names[i],
+    #         marker_color=[colors_cut_off[i + 1] if ((1-x)*100)>cut_off_threshold else colors[i + 1] for x in accuracies][::-1],
+    #         # text=['{:.2f}'.format((1 - x) * 100) if ((1 - x) * 100) > cut_off_threshold else '' for x in
+    #         #       accuracies][::-1],
+    #         text=all_labels[i][::-1],
+    #         textfont_size=6,
+    #         textposition="outside",
+    #         orientation='h'
+    #     ))
 
     # for index, (i, row) in enumerate(accuracy_dataframe.iterrows()):
     #     fig.add_trace(go.Bar(
@@ -284,6 +303,7 @@ def generate_model_accuracy_of_testsets_2(labels, accuracy_dataframe, per_attrib
         tickvals = [x for x in range(0, cut_off_threshold+1, (cut_off_threshold//5))],
         ticktext = ['{:.2f}%'.format(x) for x in range(0, cut_off_threshold+1, (cut_off_threshold//5))]
     ),
+    legend={'traceorder': 'reversed'},
     uniformtext=dict(minsize=6, mode='show'))
     return fig
 

@@ -1,6 +1,6 @@
 ---
 # Name of the weights file to load
-weights_name: best-25.pt
+weights_name: best-31.pt
 # Directory of model (weights)
 experiments_dir: "/home/noah/Desktop/affact/final_results/affact"
 basic:
@@ -35,7 +35,7 @@ evaluation:
   batch_size: 128
   quantitative:
     # Enable quantitative analysis (0 = disabled, 1 = enabled)
-    enabled: 0
+    enabled: 1
   qualitative:
     # Enable qualitative analysis (0 = disabled, 1 = enabled)
     enabled: 1

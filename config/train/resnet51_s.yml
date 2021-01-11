@@ -8,7 +8,7 @@ basic:
   experiment_name: Resnet-51-S
   # The description and purpose of the experiment
   experiment_description: Train Baseline Network ResNet-51-S
-  # The type of model that should be used for training
+  # TODO: Remove The type of model that should be used for training
   model: resnet_51
   # The path to the result directory
   result_directory: "/local/scratch/noahAndYves/affact_experiment_results"
