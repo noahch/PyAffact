@@ -216,7 +216,7 @@ def prediction_vs_ground_truth_chart(attribute_names, prediction, per_attribute_
             t=5,
             pad=2
         ),
-        height=1000
+        height=835
 
     )
 
