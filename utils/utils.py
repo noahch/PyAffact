@@ -13,14 +13,8 @@ import numpy as np
 def init_environment(config):
     """
     Initialize the environment for training on GPUs
-
-    Parameters
-    ----------
-    config Configuration DotMap
-
-    Returns
-    -------
-    The cuda device
+    :param config: Configuration DotMap
+    :return: The cuda device
     """
 
     # CUDA for PyTorch
@@ -57,15 +51,8 @@ def init_environment(config):
 def create_directory(directory, recreate=False):
     """
     Helper function to create a directory
-
-    Parameters
-    ----------
-    directory Directory Path
-    recreate If True, removes folder and creates new one
-
-    Returns
-    -------
-
+    :param directory: Directory Path
+    :param recreate: If True, removes folder and creates new one
     """
     if not os.path.exists(directory):
         try:

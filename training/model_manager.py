@@ -16,11 +16,8 @@ class ModelManager():
     def __init__(self, config, device):
         """
         Init Model Manager
-
-        Parameters
-        ----------
-        config DotMap Configuration
-        device cuda device
+        :param config: DotMap Configuration
+        :param device: cuda device
         """
         self.config = config
         self.device = device
@@ -40,9 +37,7 @@ class ModelManager():
         """
         Get the model based on configuration Value
 
-        Returns
-        -------
-        A model
+        :return: A model
         """
 
         # ResNet-51 used for baseline and AFFACT experiments

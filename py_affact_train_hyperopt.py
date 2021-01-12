@@ -21,9 +21,6 @@ import wandb
 def main():
     """
     Run training for a specific model
-    Returns
-    -------
-
     """
     # Load configuration for training
     config = get_config('train/affact_hyperopt')

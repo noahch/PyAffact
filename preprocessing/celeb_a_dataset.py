@@ -1,3 +1,6 @@
+"""
+Class that contains the CelebA-Dataset
+"""
 import torch
 import pandas as pd
 import numpy as np

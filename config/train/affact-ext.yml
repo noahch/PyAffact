@@ -1,6 +1,6 @@
 ---
 config:
-  name: affact # name of the configuration file
+  name: affact-ext # name of the configuration file
 basic:
   # The Cuda device ID, that is needed to enable GPU acceleration. Can also be several IDs seperated by Comma
   cuda_device_name: cuda:7

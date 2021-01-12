@@ -12,10 +12,6 @@ from utils.utils import init_environment
 def main(generate_accuracy_csv=False):
     """
     run evaluation for a specific model and generate chart
-
-    Returns
-    -------
-
     """
     # Load configuration for evaluation
     # config = get_config('eval/resnet152')

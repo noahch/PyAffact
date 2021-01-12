@@ -1,3 +1,6 @@
+"""
+Class that handles the AFFACT transformations
+"""
 import math
 
 import bob.io.image
@@ -13,12 +16,11 @@ from torchvision.transforms.functional import to_tensor
 class AffactTransformer():
     """
     Apply AFFACT transformations (scale, rotate, shift, blur, gamma) and temperature to image
-
     """
 
     def __init__(self, config):
         """
-        Init
+        Initialization
         :param config: training configuration file
         """
         if not config:

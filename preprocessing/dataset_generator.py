@@ -1,5 +1,5 @@
 """
-function to generate the training and validation dataset
+functions that create datasets for training, validation and testing
 """
 import os
 import pandas as pd
@@ -12,13 +12,8 @@ from preprocessing.celeb_a_dataset import CelebADataset
 def get_train_val_dataset(config):
     """
     generate dataloader, dataset and all meta information needed for training
-    Parameters
-    ----------
-    config the configuration file
-
-    Returns
-    -------
-    result dict containing dataloader, dataset size, attribute baseline accuracy, dataset meta information
+    :param config: the configuration file
+    :return: result dict containing dataloader, dataset size, attribute baseline accuracy, dataset meta information
     """
     # Loads the bounding boxes, labels, landmarks and partition df from disk
     bounding_boxes, labels, landmarks, partition_df = _load_dataframes(config)
@@ -86,14 +81,8 @@ def get_train_val_dataset(config):
 def generate_test_dataset(config):
     """
     Generate dataframe for testing
-
-    Parameters
-    ----------
-    config Configuration file
-
-    Returns
-    -------
-    labels, landmarks, bounding boxes of test partition
+    :param config: Configuration file
+    :return: labels, landmarks, bounding boxes of test partition
     """
     # Loads the bounding boxes, labels, landmarks and partition df from disk
     bounding_boxes, labels, landmarks, partition_df = _load_dataframes(config)
@@ -109,14 +98,8 @@ def generate_test_dataset(config):
 def _load_dataframes(config):
     """
     loads the labels, landmarks, bounding boxes and partition dataframe from disk
-
-    Parameters
-    ----------
-    config the configuration file
-
-    Returns
-    -------
-    bounding_boxes, labels, landmarks, partition dataframe
+    :param config: the configuration file
+    :return: bounding_boxes, labels, landmarks, partition dataframe
     """
     labels = pd.read_csv(config.dataset.dataset_labels_filename,
                          delim_whitespace=True, skiprows=1)
@@ -133,18 +116,12 @@ def _load_dataframes(config):
 def _get_partition_dataframes(partition_df, partition, labels, landmarks, bounding_boxes):
     """
     generate labels, landmarks and bounding boxes dataframes based on partition (train/val/test)
-
-    Parameters
-    ----------
-    partition_df partition dataframe
-    partition 0=train, 1=val, 2=test
-    labels labels dataframe
-    landmarks landmarks dataframe
-    bounding_boxes bounding boxes dataframe
-
-    Returns
-    -------
-    labels dataframe, landmarks dataframe, bounding boxes dataframe
+    :param partition_df: partition dataframe
+    :param partition: 0=train, 1=val, 2=test
+    :param labels: labels dataframe
+    :param landmarks: landmarks dataframe
+    :param bounding_boxes: bounding boxes dataframe
+    :return: labels dataframe, landmarks dataframe, bounding boxes dataframe
     """
     # Rename columns
     partition_df.columns = ['filename', 'partition']
@@ -175,18 +152,12 @@ def _get_partition_dataframes(partition_df, partition, labels, landmarks, boundi
 def generate_dataset_and_loader(transform, labels, landmarks, bounding_boxes, config):
     """
     creates a dataset instance of the CelebAdataset given the transformer, labels, landmarks, bounding boxes and the configuration file
-
-    Parameters
-    ----------
-    transform AffactTransformer
-    labels labels
-    landmarks landmarks
-    bounding_boxes bounding box
-    config the configuration file
-
-    Returns
-    -------
-    the dataset and dataloader
+    :param transform: AffactTransformer
+    :param labels: labels
+    :param landmarks: landmarks
+    :param bounding_boxes: bounding box
+    :param config: the configuration file
+    :return: the dataset and dataloader
     """
     dataset = CelebADataset(transform=transform, labels=labels, landmarks=landmarks, bounding_boxes=bounding_boxes,
                             config=config)

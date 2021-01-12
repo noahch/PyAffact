@@ -13,14 +13,8 @@ from dotmap import DotMap
 def get_config(config_name=None):
     """
     Reads the configuration and returns a configuration DotMap
-
-    Parameters
-    ----------
-    config_name Optional name of the configuation file
-
-    Returns
-    -------
-    Configuration DotMap with arguments parsed form terminal/cmd
+    :param config_name: Optional name of the configuation file
+    :return: Configuration DotMap with arguments parsed form terminal/cmd
     """
 
     # Read arguments
@@ -43,15 +37,9 @@ def _overwrite_defaults(config, args):
     """
     TODO: check before submission
     Overwrite the default values in the configuration DotMap
-
-    Parameters
-    ----------
-    config configuration file
-    args command line arguments
-
-    Returns
-    -------
-    DotMap Configuration with new values
+    :param config: configuration file
+    :param args: command line arguments
+    :return: DotMap Configuration with new values
     """
 
     # Overwrite all arguments that are set via terminal/cmd
@@ -65,9 +53,7 @@ def _read_arguments():
     """
     Read the arguments from the command line/terminal
 
-    Returns
-    -------
-    ArgParser
+    :return: ArgParser
     """
     parser = argparse.ArgumentParser(description='Arguments for PyAffact')
     parser.add_argument('--config.name', default='train/basic_config', type=str)
@@ -270,16 +256,10 @@ def _read_arguments():
 def _replace_value_in_config(config, argument, argument_value):
     """
     Replaces a value in the DotMap
-
-    Parameters
-    ----------
-    config Configuration DotMap
-    argument Argument to overwrite
-    argument_value Argument value
-
-    Returns
-    -------
-    new DotMap with new Values
+    :param config: Configuration DotMap
+    :param argument: Argument to overwrite
+    :param argument_value: Argument value
+    :return: new DotMap with new Values
     """
 
     # Recursive Help function which creates a nested dict
@@ -307,14 +287,7 @@ def _replace_value_in_config(config, argument, argument_value):
 def create_result_directory(config):
     """
     Creates the result directory and updates the configuration file
-
-    Parameters
-    ----------
-    config configuration file
-
-    Returns
-    -------
-
+    :param config: configuration file
     """
 
     # Get current time
@@ -349,14 +322,7 @@ def create_result_directory(config):
 def save_config_to_file(config):
     """
     Save configuration to disk
-
-    Parameters
-    ----------
-    config DotMap Configuration
-
-    Returns
-    -------
-
+    :param config: DotMap Configuration
     """
     file = open(os.path.join(config.basic.result_directory, 'config.yml'), "w")
     file.write(yaml.dump(config.toDict()))

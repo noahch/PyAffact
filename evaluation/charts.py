@@ -1,3 +1,6 @@
+"""
+functions that generate charts for evaluation
+"""
 import math
 import string
 
@@ -13,7 +16,6 @@ def generate_attribute_accuracy_plot(attribute_name, attribute_accuracy_train, a
                                      attribute_accuracy_val, attribute_accuracy_baseline_val):
     """
     Generates progress chart of an attribute during training and compares accuracy of training/validation data vs baseline model (majority guess from training data)
-
     :param attribute_name: name of attribute
     :param attribute_accuracy_train: accuracy on training data
     :param attribute_accuracy_baseline_train:  accuracy of majority guess on attribute (training)
@@ -257,3 +259,94 @@ def accuracy_sample_plot(image_list, accuracy_list, number_of_img_per_row=3):
             ax.imshow(tensor_to_image(image_list[current_index]))
 
     return fig
+
+
+def generate_relative_improvement_chart(labels, accuracy_dataframe_left,  accuracy_dataframe_right, left_name, right_name):
+    """
+    Generates chart comparing relative improvements of different models
+    :param labels: labels/attributes
+    :param accuracy_dataframe_left: model accuracies left
+    :param accuracy_dataframe_right: model accuracies right
+    :param left_name: name of left model
+    :param right_name: name of right model
+    :return: list of figures
+    """
+    labels.append('<b>OVERALL</b>')
+    figures = []
+    for test_set in accuracy_dataframe_left.columns:
+        left_list = accuracy_dataframe_left[test_set].tolist()
+        right_list = accuracy_dataframe_right[test_set].tolist()
+        left_list.append(np.mean(left_list))
+        right_list.append(np.mean(right_list))
+        left_trace = []
+        right_trace = []
+
+        highest_val = 0
+        for i in range(len(left_list)):
+            a = (1 - left_list[i])
+            b = (1 - right_list[i])
+            switched = False
+            if a > b:
+                temp = a
+                a = b
+                b = temp
+                switched = True
+
+
+            rel_change = ((b - a) / a) * 100
+            if abs(rel_change) > highest_val:
+                highest_val = abs(rel_change)
+
+            if switched:
+                right_trace.append(rel_change)
+                left_trace.append(0)
+            else:
+                left_trace.append(-rel_change)
+                right_trace.append(0)
+
+
+        layout = go.Layout(
+            autosize=False,
+            margin=go.layout.Margin(
+                l=2,
+                r=3,
+                b=2,
+                t=30,
+                pad=2
+            ),
+            height=750,
+            width=550,
+            legend={'traceorder': 'reversed'},
+            title='Relative Performance Differnece on {}. {} vs {}'.format(test_set, left_name, right_name),
+            titlefont=dict(size=12)
+            # paper_bgcolor='rgba(255,255,255,1)',
+            # plot_bgcolor='rgba(255,255,255,0.5)'
+        )
+
+        fig = go.Figure(layout=layout)
+
+        fig.add_trace(go.Bar(
+            y=labels[::-1],
+            x=right_trace[::-1],
+            name=right_name,
+            orientation='h'
+        ))
+
+        fig.add_trace(go.Bar(
+            y=labels[::-1],
+            x=left_trace[::-1],
+            name=left_name,
+            orientation='h'
+        ))
+
+        highest = int(math.ceil(highest_val / 10.0)) * 10
+        tickvals = [-highest, -highest/2, 0, highest/2, highest]
+
+        fig.update_layout(xaxis=dict(
+            range = [-highest, highest],
+            tickmode = 'array',
+            tickvals = tickvals,
+            ticktext = ['+{}%'.format(abs(x)) for x in tickvals]
+        ))
+        figures.append(fig)
+    return figures

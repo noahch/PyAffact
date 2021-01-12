@@ -17,12 +17,9 @@ from utils.utils import create_directory
 
 def main():
     """
-    Starts creation of test datasets
-
-    Returns
-    -------
-
+    Creates the test datasets needed for evaluation
     """
+
     config = get_config('dataset/testsetA_config')
     # Load dataframes for testing
     df_test_labels, df_test_landmarks, df_test_bounding_boxes = generate_test_dataset(config)
@@ -50,12 +47,6 @@ def main():
     print('Creating testset T (AFFACT transformations)')
     data_transforms_T = transforms.Compose([AffactTransformer(config)])
     _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_T)
-    #
-    # # Face detector --> bbx scale 2.5
-    # config = get_config('dataset/testsetAZ_config')
-    # print('Creating testset AZ (automatically zoomed out)')
-    # data_transforms_AZ = transforms.Compose([AffactTransformer(config)])
-    # _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_AZ)
 
 
 
@@ -63,26 +54,18 @@ def main():
 def _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, transformer):
     """
     Generates test images based on dataframes
-
-    Parameters
-    ----------
-    config Configuration File
-    df_test_labels labels dataframe
-    df_test_landmarks Landmark dataframe
-    df_test_bounding_boxes bounding boxes dataframe
-    transformer transformer
-
-    Returns
-    -------
-
+    :param config: Configuration File
+    :param df_test_labels: labels dataframe
+    :param df_test_landmarks: Landmark dataframe
+    :param df_test_bounding_boxes: bounding boxes dataframe
+    :param transformer: transformer
     """
 
-    # TODO
-    # create_directory(config.dataset_result_folder, recreate=True)
+
     create_directory(config.dataset_result_folder, recreate=True)
     print("created {}".format(config.dataset_result_folder))
     pbar = tqdm(range(len(df_test_labels.index)))
-    # pbar.clear()
+
     mtcnn = MTCNN(select_largest=False, post_process=False, device='cuda:0')
 
     for index, (i, row) in enumerate(df_test_labels.iterrows()):

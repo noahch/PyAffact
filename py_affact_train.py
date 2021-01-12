@@ -10,9 +10,6 @@ from utils.utils import init_environment
 def main():
     """
     Run training for a specific model
-    Returns
-    -------
-
     """
     # Load configuration for training
     config = get_config()
