@@ -71,7 +71,7 @@ def generate_attribute_accuracy_plot(attribute_name, attribute_accuracy_train, a
 
 
 
-def generate_model_accuracy_of_testsets(labels, accuracy_dataframe, per_attribute_baseline_accuracy, all_attributes_baseline_accuracy, cut_off_threshold=15):
+def generate_model_accuracy_of_testsets(labels, accuracy_dataframe, per_attribute_baseline_accuracy, all_attributes_baseline_accuracy, cut_off_threshold=15, order=None):
     """
     evaluates a model on different test sets
     :param labels: attribute names
@@ -79,6 +79,7 @@ def generate_model_accuracy_of_testsets(labels, accuracy_dataframe, per_attribut
     :param per_attribute_baseline_accuracy: majority guess accuracy per attribute
     :param all_attributes_baseline_accuracy: overall accuracy of majority guess
     :param cut_off_threshold: thresholds that defines when the bars are cut off and labels containing the real accuracy are displayed (in percentage)
+    :param order: Display order of test sets
     :return: evaluation chart
     """
 
@@ -119,6 +120,9 @@ def generate_model_accuracy_of_testsets(labels, accuracy_dataframe, per_attribut
         all_accuracies[testset] = accuracies
         all_labels[testset] = []
 
+    if not order:
+        order = list(all_accuracies.keys())
+
     # loop that finds the longest bar chart per attribute group
     # if the longest bar chart exceeds the cut of threshold,
     # a custom label containing the real accuracies of all cut off bars in an attribute group is created
@@ -131,7 +135,7 @@ def generate_model_accuracy_of_testsets(labels, accuracy_dataframe, per_attribut
         if min(val, cut_off_threshold) >= cut_off_threshold:
             label += 'MG:{:.2f}%'.format(val)
             br_count += 1
-        for j in all_accuracies.keys():
+        for j in order:
             val2 = (1- all_accuracies[j][i])*100
             if min(val2, cut_off_threshold) > highest_val:
                 highest_idx = j
@@ -160,9 +164,8 @@ def generate_model_accuracy_of_testsets(labels, accuracy_dataframe, per_attribut
 
     fig = go.Figure(layout=layout)
 
-    # hack in order to have the right sorting of the bars
     i = 1
-    for k in ['testsetA', 'testsetC', 'testsetD', 'testsetT'][::-1]:
+    for k in order[::-1]:
 
         v = all_accuracies[k]
         fig.add_trace(go.Bar(

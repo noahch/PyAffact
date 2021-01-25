@@ -206,10 +206,11 @@ class EvalModel(ModelManager):
         df = pd.DataFrame(np.transpose(per_attribute_accuracy_list), columns=test_folders)
         return df
 
-    def quantitative_analysis(self):
+    def quantitative_analysis(self, order=None):
         """
         Loads the evaluation_result.csv file and quantitatively evaluates the model
         Saves the evaluation chart and displays it in the browser
+        :param order: Display order of test sets
         """
         # Load labels
         labels, _, _ = generate_test_dataset(self.config)
@@ -226,7 +227,7 @@ class EvalModel(ModelManager):
         # Generate figure with accuracies on different test sets for model and baseline
         figure = generate_model_accuracy_of_testsets(labels.columns.tolist(), accuracy_df,
                                                      per_attribute_baseline_accuracy.tolist(),
-                                                     all_attributes_baseline_accuracy)
+                                                     all_attributes_baseline_accuracy, order=order)
         # Save the figure
         figure.write_image('{}/eval_fig.png'.format(self.config.experiments_dir), format='png', scale=3)
         figure.show()
