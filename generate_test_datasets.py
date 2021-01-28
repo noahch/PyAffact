@@ -42,7 +42,7 @@ def main():
     data_transforms_C = transforms.Compose([AffactTransformer(config)])
     _create_test_images(config, df_test_labels, df_test_landmarks, df_test_bounding_boxes, data_transforms_C)
 
-    # # face detector -> bigger bbx -> AFFACT Transformations
+    # face detector -> bigger bbx -> AFFACT Transformations
     config = get_config('dataset/testsetT_config')
     print('Creating testset T (AFFACT transformations)')
     data_transforms_T = transforms.Compose([AffactTransformer(config)])
