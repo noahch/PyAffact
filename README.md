@@ -22,6 +22,7 @@ Abstract
   + [*AFFACT*](#training-affact)
   + [*Resnet-152*](#training-resnet-152)
 * [Training on multiple GPUs](#training-on-multiple-gpus)
+* [Run a Hyperparameter Optimization](#run-a-hyperparameter-optimization)
 * [References](#references)
 
 ## Quick start
@@ -168,6 +169,18 @@ It is possible to add several cuda IDs separated by comma in a training configur
 # inside the conda environment, run the following command:
 python py_affact_evaluate.py --config.name=eval/affact --config.basic.cuda_device_name=cuda:0,cuda:1     
 ```
+
+## Run a Hyperparameter Optimization
+If you want to explore hyperparameters you can run a [Sweep using WandB](https://docs.wandb.com/sweeps) over a range of values.
+
+Edit the example sweep configuration files located in config/train/hyperopt to adjust parameter bounds.
+
+Create the sweep:
+- `wandb sweep config/train/hyperopt/affact_hyperopt.yaml`
+
+Start Sweep:
+- `wandb agent SWEEP_ID  # SWEEP_ID is from the create sweep command above`
+
 
 ## References
 [AFFACT - Alignment-Free Facial Attribute Classification Technique](https://arxiv.org/pdf/1611.06158) \
