@@ -170,7 +170,7 @@ python py_affact_evaluate.py --config.name=eval/affact --config.basic.cuda_devic
 ```
 
 ## References
-AFFACT \
-pytorch \
+[AFFACT - Alignment-Free Facial Attribute Classification Technique](https://arxiv.org/pdf/1611.06158) \
 our report \
-wandb
+[Wandb](http://wandb.ai) \
+[PyTorch](https://pytorch.org)
