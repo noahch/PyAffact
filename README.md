@@ -1,7 +1,7 @@
 # PyAffact
 PyTorch implementation of the AFFACT Paper
 
-Facial attribute classification tasks have many potential real-world applications across different areas (e.g. surveillance, entertainment, medical treatment). To make classification models more stable toward misaligned images, a data augmentation technique called alignment-free facial attribute classification technique (AFFACT) was introduced by Günther et al [[1]](#1). Since their approach was originally implemented using the nowadays outdated Caffe framework, the goal of this master project is to reimplement this technique using the more popular PyTorch framework. Our reimplementation performs on the same level as the original AFFACT model. We further introduce the possibility to perform hyperparameter optimization on existing models and establish an extended network trained on an additional data augmentation operation. 
+Facial attribute classification tasks have many potential real-world applications across different areas (e.g. surveillance, entertainment, medical treatment). To make classification models more stable toward misaligned images, a data augmentation technique called alignment-free facial attribute classification technique (AFFACT) was introduced by Günther et al. [[1]](#1). Since their approach was originally implemented using the nowadays outdated Caffe framework, the goal of this master project is to reimplement this technique using the more popular PyTorch framework. Our reimplementation performs on the same level as the original AFFACT model. We further introduce the possibility to perform hyperparameter optimization on existing models and establish an extended network trained on an additional data augmentation operation. 
 
 
 ## Table of contents
@@ -15,12 +15,12 @@ Facial attribute classification tasks have many potential real-world application
 * [Training a model](#training-a-model)
   + [*Resnet-51-S*](#training-resnet-51-s)
   + [*AFFACT*](#training-affact)
-  + [*Resnet-152*](#training-resnet-152)
+  + [*AFFACT-Ext*](#training-AFFACT-Ext)
 * [Evaluation of a model](#evaluation-of-a-model)
   + [*Generate test datasets*](#generate-test-datasets)
   + [*Resnet-51-S*](#training-resnet-51-s)
   + [*AFFACT*](#training-affact)
-  + [*Resnet-152*](#training-resnet-152)
+  + [*AFFACT-Ext*](#training-AFFACT-Ext)
 * [Training on multiple GPUs](#training-on-multiple-gpus)
 * [Run a Hyperparameter Optimization](#run-a-hyperparameter-optimization)
 * [References](#references)
@@ -78,28 +78,28 @@ There are the following 3 types of configuration YAML files. The first configura
 Furthermore, there is another configuration file with different parameters in the config/eval folder, which covers all parameters to evaluate a model.
 Finally, the configuration file to create the different test sets is situated in the config/dataset folder.
 The configuration files are written in the popular YAML format and fully documented.
-For reproducibility purposes, there is a configuration file for the ResNet-51-S, AFFACT and ResNet-152 in the config/train and in the config/evaluation folder respectively.
+For reproducibility purposes, there is a configuration file for the ResNet-51-S, AFFACT and AFFACT-Ext in the config/train and in the config/evaluation folder respectively.
 
 For example, the fully-documented configuration YAML file to train the AFFACT model can be found [here](config/train/affact.yml).
 
 ### WandB
-WandB (Weights and Biases) is a popular tool to keep track of machine learning experiments \cite{wandb}.
+WandB (Weights and Biases) is a popular tool to keep track of machine learning experiments [[4]](#4).
 In our project we allow the use of WandB in our training configuration file.
 When enabled, each experiment creates 1 report with a dedicated URL link. This report then monitors the training history and every epoch the plots for the current training and validation loss/accuracy is automatically updated. Moreover, the system metrics such as memory, CPU, GPU usage are recorded and updated on the fly.
 
 ## Pretrained models
-The pretrained models described in the AFFACT paper as well as own built ResNet-152 model achieved the following results:
+The pretrained models described in the AFFACT paper as well as our own built AFFACT-Ext model are available for download here:
 
-|Model name|Accuracy on test set|
-| :- | :-: |
-|[ResNet-51-S](xxx) (xxxMB)|0.xxx|
-|[AFFACT](xxx) (xxxMB)|0.xxx|
-|[ResNet-152](xxx) (xxxMB)|0.xxx|
+|Model name|
+| :- |
+|[ResNet-51-S](https://drive.google.com/file/d/1EMk6fAtLLmzNEvlh5B604MGvwDMfxX16/view) |
+|[AFFACT](https://drive.google.com/file/d/1D7WVDuDZ49Tl2B9U4077F8uUgUeuwL7A/view) |
+|[AFFACT-Ext](https://drive.google.com/file/d/1L5hE3kkaT35oJgmf_FUuOrv7kKVQTvFd/view)|
 
 ## Training a model
-To simplify training of the models in the AFFACT paper, we created a configuration file for each model in the AFFACT paper. Additionally, we added a configuration file our own model (ResNet-152) which is described in our report. The commands to train the different models are listed below.
+To simplify training of the models in the AFFACT paper, we created a configuration file for each model in the AFFACT paper. Additionally, we added a configuration file our own model (AFFACT-Ext) which is described in our report. The commands to train the different models are listed below.
 
-### Resnet-51-S
+### ResNet-51-S
 Run the following command to train the ResNet-51-S model:
 
  ```bash
@@ -115,17 +115,17 @@ Run the following command to train the AFFACT model:
  python py_affact_train.py --config.name=train/affact     
  ```
 
-### ResNet-152
-Run the following command to train the ResNet-152 model:
+### AFFACT-Ext
+Run the following command to train the AFFACT-Ext model:
 
  ```bash
  # inside the conda environment, run the following command:
- python py_affact_train.py --config.name=train/resnet152     
+ python py_affact_train.py --config.name=train/affact-ext     
  ```
 
 
 ## Evaluation of a model
-We evaluate each model quantitavely and qualitatively. In the quantitative analysis we analyze the accuracy of the model on 5 transformations of the test set (AA, AM, AZ, C, T) described in our report for each attribute and calculate the overall accuracy.
+We evaluate each model quantitavely and qualitatively. In the quantitative analysis we analyze the accuracy of the model on 4 transformations of the test set (A, C, D, T) described in our report for each attribute and calculate the overall accuracy.
 In the qualitative analysis we look at 6 samples of images and evaluate the prediction quality of the network.
 All the results are saved in a result folder, marked by the timestamp and specific chosen model.
 
@@ -154,12 +154,12 @@ Run the following command to evaluate the AFFACT model:
  python py_affact_evaluate.py --config.name=eval/affact     
  ```
 
-### ResNet-152
-Run the following command to evaluate the ResNet-152 model:
+### AFFACT-Ext
+Run the following command to evaluate the AFFACT-Ext model:
 
  ```bash
  # inside the conda environment, run the following command:
- python py_affact_evaluate.py --config.name=eval/resnet152     
+ python py_affact_evaluate.py --config.name=eval/affact-ext     
  ```
 
 ## Training on multiple GPUs
