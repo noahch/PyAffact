@@ -3,19 +3,19 @@
 dataset_result_folder: evaluation/dataset/testsetD
 dataset:
   # Path to the partition file
-  partition_filename: dataset/CelebA/list_eval_partition.txt
+  partition_filename: "path/to/your/partition_file"
   # Path to the labels' file
-  dataset_labels_filename: dataset/CelebA/list_attr_celeba.txt
+  dataset_labels_filename: "path/to/your/dataset_labels_file"
   # Path to the folder which contains the images
-  dataset_image_folder: dataset/CelebA/Img
+  dataset_image_folder: "path/to/your/dataset_image_folder"
   # bounding box mode (0 = align with landmarks, 1 = crop with the bounding box file, 2 = crop with a face detector)
   bounding_box_mode: 2
   # Scale the bounding box if bounding box mode 2 is selected
   bounding_box_scale: 2
   # Path to the file which contains the landmarks information
-  landmarks_filename: dataset/CelebA/list_landmarks_celeba.txt
+  landmarks_filename: "path/to/your/landmarks_file"
   # Path to the bounding box file
-  bounding_boxes_filename: dataset/CelebA/list_bbox_celeba.txt
+  bounding_boxes_filename: "path/to/your/bounding_boxes_file"
 preprocessing:
   transformation:
     crop_size:
