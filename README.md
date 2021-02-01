@@ -47,7 +47,8 @@ Abstract
     conda install -c https://www.idiap.ch/software/bob/conda bob.io.image
     conda install -c https://www.idiap.ch/software/bob/conda bob.ip.base
 
-    # install PyTorch according to your system's specification
+    # install PyTorch according to your system's specification 
+    # have a look at https://pytorch.org/ as the installation command may vary depending on your OS and your version of CUDA
 
     # install all other dependencies
     pip install -r requirements.txt
