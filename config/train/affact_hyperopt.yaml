@@ -1,0 +1,47 @@
+method: bayes
+metric:
+  goal: maximize
+  name: Accuracy Val
+parameters:
+  basic.cuda_device_name:
+    distribution: categorical
+    values:
+    - cuda:0
+  config.name:
+    distribution: categorical
+    values:
+    - train/affact-ext
+  model.name:
+    distribution: categorical
+    values:
+    - resnet_51-ext
+  preprocessing.dataloader.batch_size:
+    distribution: categorical
+    values:
+    - 8
+    - 16
+    - 32
+    - 64
+  training.epochs:
+    distribution: int_uniform
+    max: 15
+    min: 5
+  training.lr_scheduler.gamma:
+    distribution: uniform
+    max: 0.5
+    min: 0.01
+  training.optimizer.learning_rate:
+    distribution: log_uniform
+    max: 0
+    min: -5
+  training.optimizer.momentum:
+    distribution: uniform
+    max: 1
+    min: 0
+  training.optimizer.type:
+    distribution: categorical
+    values:
+    - SGD
+    - Adam
+    - RMSprop
+program: py_affact_train.py
