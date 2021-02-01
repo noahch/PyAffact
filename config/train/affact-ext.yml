@@ -22,7 +22,7 @@ model:
   # The rate of dropout (0.2-0.5 is recommended, only matters if chosen model has a dropout layer)
   dropout: 0
   # model weights path of affact
-  affact_weights: '"path/to/affact_weights'
+  affact_weights: 'path/to/affact_weights'
 dataset:
   # Path to the partition file
   partition_filename: "path/to/your/partition_file"
