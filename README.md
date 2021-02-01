@@ -47,8 +47,7 @@ Abstract
     conda install -c https://www.idiap.ch/software/bob/conda bob.io.image
     conda install -c https://www.idiap.ch/software/bob/conda bob.ip.base
 
-    # install pytorch according to your system's specification (e.g. for RTX 3070):
-    conda install pytorch torchvision torchaudio cudatoolkit=11.0 -c pytorch
+    # install PyTorch according to your system's specification
 
     # install all other dependencies
     pip install -r requirements.txt
