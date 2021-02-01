@@ -87,6 +87,8 @@ WandB (Weights and Biases) is a popular tool to keep track of machine learning e
 In our project we allow the use of WandB in our training configuration file.
 When enabled, each experiment creates 1 report with a dedicated URL link. This report then monitors the training history and every epoch the plots for the current training and validation loss/accuracy is automatically updated. Moreover, the system metrics such as memory, CPU, GPU usage are recorded and updated on the fly.
 
+The installation guide can be found [here](https://docs.wandb.ai/quickstart).
+
 ## Pretrained models
 The pretrained models described in the AFFACT paper as well as our own built AFFACT-Ext model are available for download here:
 
