@@ -3,13 +3,13 @@ config:
   name: affact # name of the configuration file
 basic:
   # The Cuda device ID, that is needed to enable GPU acceleration. Can also be several IDs seperated by Comma
-  cuda_device_name: cuda:7
+  cuda_device_name: cuda:0
   # The name of the experiment
   experiment_name: AFFACT
   # The description and purpose of the experiment
   experiment_description: Train the AFFACT Network
   # The path to the result directory
-  result_directory: "/local/scratch/noahAndYves/affact_experiment_results"
+  result_directory: "path/to/your/result_directory"
   # The name of the result folder
   result_directory_name: ''
   # if wandB should be enabled (0 = not enabled, 1 = enabled)
@@ -23,19 +23,19 @@ model:
   dropout: 0
 dataset:
   # Path to the partition file
-  partition_filename: "/local/scratch/datasets/CelebA/protocol/list_eval_partition.txt"
+  partition_filename: "path/to/your/partition_file"
   # Path to the labels' file
-  dataset_labels_filename: "/local/scratch/datasets/CelebA/protocol/list_attr_celeba.txt"
+  dataset_labels_filename: "path/to/your/dataset_labels_file"
   # Path to the folder which contains the images
-  dataset_image_folder: "/local/scratch/datasets/CelebA/img_celeba"
+  dataset_image_folder: "path/to/your/dataset_image_folder"
   # bounding box mode (0 = align with landmarks, 1 = crop with the bounding box file, 2 = crop with a face detector)
   bounding_box_mode: 0
   # Scale the bounding box if bounding box mode 2 is selected
   bounding_box_scale: 2
   # Path to the file which contains the landmarks information
-  landmarks_filename: "/local/scratch/datasets/CelebA/protocol/list_landmarks_celeba.txt"
+  landmarks_filename: "path/to/your/landmarks_file"
   # Path to the bounding box file
-  bounding_boxes_filename: "/local/scratch/datasets/CelebA/protocol/list_bbox_celeba.txt"
+  bounding_boxes_filename: "path/to/your/bounding_boxes_file"
 training:
   # How many epochs the model should be trained on
   epochs: 35
