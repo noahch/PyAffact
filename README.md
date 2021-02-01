@@ -1,8 +1,8 @@
 # PyAffact
-PyTorch implementation of the Affact Paper
+PyTorch implementation of the AFFACT Paper
 
+Facial attribute classification tasks have many potential real-world applications across different areas (e.g. surveillance, entertainment, medical treatment). To make classification models more stable toward misaligned images, a data augmentation technique called alignment-free facial attribute classification technique (AFFACT) was introduced by Günther et al [[1]](#1). Since their approach was originally implemented using the nowadays outdated Caffe framework, the goal of this master project is to reimplement this technique using the more popular PyTorch framework. Our reimplementation performs on the same level as the original AFFACT model. We further introduce the possibility to perform hyperparameter optimization on existing models and establish an extended network trained on an additional data augmentation operation. 
 
-Abstract
 
 ## Table of contents
 
@@ -183,7 +183,7 @@ Start Sweep:
 
 
 ## References
-[AFFACT - Alignment-Free Facial Attribute Classification Technique](https://arxiv.org/pdf/1611.06158) \
-our report \
-[Wandb](http://wandb.ai) \
-[PyTorch](https://pytorch.org)
+<a id="1">[1]</a> [AFFACT - Alignment-Free Facial Attribute Classification Technique](https://arxiv.org/pdf/1611.06158) \
+<a id="2">[2]</a> our report \
+<a id="3">[3]</a> [PyTorch](https://pytorch.org) \
+<a id="4">[4]</a> [Wandb](http://wandb.ai)
