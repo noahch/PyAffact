@@ -5,7 +5,7 @@ basic:
   # The Cuda device ID, that is needed to enable GPU acceleration. Can also be several IDs seperated by Comma
   cuda_device_name: cuda:0
   # The name of the experiment
-  experiment_name: AFFACT-EXT
+  experiment_name: AFFACT-Ext
   # The description and purpose of the experiment
   experiment_description: Train the AFFACT Network extended
   # The path to the result directory
@@ -16,7 +16,7 @@ basic:
   enable_wand_reporting: 1
 model:
   # The name of the model
-  name: resnet_51-ext
+  name: affact-ext
   # If pretrained weights should be used (0 = false, 1 = true)
   pretrained: 1
   # The rate of dropout (0.2-0.5 is recommended, only matters if chosen model has a dropout layer)

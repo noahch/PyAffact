@@ -8,7 +8,7 @@ basic:
   cuda_device_name: cuda:0
 model:
   # The name of the model
-  name: resnet_51-ext
+  name: affact-ext
 dataset:
   # Path to the partition file
   partition_filename: path/to/partition_file
