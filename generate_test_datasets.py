@@ -5,7 +5,7 @@ from PIL import Image
 from facenet_pytorch.models.mtcnn import MTCNN
 
 import numpy as np
-from torchvision.transforms import transforms, TenCrop
+from torchvision.transforms import transforms
 from tqdm import tqdm
 
 from preprocessing.dataset_generator import generate_test_dataset

@@ -10,11 +10,11 @@ parameters:
   config.name:
     distribution: categorical
     values:
-    - train/affact-ext
+    - train/affact_ext
   model.name:
     distribution: categorical
     values:
-    - affact-ext
+    - affact_ext
   preprocessing.dataloader.batch_size:
     distribution: categorical
     values:

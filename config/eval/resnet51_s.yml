@@ -1,7 +1,7 @@
 ---
 # Name of the weights file to load
 weights_name: best-6.pt
-# Directory of model (weights)
+# Directory of model (weights), evaluation results are saved in this directory
 experiments_dir: path/to/model/weights
 basic:
   # The Cuda device ID, that is needed to enable GPU acceleration during inference
@@ -36,5 +36,5 @@ evaluation:
     # settings for matplotlib plot (choose how many samples are shown)
     number_of_rows: 2
     number_of_images_per_row: 3
-    # choose the testset for the random samples
+    # choose the test set for the random samples
     testset_name: testsetA

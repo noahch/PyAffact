@@ -54,7 +54,7 @@ class TrainModel(ModelManager):
             return self._train_resnet_51()
 
         # train extended resnet_51 (experiment)
-        elif self.config.model.name == "affact-ext":
+        elif self.config.model.name == "affact_ext":
             return self._train_resnet_51()
 
         else:

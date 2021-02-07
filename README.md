@@ -96,7 +96,7 @@ The pretrained models described in the AFFACT paper as well as our own built AFF
 | :- |
 |[ResNet-51-S](https://drive.google.com/file/d/1EMk6fAtLLmzNEvlh5B604MGvwDMfxX16/view) |
 |[AFFACT](https://drive.google.com/file/d/1D7WVDuDZ49Tl2B9U4077F8uUgUeuwL7A/view) |
-|[AFFACT-Ext](https://drive.google.com/file/d/1L5hE3kkaT35oJgmf_FUuOrv7kKVQTvFd/view)|
+|[AFFACT-Ext](https://drive.google.com/file/d/1L5hE3kkaT35oJgmf_FUuOrv7kKVQTvFd/view) |
 
 ## Training a model
 To simplify training of the models in the AFFACT paper, we created a configuration file for each model in the AFFACT paper. Additionally, we added a configuration file our own model (AFFACT-Ext) which is described in our report. The commands to train the different models are listed below.
@@ -122,7 +122,7 @@ Run the following command to train the AFFACT-Ext model:
 
  ```bash
  # inside the conda environment, run the following command:
- python py_affact_train.py --config.name=train/affact-ext     
+ python py_affact_train.py --config.name=train/affact_ext     
  ```
 
 
@@ -161,7 +161,7 @@ Run the following command to evaluate the AFFACT-Ext model:
 
  ```bash
  # inside the conda environment, run the following command:
- python py_affact_evaluate.py --config.name=eval/affact-ext     
+ python py_affact_evaluate.py --config.name=eval/affact_ext     
  ```
 
 ## Training on multiple GPUs
