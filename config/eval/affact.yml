@@ -20,8 +20,8 @@ dataset:
   bounding_boxes_filename: path/to/bounding_boxes_file
   # Path to the folder which contains the images
   dataset_image_folder: path/to/dataset_image_folder
-  # Path to the folder which contains the majority class files (baseline guess)
-  majority_class_file: path/to/majority_classes_file
+  # Path to the folder which contains the majority class files (baseline guess), default is majority class file provided
+  majority_class_file: config/majority_classes_training_partition.pkl
   # Path to the testsets
   testsets_path: path/to/evaluation/dataset
 evaluation:
