@@ -186,6 +186,6 @@ Start Sweep:
 
 ## References
 <a id="1">[1]</a> [AFFACT - Alignment-Free Facial Attribute Classification Technique](https://arxiv.org/pdf/1611.06158) \
-<a id="2">[2]</a> our report \
+<a id="2">[2]</a> [Reimplementing AFFACT](https://drive.google.com/file/d/1KLzqxLs9m_XbakMimGYGTteRLiGVzZFv/view)
 <a id="3">[3]</a> [PyTorch](https://pytorch.org) \
 <a id="4">[4]</a> [Wandb](http://wandb.ai)
